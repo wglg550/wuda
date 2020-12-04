@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>index</title>
+  <script type="text/javascript" src="/js/jquery-3.5.1.min.js"></script>
+</head>
+<body>
+welcome to wuda-teaching
+<button type="button" id="confirm">test</button>
+<script>
+  $('#confirm').click(function() {
+    $.ajax({
+      async : true,
+      type : "post", // 提交方式 get/post
+      url : "/api/teaching/sys/test",
+      dataType : "json",
+      success : function(data) {
+        alert(data.data.success);
+      }
+    });
+  });
+</script>
+</body>
+</html>

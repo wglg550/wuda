@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qmth.wuda.teaching.dao.TBTeacherExamStudentMapper">
+
+    <delete id="deleteAll">
+        delete t from t_b_teacher_exam_student t
+    </delete>
+</mapper>
