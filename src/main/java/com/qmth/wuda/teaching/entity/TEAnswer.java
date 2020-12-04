@@ -1,8 +1,11 @@
 package com.qmth.wuda.teaching.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.qmth.wuda.teaching.base.BaseEntity;
+import com.qmth.wuda.teaching.util.UidUtil;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -21,8 +24,9 @@ public class TEAnswer implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @JsonSerialize(using = ToStringSerializer.class)
     @ApiModelProperty(value = "主键")
-    @TableId(value = "id", type = IdType.AUTO)
+    @TableId(value = "id")
     private Long id;
 
     @ApiModelProperty(value = "大题号")
@@ -37,6 +41,7 @@ public class TEAnswer implements Serializable {
     @TableField(value = "type")
     private String type;
 
+    @JsonSerialize(using = ToStringSerializer.class)
     @ApiModelProperty(value = "考试记录id")
     @TableField(value = "exam_record_id")
     private Long examRecordId;
@@ -59,20 +64,22 @@ public class TEAnswer implements Serializable {
 
     @ApiModelProperty(value = "版本号")
     @TableField(value = "version")
-    private Long version = 0L;
+    private Integer version = 0;
 
     public TEAnswer() {
 
     }
 
     public TEAnswer(Integer mainNumber, Integer subNumber, String type, Long examRecordId) {
+        setId(UidUtil.nextId());
         this.mainNumber = mainNumber;
         this.subNumber = subNumber;
         this.type = type;
         this.examRecordId = examRecordId;
     }
 
-    public TEAnswer(Integer mainNumber, Integer subNumber, String type, Long examRecordId, String answer, Long version) {
+    public TEAnswer(Integer mainNumber, Integer subNumber, String type, Long examRecordId, String answer, Integer version) {
+        setId(UidUtil.nextId());
         this.mainNumber = mainNumber;
         this.subNumber = subNumber;
         this.type = type;
@@ -81,7 +88,8 @@ public class TEAnswer implements Serializable {
         this.version = version;
     }
 
-    public TEAnswer(Integer mainNumber, Integer subNumber, String type, Long examRecordId, Double score, Long version) {
+    public TEAnswer(Integer mainNumber, Integer subNumber, String type, Long examRecordId, Double score, Integer version) {
+        setId(UidUtil.nextId());
         this.mainNumber = mainNumber;
         this.subNumber = subNumber;
         this.type = type;
@@ -90,16 +98,16 @@ public class TEAnswer implements Serializable {
         this.version = version;
     }
 
-    public static long getSerialVersionUID() {
-        return serialVersionUID;
-    }
-
     public Long getId() {
         return id;
     }
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
     }
 
     public Integer getMainNumber() {
@@ -166,11 +174,11 @@ public class TEAnswer implements Serializable {
         this.durationSeconds = durationSeconds;
     }
 
-    public Long getVersion() {
+    public Integer getVersion() {
         return version;
     }
 
-    public void setVersion(Long version) {
+    public void setVersion(Integer version) {
         this.version = version;
     }
 }

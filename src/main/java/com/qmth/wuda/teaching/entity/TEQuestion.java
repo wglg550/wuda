@@ -1,8 +1,10 @@
 package com.qmth.wuda.teaching.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.qmth.wuda.teaching.base.BaseEntity;
+import com.qmth.wuda.teaching.util.UidUtil;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -17,14 +19,11 @@ import java.io.Serializable;
  * @since 2020-12-01
  */
 @ApiModel(value = "t_e_question", description = "试卷结构题型说明")
-public class TEQuestion implements Serializable {
+public class TEQuestion extends BaseEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @ApiModelProperty(value = "主键")
-    @TableId(value = "id", type = IdType.AUTO)
-    private Long id;
-
+    @JsonSerialize(using = ToStringSerializer.class)
     @ApiModelProperty(value = "试卷id")
     @TableField(value = "paper_id")
     private Long paperId;
@@ -65,7 +64,9 @@ public class TEQuestion implements Serializable {
 
     }
 
-    public TEQuestion(Integer mainNumber, Integer subNumber, String type, Double score, String rule, String description, String knowledge, String capability) {
+    public TEQuestion(Long paperId, Integer mainNumber, Integer subNumber, String type, Double score, String rule, String description, String knowledge, String capability) {
+        setId(UidUtil.nextId());
+        this.paperId = paperId;
         this.mainNumber = mainNumber;
         this.subNumber = subNumber;
         this.type = type;
@@ -94,14 +95,6 @@ public class TEQuestion implements Serializable {
 
     public static long getSerialVersionUID() {
         return serialVersionUID;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public Long getPaperId() {

@@ -1,8 +1,10 @@
 package com.qmth.wuda.teaching.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.qmth.wuda.teaching.base.BaseEntity;
+import com.qmth.wuda.teaching.util.UidUtil;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -17,22 +19,21 @@ import java.io.Serializable;
  * @since 2020-12-01
  */
 @ApiModel(value = "t_e_exam_student", description = "考生信息表")
-public class TEExamStudent implements Serializable {
+public class TEExamStudent extends BaseEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @ApiModelProperty(value = "主键")
-    @TableId(value = "id", type = IdType.AUTO)
-    private Long id;
-
+    @JsonSerialize(using = ToStringSerializer.class)
     @ApiModelProperty(value = "考试批次id")
     @TableField(value = "exam_id")
     private Long examId;
 
+    @JsonSerialize(using = ToStringSerializer.class)
     @ApiModelProperty(value = "学生id")
     @TableField(value = "student_id")
     private Long studentId;
 
+    @JsonSerialize(using = ToStringSerializer.class)
     @ApiModelProperty(value = "学院id")
     @TableField(value = "college_id")
     private Long collegeId;
@@ -61,6 +62,7 @@ public class TEExamStudent implements Serializable {
     @TableField(value = "grade")
     private String grade;
 
+    @JsonSerialize(using = ToStringSerializer.class)
     @ApiModelProperty(value = "专业id")
     @TableField(value = "major_id")
     private Long majorId;
@@ -77,20 +79,16 @@ public class TEExamStudent implements Serializable {
     @TableField(value = "class_no")
     private String classNo;
 
-    @ApiModelProperty(value = "专业名称")
-    @TableField(exist = false)
-    private String majorName;
-
-    @ApiModelProperty(value = "学院名称")
-    @TableField(exist = false)
-    private String collegeName;
-
     public TEExamStudent() {
 
     }
 
-    public TEExamStudent(Long examId, String courseName, String courseCode, String name, String identity, String idcardNumber, String grade, Integer miss,String majorName,String collegeName) {
+    public TEExamStudent(Long examId, Long studentId, Long collegeId, Long majorId, String courseName, String courseCode, String name, String identity, String idcardNumber, String grade, Integer miss) {
+        setId(UidUtil.nextId());
         this.examId = examId;
+        this.studentId = studentId;
+        this.collegeId = collegeId;
+        this.majorId = majorId;
         this.courseName = courseName;
         this.courseCode = courseCode;
         this.name = name;
@@ -98,25 +96,7 @@ public class TEExamStudent implements Serializable {
         this.idcardNumber = idcardNumber;
         this.grade = grade;
         this.miss = miss;
-        this.majorName = majorName;
-        this.collegeName = collegeName;
         this.enable = 1;
-    }
-
-    public String getMajorName() {
-        return majorName;
-    }
-
-    public void setMajorName(String majorName) {
-        this.majorName = majorName;
-    }
-
-    public String getCollegeName() {
-        return collegeName;
-    }
-
-    public void setCollegeName(String collegeName) {
-        this.collegeName = collegeName;
     }
 
     public Long getCollegeId() {
@@ -129,14 +109,6 @@ public class TEExamStudent implements Serializable {
 
     public static long getSerialVersionUID() {
         return serialVersionUID;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public Long getExamId() {

@@ -17,7 +17,7 @@ public class MetaHandler implements MetaObjectHandler {
     @Override
     public void insertFill(MetaObject metaObject) {
         this.setFieldValByName("createTime", System.currentTimeMillis(), metaObject);
-//        this.setFieldValByName("updateTime", System.currentTimeMillis(), metaObject);
+        this.setFieldValByName("updateTime", System.currentTimeMillis(), metaObject);
     }
 
     @Override

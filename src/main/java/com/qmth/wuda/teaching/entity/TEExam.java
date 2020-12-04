@@ -1,8 +1,10 @@
 package com.qmth.wuda.teaching.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.qmth.wuda.teaching.base.BaseEntity;
+import com.qmth.wuda.teaching.util.UidUtil;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -17,14 +19,11 @@ import java.io.Serializable;
  * @since 2020-12-01
  */
 @ApiModel(value = "t_e_exam", description = "考试批次表")
-public class TEExam implements Serializable {
+public class TEExam extends BaseEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @ApiModelProperty(value = "主键")
-    @TableId(value = "id", type = IdType.AUTO)
-    private Long id;
-
+    @JsonSerialize(using = ToStringSerializer.class)
     @ApiModelProperty(value = "学校id")
     @TableField(value = "school_id")
     private Long schoolId;
@@ -54,6 +53,7 @@ public class TEExam implements Serializable {
     }
 
     public TEExam(Long schoolId, String name, String code, Long startTime, Long endTime) {
+        setId(UidUtil.nextId());
         this.schoolId = schoolId;
         this.name = name;
         this.code = code;
@@ -64,14 +64,6 @@ public class TEExam implements Serializable {
 
     public static long getSerialVersionUID() {
         return serialVersionUID;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public Long getSchoolId() {

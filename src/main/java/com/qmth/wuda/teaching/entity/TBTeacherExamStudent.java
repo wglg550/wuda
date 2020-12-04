@@ -1,8 +1,10 @@
 package com.qmth.wuda.teaching.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.qmth.wuda.teaching.util.UidUtil;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -21,40 +23,29 @@ public class TBTeacherExamStudent implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @JsonSerialize(using = ToStringSerializer.class)
     @ApiModelProperty(value = "主键")
-    @TableId(value = "id", type = IdType.AUTO)
+    @TableId(value = "id")
     private Long id;
 
+    @JsonSerialize(using = ToStringSerializer.class)
     @ApiModelProperty(value = "教师id")
     @TableField(value = "teacher_id")
     private Long teacherId;
 
-    @ApiModelProperty(value = "考生主键")
+    @JsonSerialize(using = ToStringSerializer.class)
+    @ApiModelProperty(value = "考生id")
     @TableField(value = "exam_student_id")
     private Long examStudentId;
-
-    @ApiModelProperty(value = "考生唯一身份")
-    @TableField(exist = false)
-    private String examStudentIdcardNumberAndIdentity;
 
     public TBTeacherExamStudent() {
 
     }
 
-    public TBTeacherExamStudent(String examStudentIdcardNumberAndIdentity) {
-        this.examStudentIdcardNumberAndIdentity = examStudentIdcardNumberAndIdentity;
-    }
-
-    public String getExamStudentIdcardNumberAndIdentity() {
-        return examStudentIdcardNumberAndIdentity;
-    }
-
-    public void setExamStudentIdcardNumberAndIdentity(String examStudentIdcardNumberAndIdentity) {
-        this.examStudentIdcardNumberAndIdentity = examStudentIdcardNumberAndIdentity;
-    }
-
-    public static long getSerialVersionUID() {
-        return serialVersionUID;
+    public TBTeacherExamStudent(Long teacherId, Long examStudentId) {
+        setId(UidUtil.nextId());
+        this.teacherId = teacherId;
+        this.examStudentId = examStudentId;
     }
 
     public Long getId() {
@@ -63,6 +54,10 @@ public class TBTeacherExamStudent implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
     }
 
     public Long getTeacherId() {

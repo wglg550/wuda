@@ -1,9 +1,10 @@
 package com.qmth.wuda.teaching.entity;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.qmth.wuda.teaching.base.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -18,14 +19,11 @@ import java.io.Serializable;
  * @since 2020-12-01
  */
 @ApiModel(value = "t_b_user", description = "用户信息表")
-public class TBUser implements Serializable {
+public class TBUser extends BaseEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @ApiModelProperty(value = "主键")
-    @TableId(value = "id", type = IdType.AUTO)
-    private Long id;
-
+    @JsonSerialize(using = ToStringSerializer.class)
     @ApiModelProperty(value = "学校id")
     @TableField(value = "school_id")
     private Long schoolId;
@@ -42,28 +40,12 @@ public class TBUser implements Serializable {
     @TableField(value = "password")
     private String password;
 
-    @ApiModelProperty(value = "创建人")
-    @TableField(value = "create_id")
-    private Long createId;
-
-    @ApiModelProperty(value = "创建时间")
-    @TableField(value = "create_time", fill = FieldFill.INSERT)
-    private Long createTime;
-
     @ApiModelProperty(value = "是否启用，0：停用，1：启用")
     @TableField(value = "enable")
     private Integer enable;
 
     public static long getSerialVersionUID() {
         return serialVersionUID;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public Long getSchoolId() {
@@ -96,22 +78,6 @@ public class TBUser implements Serializable {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public Long getCreateId() {
-        return createId;
-    }
-
-    public void setCreateId(Long createId) {
-        this.createId = createId;
-    }
-
-    public Long getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Long createTime) {
-        this.createTime = createTime;
     }
 
     public Integer getEnable() {

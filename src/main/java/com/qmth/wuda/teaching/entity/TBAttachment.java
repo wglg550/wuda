@@ -1,9 +1,8 @@
 package com.qmth.wuda.teaching.entity;
 
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
+import com.qmth.wuda.teaching.base.BaseEntity;
+import com.qmth.wuda.teaching.util.UidUtil;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -18,13 +17,9 @@ import java.math.BigDecimal;
  * @Date: 2020-04-17
  */
 @ApiModel(value = "t_b_attachment", description = "附件表")
-public class TBAttachment implements Serializable {
+public class TBAttachment extends BaseEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
-    @ApiModelProperty(value = "主键")
-    @TableId(value = "id", type = IdType.AUTO)
-    private Long id; //主键
 
     @TableField("name")
     @ApiModelProperty(value = "附件名称")
@@ -50,19 +45,12 @@ public class TBAttachment implements Serializable {
     @ApiModelProperty(value = "备注")
     private String remark; //备注
 
-    @TableField("create_id")
-    @ApiModelProperty(value = "创建人id")
-    private Long createId; //创建人id
-
-    @TableField(value = "create_time", fill = FieldFill.INSERT)
-    @ApiModelProperty(value = "创建时间")
-    private Long createTime; //创建时间
-
     public TBAttachment() {
 
     }
 
     public TBAttachment(String path, String name, String type, BigDecimal size, String md5) {
+        setId(UidUtil.nextId());
         this.path = path;
         this.name = name;
         this.type = type;
@@ -72,14 +60,6 @@ public class TBAttachment implements Serializable {
 
     public static long getSerialVersionUID() {
         return serialVersionUID;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getName() {
@@ -128,21 +108,5 @@ public class TBAttachment implements Serializable {
 
     public void setRemark(String remark) {
         this.remark = remark;
-    }
-
-    public Long getCreateId() {
-        return createId;
-    }
-
-    public void setCreateId(Long createId) {
-        this.createId = createId;
-    }
-
-    public Long getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Long createTime) {
-        this.createTime = createTime;
     }
 }

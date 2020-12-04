@@ -69,7 +69,7 @@ public class ExcelUtil {
                         int lastcell = row.getLastCellNum();
                         o = clazz.get(y).newInstance();
                         Field[] fields = o.getClass().getDeclaredFields();
-                        Map map = null;
+                        boolean extend = fields[fields.length - 1].getName().contains(SystemConstant.EXTEND_COLUMN);
                         for (int j = firstcell; j < lastcell; j++) {
                             //获取第j列
                             Cell cell = row.getCell(j);
@@ -78,24 +78,28 @@ public class ExcelUtil {
                             } else {
                                 if (Objects.nonNull(cell)) {
                                     Object obj = convert(cell);
-                                    if (Objects.isNull(map)) {
-                                        fields[j].setAccessible(true);
-                                        String string = fields[j].getGenericType().getTypeName();
-                                        if (string.contains(SystemConstant.MAP)) {
-                                            map = (Map) fields[j].get(o);
+                                    if (extend) {
+                                        if (j < fields.length - 1) {
+                                            fields[j].setAccessible(true);
+                                            fields[j].set(o, obj);
+                                        } else {
+                                            Field field = null;
+                                            if (j == fields.length - 1) {
+                                                field = fields[j];
+                                            } else {
+                                                field = fields[fields.length - 1];
+                                            }
+                                            field.setAccessible(true);
+                                            Map map = (Map) field.get(o);
                                             if (Objects.isNull(map)) {
                                                 map = new LinkedHashMap<>();
                                             }
                                             map.put(columnNameList.get(y).get(j), obj);
-                                            fields[j].set(o, map);
-                                        } else {
-                                            fields[j].set(o, obj);
+                                            field.set(o, map);
                                         }
                                     } else {
-                                        Field field = o.getClass().getDeclaredField(SystemConstant.EXTEND_COLUMN);
-                                        field.setAccessible(true);
-                                        map.put(columnNameList.get(y).get(j), obj);
-                                        field.set(o, map);
+                                        fields[j].setAccessible(true);
+                                        fields[j].set(o, obj);
                                     }
                                 }
                             }

@@ -1,8 +1,11 @@
 package com.qmth.wuda.teaching.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.qmth.wuda.teaching.base.BaseEntity;
+import com.qmth.wuda.teaching.util.UidUtil;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -21,14 +24,17 @@ public class TBModule implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @JsonSerialize(using = ToStringSerializer.class)
     @ApiModelProperty(value = "主键")
-    @TableId(value = "id", type = IdType.AUTO)
+    @TableId(value = "id")
     private Long id;
 
+    @JsonSerialize(using = ToStringSerializer.class)
     @ApiModelProperty(value = "学校id")
     @TableField(value = "school_id")
     private Long schoolId;
 
+    @JsonSerialize(using = ToStringSerializer.class)
     @ApiModelProperty(value = "学院id")
     @TableField(value = "college_id")
     private Long collegeId;
@@ -54,11 +60,20 @@ public class TBModule implements Serializable {
     }
 
     public TBModule(Long schoolId, String name, String code, String description, String proficiency) {
+        setId(UidUtil.nextId());
         this.schoolId = schoolId;
         this.name = name;
         this.code = code;
         this.description = description;
         this.proficiency = proficiency;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Long getCollegeId() {
@@ -71,14 +86,6 @@ public class TBModule implements Serializable {
 
     public static long getSerialVersionUID() {
         return serialVersionUID;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public Long getSchoolId() {

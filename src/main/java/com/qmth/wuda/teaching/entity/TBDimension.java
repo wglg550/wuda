@@ -1,8 +1,11 @@
 package com.qmth.wuda.teaching.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.qmth.wuda.teaching.base.BaseEntity;
+import com.qmth.wuda.teaching.util.UidUtil;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -21,10 +24,12 @@ public class TBDimension implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @JsonSerialize(using = ToStringSerializer.class)
     @ApiModelProperty(value = "主键")
-    @TableId(value = "id", type = IdType.AUTO)
+    @TableId(value = "id")
     private Long id;
 
+    @JsonSerialize(using = ToStringSerializer.class)
     @ApiModelProperty(value = "模块id")
     @TableField(value = "module_id")
     private Long moduleId;
@@ -61,15 +66,9 @@ public class TBDimension implements Serializable {
 
     }
 
-    public TBDimension(String courseName, String courseCode, String knowledgeFirst, String identifierFirst, String description) {
-        this.courseName = courseName;
-        this.courseCode = courseCode;
-        this.knowledgeFirst = knowledgeFirst;
-        this.identifierFirst = identifierFirst;
-        this.description = description;
-    }
-
-    public TBDimension(String courseName, String courseCode, String knowledgeFirst, String identifierFirst, String knowledgeSecond, String identifierSecond, String description) {
+    public TBDimension(Long moduleId, String courseName, String courseCode, String knowledgeFirst, String identifierFirst, String knowledgeSecond, String identifierSecond, String description) {
+        setId(UidUtil.nextId());
+        this.moduleId = moduleId;
         this.courseName = courseName;
         this.courseCode = courseCode;
         this.knowledgeFirst = knowledgeFirst;
@@ -79,8 +78,15 @@ public class TBDimension implements Serializable {
         this.description = description;
     }
 
-    public static long getSerialVersionUID() {
-        return serialVersionUID;
+    public TBDimension(String courseName, String courseCode, String knowledgeFirst, String identifierFirst, String knowledgeSecond, String identifierSecond, String description) {
+        setId(UidUtil.nextId());
+        this.courseName = courseName;
+        this.courseCode = courseCode;
+        this.knowledgeFirst = knowledgeFirst;
+        this.identifierFirst = identifierFirst;
+        this.knowledgeSecond = knowledgeSecond;
+        this.identifierSecond = identifierSecond;
+        this.description = description;
     }
 
     public Long getId() {
@@ -89,6 +95,10 @@ public class TBDimension implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
     }
 
     public Long getModuleId() {
