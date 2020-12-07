@@ -1,7 +1,9 @@
 package com.qmth.wuda.teaching.service;
 
-import com.qmth.wuda.teaching.entity.TBLevel;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.qmth.wuda.teaching.entity.TBLevel;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +15,10 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface TBLevelService extends IService<TBLevel> {
 
+    /**
+     * 查询所有等级
+     *
+     * @return
+     */
+    List<TBLevel> findAll();
 }

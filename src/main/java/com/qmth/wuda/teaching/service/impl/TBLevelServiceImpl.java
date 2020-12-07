@@ -1,10 +1,14 @@
 package com.qmth.wuda.teaching.service.impl;
 
-import com.qmth.wuda.teaching.entity.TBLevel;
-import com.qmth.wuda.teaching.dao.TBLevelMapper;
-import com.qmth.wuda.teaching.service.TBLevelService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.qmth.wuda.teaching.dao.TBLevelMapper;
+import com.qmth.wuda.teaching.entity.TBLevel;
+import com.qmth.wuda.teaching.service.TBLevelService;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * <p>
@@ -17,4 +21,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class TBLevelServiceImpl extends ServiceImpl<TBLevelMapper, TBLevel> implements TBLevelService {
 
+    @Override
+    @Cacheable(value = "level_cache", key = "methodName")
+    public List<TBLevel> findAll() {
+        return this.list();
+    }
 }

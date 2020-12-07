@@ -5,4 +5,37 @@
     <delete id="deleteAll">
         delete t from t_e_exam_student t
     </delete>
+
+    <select id="findByStudentNo" resultType="com.qmth.wuda.teaching.dto.ExamStudentDto">
+        select
+        tees.name,
+        tees.`identity` as studentNo,
+        tbsc.name as college,
+        tees.class_no as clazz,
+        tee.name as examName,
+        tees.course_name as subject,
+        from_unixtime(tee.start_time / 1000, '%Y年%m月%d日') as time,
+        teer.objective_score as objectiveScore,
+        teer.subjective_score as subjectiveScore,
+        teer.sum_score as sumScore
+        from
+        t_e_exam_record teer
+        left join t_e_exam_student tees on
+        tees.id = teer.exam_student_id
+        left join t_e_exam tee on
+        tee.id = teer.exam_id
+        left join t_b_school tbs on
+        tbs.id = tee.school_id
+        left join t_b_school_college tbsc on
+        tbsc.id = tees.college_id
+        <where> 1 = 1
+            <if test="identity != null and identity != ''">
+                and tees.`identity` = #{identity}
+            </if>
+            and tbs.id = 1
+            and tees.enable = 1
+            and tbs.enable = 1
+            and tbsc.enable = 1
+        </where>
+    </select>
 </mapper>

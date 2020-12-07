@@ -16,26 +16,26 @@
             timeToLiveSeconds="43200"
             memoryStoreEvictionPolicy="LRU" />
 
-<!--    <cache-->
-<!--            name="org_code_cache"-->
-<!--            eternal="true"-->
-<!--            maxElementsInMemory="1"-->
-<!--            maxElementsOnDisk="0"-->
-<!--            overflowToDisk="true"-->
-<!--            diskPersistent="true"-->
-<!--            timeToIdleSeconds="0"-->
-<!--            timeToLiveSeconds="43200"-->
-<!--            memoryStoreEvictionPolicy="LRU" />-->
+    <cache
+            name="level_cache"
+            eternal="true"
+            maxElementsInMemory="1"
+            maxElementsOnDisk="0"
+            overflowToDisk="true"
+            diskPersistent="true"
+            timeToIdleSeconds="0"
+            timeToLiveSeconds="43200"
+            memoryStoreEvictionPolicy="LRU" />
 
-<!--    <cache-->
-<!--            name="role_cache"-->
-<!--            eternal="true"-->
-<!--            maxElementsInMemory="1"-->
-<!--            maxElementsOnDisk="0"-->
-<!--            overflowToDisk="true"-->
-<!--            diskPersistent="true"-->
-<!--            timeToIdleSeconds="0"-->
-<!--            timeToLiveSeconds="43200"-->
-<!--            memoryStoreEvictionPolicy="LRU" />-->
+    <cache
+            name="exam_student_cache"
+            eternal="true"
+            maxElementsInMemory="1"
+            maxElementsOnDisk="0"
+            overflowToDisk="true"
+            diskPersistent="true"
+            timeToIdleSeconds="0"
+            timeToLiveSeconds="43200"
+            memoryStoreEvictionPolicy="LRU" />
 
 </ehcache>
