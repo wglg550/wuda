@@ -7,6 +7,7 @@ import com.qmth.wuda.teaching.bean.Result;
 import com.qmth.wuda.teaching.bean.report.*;
 import com.qmth.wuda.teaching.constant.SystemConstant;
 import com.qmth.wuda.teaching.dto.ExamStudentDto;
+import com.qmth.wuda.teaching.dto.common.ExamStudentCommonDto;
 import com.qmth.wuda.teaching.entity.TBLevel;
 import com.qmth.wuda.teaching.enums.MissEnum;
 import com.qmth.wuda.teaching.service.TBLevelService;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -90,6 +92,51 @@ public class ReportController {
         CollegeBean collegeBean = new CollegeBean(finalSynthesis);
         personalReportBean.setCollege(collegeBean);
         //报告第二页end
+
+
+        //诊断页start
+        DiagnosisBean diagnosisBean = new DiagnosisBean();
+        diagnosisBean.setResult(true);
+
+        List<DiagnosisDetailBean> diagnosisDetailBeanList = new ArrayList<>();
+        DiagnosisDetailBean diagnosisDetailBean = new DiagnosisDetailBean();
+        diagnosisDetailBean.setName("知识");
+
+        ModuleBean moduleBean = new ModuleBean();
+        moduleBean.setInfo("测试1");
+        moduleBean.setRemark("测试1remark");
+        List<ModuleDetailBean> dios = new ArrayList<>();
+        ModuleDetailBean moduleDetailBean = new ModuleDetailBean();
+        moduleDetailBean.setName("记忆");
+        moduleDetailBean.setRate(new BigDecimal(8));
+        moduleDetailBean.setCollegeRate(new BigDecimal(10));
+        dios.add(moduleDetailBean);
+        moduleBean.setDios(dios);
+
+        diagnosisDetailBean.setModules(moduleBean);
+
+        DimensionBean dimensionBean = new DimensionBean();
+        dimensionBean.setMyScore(examStudentDto.getMyScore());
+        dimensionBean.setMasteryRate(new BigDecimal(9));
+        dimensionBean.setDioFullScore(new BigDecimal(100));
+        List<DimensionDetailBean> subDios = new ArrayList<>();
+        DimensionDetailBean dimensionDetailBean = new DimensionDetailBean();
+        dimensionDetailBean.setCode("A1");
+        dimensionDetailBean.setName("碱金属元素化合物");
+        dimensionDetailBean.setProficiency("H");
+        dimensionDetailBean.setScoreRate(new BigDecimal(10));
+        dimensionDetailBean.setCollegeAvgScore(new BigDecimal(60));
+        subDios.add(dimensionDetailBean);
+
+        dimensionBean.setSubDios(subDios);
+        dimensionBean.setMasterys(levelBeanList);
+
+        diagnosisDetailBean.setDetail(dimensionBean);
+
+        diagnosisDetailBeanList.add(diagnosisDetailBean);
+        diagnosisBean.setList(diagnosisDetailBeanList);
+        collegeBean.setDiagnosis(diagnosisBean);
+        //诊断页end
         return ResultUtil.ok(personalReportBean);
     }
 

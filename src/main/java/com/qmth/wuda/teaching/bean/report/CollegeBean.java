@@ -16,6 +16,9 @@ public class CollegeBean implements Serializable {
     @ApiModelProperty(value = "综合信息")
     private SynthesisBean synthesis;
 
+    @ApiModelProperty(value = "诊断信息")
+    private DiagnosisBean diagnosis;
+
     public CollegeBean() {
 
     }
@@ -30,5 +33,13 @@ public class CollegeBean implements Serializable {
 
     public void setSynthesis(SynthesisBean synthesis) {
         this.synthesis = synthesis;
+    }
+
+    public DiagnosisBean getDiagnosis() {
+        return diagnosis;
+    }
+
+    public void setDiagnosis(DiagnosisBean diagnosis) {
+        this.diagnosis = diagnosis;
     }
 }
