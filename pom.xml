@@ -37,6 +37,7 @@
         <tencentyun.version>1.1</tencentyun.version>
         <spring-web.version>5.2.7.RELEASE</spring-web.version>
         <commons-io.version>2.6</commons-io.version>
+        <commons-beanutils.version>1.9.4</commons-beanutils.version>
         <ehcache.version>2.10.6</ehcache.version>
     </properties>
 
@@ -93,6 +94,11 @@
                 <groupId>commons-codec</groupId>
                 <artifactId>commons-codec</artifactId>
                 <version>${commons.codec.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-beanutils</groupId>
+                <artifactId>commons-beanutils</artifactId>
+                <version>${commons-beanutils.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.google.code.gson</groupId>
@@ -286,6 +292,10 @@
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-beanutils</groupId>
+            <artifactId>commons-beanutils</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

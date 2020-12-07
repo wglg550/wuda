@@ -83,7 +83,7 @@ public class TEExamStudent extends BaseEntity implements Serializable {
 
     }
 
-    public TEExamStudent(Long examId, Long studentId, Long collegeId, Long majorId, String courseName, String courseCode, String name, String identity, String idcardNumber, String grade, Integer miss) {
+    public TEExamStudent(Long examId, Long studentId, Long collegeId, Long majorId, String courseName, String courseCode, String name, String identity, String idcardNumber, String grade, Integer miss, String classNo) {
         setId(UidUtil.nextId());
         this.examId = examId;
         this.studentId = studentId;
@@ -96,6 +96,7 @@ public class TEExamStudent extends BaseEntity implements Serializable {
         this.idcardNumber = idcardNumber;
         this.grade = grade;
         this.miss = miss;
+        this.classNo = classNo;
         this.enable = 1;
     }
 

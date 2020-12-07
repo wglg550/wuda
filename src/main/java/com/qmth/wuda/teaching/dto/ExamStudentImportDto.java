@@ -59,6 +59,10 @@ public class ExamStudentImportDto implements Serializable {
     @ExcelNotNull
     private String majorName;
 
+    @ExcelNote(value = "班级")
+    @ExcelNotNull
+    private String classNo;
+
     @ExcelNote(value = "客观分")
     @ExcelNotNull
     private String objectiveScore;
@@ -73,6 +77,14 @@ public class ExamStudentImportDto implements Serializable {
 
     @ExcelNote(value = "答题记录扩展")
     private Map<String, String> extendColumn;
+
+    public String getClassNo() {
+        return classNo;
+    }
+
+    public void setClassNo(String classNo) {
+        this.classNo = classNo;
+    }
 
     public String getCollegeName() {
         return collegeName;

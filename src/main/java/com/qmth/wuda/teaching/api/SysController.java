@@ -207,7 +207,7 @@ public class SysController {
                                 studentMap.put(examStudentImportDto.getIdcardNumber(), teStudent);
                             }
                             if (!examStudentMap.containsKey(examStudentImportDto.getIdcardNumber() + "_" + examStudentImportDto.getIdentity())) {
-                                TEExamStudent teExamStudent = new TEExamStudent(teExam.getId(), studentMap.get(examStudentImportDto.getIdcardNumber()).getId(), collegeMap.get(examStudentImportDto.getCollegeName()).getId(), majorMap.get(examStudentImportDto.getMajorName()).getId(), teCourse.getCourseName(), teCourse.getCourseCode(), examStudentImportDto.getExamStudentName(), examStudentImportDto.getIdentity(), examStudentImportDto.getIdcardNumber(), examStudentImportDto.getGrade(), Objects.equals(examStudentImportDto.getMiss(), "是") ? 1 : 0);
+                                TEExamStudent teExamStudent = new TEExamStudent(teExam.getId(), studentMap.get(examStudentImportDto.getIdcardNumber()).getId(), collegeMap.get(examStudentImportDto.getCollegeName()).getId(), majorMap.get(examStudentImportDto.getMajorName()).getId(), teCourse.getCourseName(), teCourse.getCourseCode(), examStudentImportDto.getExamStudentName(), examStudentImportDto.getIdentity(), examStudentImportDto.getIdcardNumber(), examStudentImportDto.getGrade(), Objects.equals(examStudentImportDto.getMiss(), "是") ? 1 : 0, examStudentImportDto.getClassNo());
                                 examStudentMap.put(examStudentImportDto.getIdcardNumber() + "_" + examStudentImportDto.getIdentity(), teExamStudent);
                             }
                             if (!teacherMap.containsKey(examStudentImportDto.getTeacherName())) {

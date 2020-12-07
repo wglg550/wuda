@@ -14,6 +14,7 @@ import com.qmth.wuda.teaching.service.TBLevelService;
 import com.qmth.wuda.teaching.service.TEExamStudentService;
 import com.qmth.wuda.teaching.util.ResultUtil;
 import io.swagger.annotations.*;
+import org.apache.commons.beanutils.ConvertUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -63,10 +64,7 @@ public class ReportController {
         if (Objects.nonNull(tbLevelList) && tbLevelList.size() > 0) {
             tbLevelList.forEach(s -> {
                 String[] strs = s.getDegree().split(",");
-                List<Integer> list = new ArrayList<>();
-                list.add(Integer.parseInt(strs[0]));
-                list.add(Integer.parseInt(strs[1]));
-                levelBeanList.add(new LevelBean(s.getCode(), list));
+                levelBeanList.add(new LevelBean(s.getCode(), Arrays.asList((Integer[]) ConvertUtils.convert(strs, Integer.class))));
                 if (examStudentDto.getSumScore().doubleValue() >= Double.parseDouble(strs[0]) && examStudentDto.getSumScore().doubleValue() <= Double.parseDouble(strs[1])) {
                     examStudentBean.setLevel(s.getCode());
                 }
