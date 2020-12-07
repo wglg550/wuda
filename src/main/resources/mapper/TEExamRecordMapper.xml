@@ -5,4 +5,49 @@
     <delete id="deleteAll">
         delete t from t_e_exam_record t
     </delete>
+
+    <sql id="scoreCommonMidden">
+        from t_e_exam_record teer
+        left join t_e_exam_student tees on
+            tees.id = teer.exam_student_id
+        left join t_e_exam tee on
+            tee.id = teer.exam_id
+    </sql>
+
+    <sql id="scoreCommonFoot">
+        <if test="schoolId != null and schoolId != ''">
+            and tee.school_id = #{schoolId}
+        </if>
+        <if test="examId != null and examId != ''">
+            and tees.exam_id = #{examId}
+        </if>
+        <if test="collegeId != null and collegeId != ''">
+            and tees.college_id = #{collegeId}
+        </if>
+    </sql>
+
+    <select id="findByCollegeScore" resultType="com.qmth.wuda.teaching.bean.report.SynthesisBean">
+        select
+        max(teer.sum_score) as collegeMaxScore,
+        min(teer.sum_score) as collegeMinScore,
+        avg(teer.sum_score) as collegeAvgScore
+        <include refid="scoreCommonMidden"/>
+        <where>
+            <include refid="scoreCommonFoot"/>
+        </where>
+    </select>
+
+    <select id="findByClassScore" resultType="com.qmth.wuda.teaching.bean.report.SynthesisBean">
+        select
+        max(teer.sum_score) as clazzMaxScore,
+        min(teer.sum_score) as clazzMinScore,
+        avg(teer.sum_score) as clazzAvgScore
+        <include refid="scoreCommonMidden"/>
+        <where>
+            <include refid="scoreCommonFoot"/>
+            <if test="classNo != null and classNo != ''">
+                and tees.class_no = #{classNo}
+            </if>
+        </where>
+    </select>
 </mapper>

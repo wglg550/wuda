@@ -9,6 +9,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 /**
  * <p>
@@ -42,7 +43,7 @@ public class TEQuestion extends BaseEntity implements Serializable {
 
     @ApiModelProperty(value = "题目分数")
     @TableField(value = "score")
-    private Double score;
+    private BigDecimal score;
 
     @ApiModelProperty(value = "计分规则")
     @TableField(value = "rule")
@@ -64,7 +65,7 @@ public class TEQuestion extends BaseEntity implements Serializable {
 
     }
 
-    public TEQuestion(Long paperId, Integer mainNumber, Integer subNumber, String type, Double score, String rule, String description, String knowledge, String capability) {
+    public TEQuestion(Long paperId, Integer mainNumber, Integer subNumber, String type, BigDecimal score, String rule, String description, String knowledge, String capability) {
         setId(UidUtil.nextId());
         this.paperId = paperId;
         this.mainNumber = mainNumber;
@@ -129,11 +130,11 @@ public class TEQuestion extends BaseEntity implements Serializable {
         this.type = type;
     }
 
-    public Double getScore() {
+    public BigDecimal getScore() {
         return score;
     }
 
-    public void setScore(Double score) {
+    public void setScore(BigDecimal score) {
         this.score = score;
     }
 

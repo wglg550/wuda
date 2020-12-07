@@ -9,6 +9,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 /**
  * <p>
@@ -40,21 +41,21 @@ public class TEExamRecord extends BaseEntity implements Serializable {
 
     @ApiModelProperty(value = "客观分")
     @TableField(value = "objective_score")
-    private Double objectiveScore;
+    private BigDecimal objectiveScore;
 
     @ApiModelProperty(value = "主观分")
     @TableField(value = "subjective_score")
-    private Double subjectiveScore;
+    private BigDecimal subjectiveScore;
 
     @ApiModelProperty(value = "总分")
     @TableField(value = "sum_score")
-    private Double sumScore;
+    private BigDecimal sumScore;
 
     public TEExamRecord() {
 
     }
 
-    public TEExamRecord(Long examId, Long paperId, Long examStudentId, Double objectiveScore, Double subjectiveScore, Double sumScore) {
+    public TEExamRecord(Long examId, Long paperId, Long examStudentId, BigDecimal objectiveScore, BigDecimal subjectiveScore, BigDecimal sumScore) {
         setId(UidUtil.nextId());
         this.examId = examId;
         this.paperId = paperId;
@@ -92,27 +93,27 @@ public class TEExamRecord extends BaseEntity implements Serializable {
         this.paperId = paperId;
     }
 
-    public Double getObjectiveScore() {
+    public BigDecimal getObjectiveScore() {
         return objectiveScore;
     }
 
-    public void setObjectiveScore(Double objectiveScore) {
+    public void setObjectiveScore(BigDecimal objectiveScore) {
         this.objectiveScore = objectiveScore;
     }
 
-    public Double getSubjectiveScore() {
+    public BigDecimal getSubjectiveScore() {
         return subjectiveScore;
     }
 
-    public void setSubjectiveScore(Double subjectiveScore) {
+    public void setSubjectiveScore(BigDecimal subjectiveScore) {
         this.subjectiveScore = subjectiveScore;
     }
 
-    public Double getSumScore() {
+    public BigDecimal getSumScore() {
         return sumScore;
     }
 
-    public void setSumScore(Double sumScore) {
+    public void setSumScore(BigDecimal sumScore) {
         this.sumScore = sumScore;
     }
 }

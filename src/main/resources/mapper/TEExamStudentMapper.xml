@@ -17,7 +17,11 @@
         from_unixtime(tee.start_time / 1000, '%Y年%m月%d日') as time,
         teer.objective_score as objectiveScore,
         teer.subjective_score as subjectiveScore,
-        teer.sum_score as sumScore
+        teer.sum_score as myScore,
+        tees.college_id as collegeId,
+        tee.id as examId,
+        tee.school_id as schoolId,
+        tep.total_score as fullScore
         from
         t_e_exam_record teer
         left join t_e_exam_student tees on
@@ -28,7 +32,9 @@
         tbs.id = tee.school_id
         left join t_b_school_college tbsc on
         tbsc.id = tees.college_id
-        <where> 1 = 1
+        left join t_e_paper tep on
+        tep.exam_id = tee.id
+        <where>1 = 1
             <if test="identity != null and identity != ''">
                 and tees.`identity` = #{identity}
             </if>
@@ -36,6 +42,28 @@
             and tees.enable = 1
             and tbs.enable = 1
             and tbsc.enable = 1
+        </where>
+    </select>
+
+    <select id="findByActualCount" resultType="java.lang.Integer">
+        select
+            count(1)
+        from
+            t_e_exam_student tees
+        left join t_e_exam tee on tee.id = tees.exam_id
+        <where>
+            <if test="schoolId != null and schoolId != ''">
+                and tee.school_id = #{schoolId}
+            </if>
+            <if test="examId != null and examId != ''">
+                and tees.exam_id = #{examId}
+            </if>
+            <if test="collegeId != null and collegeId != ''">
+                and tees.college_id = #{collegeId}
+            </if>
+            <if test="miss != null and miss != '' or miss == 0">
+                and tees.miss = #{miss}
+            </if>
         </where>
     </select>
 </mapper>

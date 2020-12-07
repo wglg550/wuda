@@ -1,8 +1,8 @@
 package com.qmth.wuda.teaching.service;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.qmth.wuda.teaching.dto.ExamStudentDto;
 import com.qmth.wuda.teaching.entity.TEExamStudent;
-import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
  * <p>
@@ -23,4 +23,15 @@ public interface TEExamStudentService extends IService<TEExamStudent> {
      * @return
      */
     ExamStudentDto findByStudentNo(String identity);
+
+    /**
+     * 获取实考人数
+     *
+     * @param schoolId
+     * @param examId
+     * @param collegeId
+     * @param miss
+     * @return
+     */
+    Integer findByActualCount(Long schoolId, Long examId, Long collegeId, Integer miss);
 }

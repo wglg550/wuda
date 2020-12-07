@@ -7,9 +7,9 @@ import com.qmth.wuda.teaching.bean.Result;
 import com.qmth.wuda.teaching.bean.excel.ExcelCallback;
 import com.qmth.wuda.teaching.bean.excel.ExcelError;
 import com.qmth.wuda.teaching.constant.SystemConstant;
-import com.qmth.wuda.teaching.dto.DimensionImportDto;
-import com.qmth.wuda.teaching.dto.ExamStudentImportDto;
-import com.qmth.wuda.teaching.dto.PaperAndQuestionImportDto;
+import com.qmth.wuda.teaching.dto.excel.DimensionImportDto;
+import com.qmth.wuda.teaching.dto.excel.ExamStudentImportDto;
+import com.qmth.wuda.teaching.dto.excel.PaperAndQuestionImportDto;
 import com.qmth.wuda.teaching.entity.*;
 import com.qmth.wuda.teaching.enums.ExceptionResultEnum;
 import com.qmth.wuda.teaching.enums.UploadFileEnum;
@@ -31,6 +31,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -218,7 +219,7 @@ public class SysController {
                             teacherExamStudentMap.add(teacherMap.get(examStudentImportDto.getTeacherName()).getId(), tbTeacherExamStudent);
 
                             if (!examRecordMap.containsKey(examStudentMap.get(examStudentImportDto.getIdcardNumber() + "_" + examStudentImportDto.getIdentity()).getId())) {
-                                TEExamRecord teExamRecord = new TEExamRecord(teExam.getId(), tePaper.getId(), examStudentMap.get(examStudentImportDto.getIdcardNumber() + "_" + examStudentImportDto.getIdentity()).getId(), Double.parseDouble(examStudentImportDto.getObjectiveScore()), Double.parseDouble(examStudentImportDto.getSubjectiveScore()), Double.parseDouble(examStudentImportDto.getSumScore()));
+                                TEExamRecord teExamRecord = new TEExamRecord(teExam.getId(), tePaper.getId(), examStudentMap.get(examStudentImportDto.getIdcardNumber() + "_" + examStudentImportDto.getIdentity()).getId(), new BigDecimal(examStudentImportDto.getObjectiveScore()), new BigDecimal(examStudentImportDto.getSubjectiveScore()), new BigDecimal(examStudentImportDto.getSumScore()));
                                 examRecordMap.put(examStudentMap.get(examStudentImportDto.getIdcardNumber() + "_" + examStudentImportDto.getIdentity()).getId(), teExamRecord);
                             }
 
@@ -236,7 +237,7 @@ public class SysController {
                                 if (k.contains("作答")) {
                                     teAnswer.setAnswer(v);
                                 } else if (k.contains("得分")) {
-                                    teAnswer.setScore(Double.parseDouble(v));
+                                    teAnswer.setScore(new BigDecimal(v));
                                 }
                                 teAnswer.setVersion(teAnswer.getVersion() + 1);
                                 answerMap.put(teQuestion.getId(), teAnswer);
@@ -385,10 +386,10 @@ public class SysController {
                             line++;
                             PaperAndQuestionImportDto paperAndQuestionImportDto = (PaperAndQuestionImportDto) subList.get(y);
                             if (!paperMap.containsKey(paperAndQuestionImportDto.getPaperCode())) {
-                                TEPaper tePaper = new TEPaper(teExam.getId(), paperAndQuestionImportDto.getCourseName(), paperAndQuestionImportDto.getCourseCode(), paperAndQuestionImportDto.getPaperCode(), paperAndQuestionImportDto.getPaperCode(), 100D);
+                                TEPaper tePaper = new TEPaper(teExam.getId(), paperAndQuestionImportDto.getCourseName(), paperAndQuestionImportDto.getCourseCode(), paperAndQuestionImportDto.getPaperCode(), paperAndQuestionImportDto.getPaperCode(), new BigDecimal(100));
                                 paperMap.put(paperAndQuestionImportDto.getPaperCode(), tePaper);
                             }
-                            TEQuestion teQuestion = new TEQuestion(paperMap.get(paperAndQuestionImportDto.getPaperCode()).getId(), Integer.parseInt(paperAndQuestionImportDto.getMainNumber()), Integer.parseInt(paperAndQuestionImportDto.getSubNumber()), paperAndQuestionImportDto.getType(), Double.parseDouble(paperAndQuestionImportDto.getScore()), paperAndQuestionImportDto.getRule(), paperAndQuestionImportDto.getDescription(), paperAndQuestionImportDto.getKnowledge(), paperAndQuestionImportDto.getCapability());
+                            TEQuestion teQuestion = new TEQuestion(paperMap.get(paperAndQuestionImportDto.getPaperCode()).getId(), Integer.parseInt(paperAndQuestionImportDto.getMainNumber()), Integer.parseInt(paperAndQuestionImportDto.getSubNumber()), paperAndQuestionImportDto.getType(), new BigDecimal(paperAndQuestionImportDto.getScore()), paperAndQuestionImportDto.getRule(), paperAndQuestionImportDto.getDescription(), paperAndQuestionImportDto.getKnowledge(), paperAndQuestionImportDto.getCapability());
                             questionMap.add(paperMap.get(paperAndQuestionImportDto.getPaperCode()).getId(), teQuestion);
                         }
                         if (max == size) {

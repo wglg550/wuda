@@ -10,6 +10,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 /**
  * <p>
@@ -52,7 +53,7 @@ public class TEAnswer implements Serializable {
 
     @ApiModelProperty(value = "分数")
     @TableField(value = "score")
-    private Double score;
+    private BigDecimal score;
 
     @ApiModelProperty(value = "作答轨迹")
     @TableField(value = "history")
@@ -88,7 +89,7 @@ public class TEAnswer implements Serializable {
         this.version = version;
     }
 
-    public TEAnswer(Integer mainNumber, Integer subNumber, String type, Long examRecordId, Double score, Integer version) {
+    public TEAnswer(Integer mainNumber, Integer subNumber, String type, Long examRecordId, BigDecimal score, Integer version) {
         setId(UidUtil.nextId());
         this.mainNumber = mainNumber;
         this.subNumber = subNumber;
@@ -150,11 +151,11 @@ public class TEAnswer implements Serializable {
         this.answer = answer;
     }
 
-    public Double getScore() {
+    public BigDecimal getScore() {
         return score;
     }
 
-    public void setScore(Double score) {
+    public void setScore(BigDecimal score) {
         this.score = score;
     }
 

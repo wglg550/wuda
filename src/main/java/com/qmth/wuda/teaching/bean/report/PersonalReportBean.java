@@ -16,6 +16,17 @@ public class PersonalReportBean implements Serializable {
     @ApiModelProperty(value = "考生信息")
     private ExamStudentBean student;
 
+    @ApiModelProperty(value = "学院信息")
+    private CollegeBean college;
+
+    public CollegeBean getCollege() {
+        return college;
+    }
+
+    public void setCollege(CollegeBean college) {
+        this.college = college;
+    }
+
     public ExamStudentBean getStudent() {
         return student;
     }
