@@ -5,4 +5,13 @@
     <delete id="deleteAll">
         delete t from t_e_answer t
     </delete>
+
+    <select id="findByExamRecordId" resultType="com.qmth.wuda.teaching.entity.TEAnswer">
+        select * from t_e_answer tea
+        <where>
+            <if test="examRecordId != null and examRecordId != ''">
+                and tea.exam_record_id = #{examRecordId}
+            </if>
+        </where>
+    </select>
 </mapper>

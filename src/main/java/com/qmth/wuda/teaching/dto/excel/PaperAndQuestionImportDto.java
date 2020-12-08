@@ -4,14 +4,15 @@ import com.qmth.wuda.teaching.annotation.ExcelNotNull;
 import com.qmth.wuda.teaching.annotation.ExcelNote;
 
 import java.io.Serializable;
+import java.util.Objects;
 
-/** 
-* @Description: 试卷和题型导入 dto
-* @Param:  
-* @return:  
-* @Author: wangliang
-* @Date: 2020/12/2 
-*/ 
+/**
+ * @Description: 试卷和题型导入 dto
+ * @Param:
+ * @return:
+ * @Author: wangliang
+ * @Date: 2020/12/2
+ */
 public class PaperAndQuestionImportDto implements Serializable {
 
     @ExcelNote(value = "试卷编号")
@@ -72,7 +73,11 @@ public class PaperAndQuestionImportDto implements Serializable {
     }
 
     public String getCapability() {
-        return capability;
+        if (Objects.nonNull(capability)) {
+            return capability.trim();
+        } else {
+            return null;
+        }
     }
 
     public void setCapability(String capability) {
@@ -136,7 +141,11 @@ public class PaperAndQuestionImportDto implements Serializable {
     }
 
     public String getKnowledge() {
-        return knowledge;
+        if (Objects.nonNull(knowledge)) {
+            return knowledge.trim();
+        } else {
+            return null;
+        }
     }
 
     public void setKnowledge(String knowledge) {

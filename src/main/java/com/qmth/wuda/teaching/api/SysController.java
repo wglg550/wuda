@@ -12,6 +12,7 @@ import com.qmth.wuda.teaching.dto.excel.ExamStudentImportDto;
 import com.qmth.wuda.teaching.dto.excel.PaperAndQuestionImportDto;
 import com.qmth.wuda.teaching.entity.*;
 import com.qmth.wuda.teaching.enums.ExceptionResultEnum;
+import com.qmth.wuda.teaching.enums.ModuleEnum;
 import com.qmth.wuda.teaching.enums.UploadFileEnum;
 import com.qmth.wuda.teaching.exception.BusinessException;
 import com.qmth.wuda.teaching.service.*;
@@ -497,12 +498,12 @@ public class SysController {
                             if (!moduleMap.containsKey(dimensionImportDto.getModuleName())) {
                                 TBModule tbModule = null;
                                 if (Objects.equals(dimensionImportDto.getModuleName(), "知识")) {
-                                    tbModule = new TBModule(tbSchool.getId(), dimensionImportDto.getModuleName(), dimensionImportDto.getModuleName(), "课程标准规定的学科内容", "1.熟练：个人得分率≥85%\n" +
+                                    tbModule = new TBModule(tbSchool.getId(), dimensionImportDto.getModuleName(), ModuleEnum.convertToName(dimensionImportDto.getModuleName()), "课程标准规定的学科内容", "1.熟练：个人得分率≥85%\n" +
                                             "2.基本熟练：60%≤个人得分率＜85%\n" +
                                             "3.不熟练：个人得分率＜60%", "技能：学习和运用知识的心理加工过程；",
                                             "与以往传统考试单纯以部分对学生进行排序的评价方式不同，四维诊断评价能够综合分析你的学业发展长短板、优劣势，经由系统分析后出具详细的学业诊断评价报告。");
                                 } else {
-                                    tbModule = new TBModule(tbSchool.getId(), dimensionImportDto.getModuleName(), dimensionImportDto.getModuleName(), "经学习与训练内化而成的心理结构", null, null, null);
+                                    tbModule = new TBModule(tbSchool.getId(), dimensionImportDto.getModuleName(), ModuleEnum.convertToName(dimensionImportDto.getModuleName()), "经学习与训练内化而成的心理结构", null, null, null);
                                 }
                                 moduleMap.put(dimensionImportDto.getModuleName(), tbModule);
                             }

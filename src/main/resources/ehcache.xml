@@ -116,6 +116,17 @@
             memoryStoreEvictionPolicy="LRU" />
 
     <cache
+            name="answer_cache"
+            eternal="true"
+            maxElementsInMemory="1"
+            maxElementsOnDisk="0"
+            overflowToDisk="true"
+            diskPersistent="true"
+            timeToIdleSeconds="0"
+            timeToLiveSeconds="43200"
+            memoryStoreEvictionPolicy="LRU" />
+
+    <cache
             name="exam_param_cache"
             eternal="true"
             maxElementsInMemory="1"

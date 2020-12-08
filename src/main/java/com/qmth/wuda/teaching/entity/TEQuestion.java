@@ -10,6 +10,7 @@ import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Objects;
 
 /**
  * <p>
@@ -79,7 +80,11 @@ public class TEQuestion extends BaseEntity implements Serializable {
     }
 
     public String getCapability() {
-        return capability;
+        if (Objects.nonNull(capability)) {
+            return capability.trim();
+        } else {
+            return null;
+        }
     }
 
     public void setCapability(String capability) {
@@ -87,7 +92,11 @@ public class TEQuestion extends BaseEntity implements Serializable {
     }
 
     public String getKnowledge() {
-        return knowledge;
+        if (Objects.nonNull(knowledge)) {
+            return knowledge.trim();
+        } else {
+            return null;
+        }
     }
 
     public void setKnowledge(String knowledge) {

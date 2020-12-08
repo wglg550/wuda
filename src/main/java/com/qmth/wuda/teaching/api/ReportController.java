@@ -8,9 +8,11 @@ import com.qmth.wuda.teaching.annotation.ApiJsonProperty;
 import com.qmth.wuda.teaching.bean.Result;
 import com.qmth.wuda.teaching.bean.report.*;
 import com.qmth.wuda.teaching.constant.SystemConstant;
+import com.qmth.wuda.teaching.dto.DimensionFirstDto;
 import com.qmth.wuda.teaching.dto.ExamStudentDto;
 import com.qmth.wuda.teaching.entity.*;
 import com.qmth.wuda.teaching.enums.MissEnum;
+import com.qmth.wuda.teaching.enums.ModuleEnum;
 import com.qmth.wuda.teaching.enums.PaperDifficultEnum;
 import com.qmth.wuda.teaching.exception.BusinessException;
 import com.qmth.wuda.teaching.service.*;
@@ -28,6 +30,8 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -63,6 +67,9 @@ public class ReportController {
 
     @Resource
     TBDimensionService tbDimensionService;
+
+    @Resource
+    TEAnswerService teAnswerService;
 
     @ApiOperation(value = "个人报告")
     @RequestMapping(value = "personal", method = RequestMethod.POST)
@@ -103,31 +110,46 @@ public class ReportController {
         if (Objects.isNull(teQuestionList) || teQuestionList.size() == 0) {
             throw new BusinessException("题目信息为空");
         }
-        Map<String, List<DimensionMasterysBean>> masterysBeanMap = new HashMap<>();
+        List<TEAnswer> teAnswerList = teAnswerService.findByExamRecordId(examStudentDto.getExamRecordId());
+        if (Objects.isNull(teAnswerList) || teAnswerList.size() == 0) {
+            throw new BusinessException("答题信息为空");
+        }
+        Map<String, TEAnswer> teAnswerMap = teAnswerList.stream().collect(Collectors.toMap(s -> s.getMainNumber() + "-" + s.getSubNumber(), Function.identity(), (dto1, dto2) -> dto1));
+//        LinkedHashMap<String, TEQuestion> teQuestionMap = teQuestionList.stream().collect(
+//                Collectors.toMap(s -> s.getMainNumber() + "-" + s.getSubNumber(), Function.identity(), (dto1, dto2) -> dto1))
+//                .entrySet().stream()
+//                .sorted(Map.Entry.comparingByKey())
+//                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
+//                        (oldValue, newValue) -> oldValue, LinkedHashMap::new));
+        Map<String, TEQuestion> teQuestionMap = teQuestionList.stream().collect(Collectors.toMap(s -> s.getMainNumber() + "-" + s.getSubNumber(), Function.identity(), (dto1, dto2) -> dto1));
+
+        Map<String, List<DimensionMasterysBean>> dimensionSecondMasterysBeanMap = new HashMap<>();
         LinkedMultiValueMap<String, TBDimension> dimensionSecondMap = new LinkedMultiValueMap<>();
-        LinkedMultiValueMap<String, Map<String, String>> dimensionFirstMap = new LinkedMultiValueMap<>();
+        Map<String, Map<String, DimensionFirstDto>> dimensionFirstMap = new LinkedHashMap<>();
         tbModuleList.forEach(s -> {
             JSONObject jsonObject = JSONObject.parseObject(s.getDegree());
             if (Objects.nonNull(jsonObject)) {
-                JSONArray jsonArray = jsonObject.getJSONArray("mastery");
+                JSONArray jsonArray = jsonObject.getJSONArray("dimensionSecondMastery");
                 if (Objects.nonNull(jsonArray) && jsonArray.size() > 0) {
                     List<DimensionMasterysBean> dimensionMasterysBeanList = new ArrayList<>();
                     for (int i = 0; i < jsonArray.size(); i++) {
                         JSONObject object = jsonArray.getJSONObject(i);
                         String[] strs = String.valueOf(object.get("degree")).split(",");
                         dimensionMasterysBeanList.add(new DimensionMasterysBean((String) object.get("level"), Arrays.asList((Integer[]) ConvertUtils.convert(strs, Integer.class))));
-                        masterysBeanMap.put(s.getCode(), dimensionMasterysBeanList);
+                        dimensionSecondMasterysBeanMap.put(s.getCode(), dimensionMasterysBeanList);
                     }
                 }
             }
             List<TBDimension> tbDimensionList = tbDimensionService.findByModuleIdAndCourseCode(s.getId(), examStudentDto.getCourseCode());
             if (Objects.nonNull(tbDimensionList) && tbDimensionList.size() > 0) {
-                Map<String, String> dimensionMap = new LinkedHashMap<>();
+                Map<String, DimensionFirstDto> dimensionMap = new LinkedHashMap<>();
                 tbDimensionList.forEach(o -> {
-                    dimensionMap.put(o.getKnowledgeFirst(), o.getIdentifierFirst());
+                    if (!dimensionMap.containsKey(o.getKnowledgeFirst())) {
+                        dimensionMap.put(o.getKnowledgeFirst(), new DimensionFirstDto(o.getModuleId(), s.getCode(), o.getCourseCode(), o.getKnowledgeFirst(), o.getIdentifierFirst()));
+                    }
                     dimensionSecondMap.add(o.getIdentifierFirst(), o);
                 });
-                dimensionFirstMap.add(s.getName(), dimensionMap);
+                dimensionFirstMap.put(s.getName(), dimensionMap);
             }
         });
         PersonalReportBean personalReportBean = new PersonalReportBean();
@@ -173,6 +195,26 @@ public class ReportController {
         if (examStudentDto.getMyScore().doubleValue() >= examStudentDto.getPassScore().doubleValue()) {
             diagnosisBean.setResult(true);
         }
+
+        //一级维度start
+        dimensionFirstMap.forEach((k, v) -> {
+            v.forEach((k1, v1) -> {
+                teQuestionMap.forEach((k2, v2) -> {
+                    if (Objects.nonNull(v1.getModuleCode()) && Objects.equals(v1.getModuleCode(), ModuleEnum.KNOWLEDGE.name().toLowerCase())) {
+                        if (Objects.nonNull(v2.getKnowledge()) && Arrays.asList(v2.getKnowledge().split(",")).contains(v1.getIdentifierFirst())) {
+                            v1.setSumScore(v1.getSumScore().add(v2.getScore()));
+                            v1.setMyScore(v1.getMyScore().add(teAnswerMap.get(k2).getScore()));
+                        }
+                    } else if (Objects.nonNull(v1.getModuleCode()) && Objects.equals(v1.getModuleCode(), ModuleEnum.CAPABILITY.name().toLowerCase())) {
+                        if (Objects.nonNull(v2.getCapability()) && Arrays.asList(v2.getCapability().split(",")).contains(v1.getIdentifierFirst())) {
+                            v1.setSumScore(v1.getSumScore().add(v2.getScore()));
+                            v1.setMyScore(v1.getMyScore().add(teAnswerMap.get(k2).getScore()));
+                        }
+                    }
+                });
+            });
+        });
+        //一级维度end
 
         List<DiagnosisDetailBean> diagnosisDetailBeanList = new ArrayList<>();
         DiagnosisDetailBean diagnosisDetailBean = new DiagnosisDetailBean();

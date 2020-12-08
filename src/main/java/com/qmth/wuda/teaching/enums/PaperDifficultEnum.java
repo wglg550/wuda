@@ -37,7 +37,7 @@ public enum PaperDifficultEnum {
     }
 
     /**
-     * 状态转换 toName
+     * 状态转换 toCode
      *
      * @param value
      * @return
