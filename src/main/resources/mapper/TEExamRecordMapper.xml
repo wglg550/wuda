@@ -50,4 +50,37 @@
             </if>
         </where>
     </select>
+
+    <select id="getLowScoreByMe" resultType="java.lang.Integer">
+        select
+        count(1)
+        from
+        t_e_exam_record t
+        left join t_e_exam tee on
+        tee.id = t.exam_id
+        left join t_e_exam_student tees on
+        tees.exam_id = tee.id
+        and tees.college_id = tees.college_id
+        and t.exam_student_id = tees.id
+        <where>
+            <include refid="scoreCommonFoot"/>
+            and t.sum_score <![CDATA[ < ]]> (
+            select
+            teer.sum_score
+            from
+            t_e_exam_record teer
+            left join t_e_exam tee on
+            tee.id = teer.exam_id
+            left join t_e_exam_student tees on
+            tees.exam_id = tee.id
+            and tees.college_id = tees.college_id
+            and teer.exam_student_id = tees.id
+            <where>
+                <if test="examRecordId != null and examRecordId != ''">
+                    and teer.id = #{examRecordId}
+                </if>
+            </where>
+            )
+        </where>
+    </select>
 </mapper>

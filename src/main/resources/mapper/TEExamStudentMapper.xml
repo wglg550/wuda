@@ -21,7 +21,8 @@
         tees.college_id as collegeId,
         tee.id as examId,
         tee.school_id as schoolId,
-        tep.total_score as fullScore
+        tep.total_score as fullScore,
+        teer.id as examRecordId
         from
         t_e_exam_record teer
         left join t_e_exam_student tees on

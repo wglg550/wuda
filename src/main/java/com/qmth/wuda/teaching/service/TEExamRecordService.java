@@ -35,4 +35,15 @@ public interface TEExamRecordService extends IService<TEExamRecord> {
      * @return
      */
     SynthesisBean findByClassScore(Long schoolId, Long examId, Long collegeId, String classNo);
+
+    /**
+     * 获取分数比自己低的人数
+     *
+     * @param schoolId
+     * @param examId
+     * @param collegeId
+     * @param examRecordId
+     * @return
+     */
+    Integer getLowScoreByMe(Long schoolId, Long examId, Long collegeId, Long examRecordId);
 }

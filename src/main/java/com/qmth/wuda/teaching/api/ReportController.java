@@ -7,7 +7,6 @@ import com.qmth.wuda.teaching.bean.Result;
 import com.qmth.wuda.teaching.bean.report.*;
 import com.qmth.wuda.teaching.constant.SystemConstant;
 import com.qmth.wuda.teaching.dto.ExamStudentDto;
-import com.qmth.wuda.teaching.dto.common.ExamStudentCommonDto;
 import com.qmth.wuda.teaching.entity.TBLevel;
 import com.qmth.wuda.teaching.enums.MissEnum;
 import com.qmth.wuda.teaching.service.TBLevelService;
@@ -87,12 +86,14 @@ public class ReportController {
         //获取实考人数
         Integer actualCount = teExamStudentService.findByActualCount(examStudentDto.getSchoolId(), examStudentDto.getExamId(), examStudentDto.getCollegeId(), MissEnum.FALSE.getValue());
         SynthesisBean finalSynthesis = new SynthesisBean(examStudentDto.getMyScore(), actualCount, examStudentDto.getFullScore());
+        Integer lowScoreCount = teExamRecordService.getLowScoreByMe(examStudentDto.getSchoolId(), examStudentDto.getExamId(), examStudentDto.getCollegeId(), examStudentDto.getExamRecordId());
+        BigDecimal bigDecimal = new BigDecimal(lowScoreCount).divide(new BigDecimal(finalSynthesis.getActualCount()), 2, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100)).setScale(2, BigDecimal.ROUND_HALF_UP);
+        finalSynthesis.setOverRate(bigDecimal);
         finalSynthesis.setCollegeScore(collegeScore);
         finalSynthesis.setClassScore(calssScore);
         CollegeBean collegeBean = new CollegeBean(finalSynthesis);
         personalReportBean.setCollege(collegeBean);
         //报告第二页end
-
 
         //诊断页start
         DiagnosisBean diagnosisBean = new DiagnosisBean();
@@ -129,7 +130,7 @@ public class ReportController {
         subDios.add(dimensionDetailBean);
 
         dimensionBean.setSubDios(subDios);
-        dimensionBean.setMasterys(levelBeanList);
+//        dimensionBean.setMasterys(levelBeanList);
 
         diagnosisDetailBean.setDetail(dimensionBean);
 

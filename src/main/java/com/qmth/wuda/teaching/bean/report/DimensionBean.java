@@ -27,8 +27,8 @@ public class DimensionBean implements Serializable {
     @ApiModelProperty(value = "维度详情")
     private List<DimensionDetailBean> subDios;
 
-    @ApiModelProperty(value = "维度熟练度")
-    private List<LevelBean> masterys;
+    @ApiModelProperty(value = "熟练度等级")
+    private List<DimensionMasterysBean> masterys;
 
     public BigDecimal getMyScore() {
         return myScore;
@@ -62,11 +62,11 @@ public class DimensionBean implements Serializable {
         this.subDios = subDios;
     }
 
-    public List<LevelBean> getMasterys() {
+    public List<DimensionMasterysBean> getMasterys() {
         return masterys;
     }
 
-    public void setMasterys(List<LevelBean> masterys) {
+    public void setMasterys(List<DimensionMasterysBean> masterys) {
         this.masterys = masterys;
     }
 }

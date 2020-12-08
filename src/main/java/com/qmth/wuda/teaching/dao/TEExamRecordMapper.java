@@ -38,4 +38,15 @@ public interface TEExamRecordMapper extends BaseMapper<TEExamRecord> {
      * @return
      */
     SynthesisBean findByClassScore(@Param("schoolId") Long schoolId, @Param("examId") Long examId, @Param("collegeId") Long collegeId, @Param("classNo") String classNo);
+
+    /**
+     * 获取分数比自己低的人数
+     *
+     * @param schoolId
+     * @param examId
+     * @param collegeId
+     * @param examRecordId
+     * @return
+     */
+    Integer getLowScoreByMe(@Param("schoolId") Long schoolId, @Param("examId") Long examId, @Param("collegeId") Long collegeId, @Param("examRecordId") Long examRecordId);
 }

@@ -36,6 +36,17 @@ public class ExamStudentDto extends ExamStudentCommonDto implements Serializable
     @ApiModelProperty(value = "试卷满分")
     private BigDecimal fullScore;
 
+    @ApiModelProperty(value = "考试记录id")
+    private Long examRecordId;
+
+    public Long getExamRecordId() {
+        return examRecordId;
+    }
+
+    public void setExamRecordId(Long examRecordId) {
+        this.examRecordId = examRecordId;
+    }
+
     public BigDecimal getMyScore() {
         return myScore;
     }

@@ -10,6 +10,7 @@ import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Objects;
 
 /**
  * <p>
@@ -94,7 +95,11 @@ public class TEExamRecord extends BaseEntity implements Serializable {
     }
 
     public BigDecimal getObjectiveScore() {
-        return objectiveScore;
+        if (Objects.nonNull(objectiveScore)) {
+            return objectiveScore.setScale(2, BigDecimal.ROUND_HALF_UP);
+        } else {
+            return new BigDecimal(0);
+        }
     }
 
     public void setObjectiveScore(BigDecimal objectiveScore) {
@@ -102,7 +107,11 @@ public class TEExamRecord extends BaseEntity implements Serializable {
     }
 
     public BigDecimal getSubjectiveScore() {
-        return subjectiveScore;
+        if (Objects.nonNull(subjectiveScore)) {
+            return subjectiveScore.setScale(2, BigDecimal.ROUND_HALF_UP);
+        } else {
+            return new BigDecimal(0);
+        }
     }
 
     public void setSubjectiveScore(BigDecimal subjectiveScore) {
@@ -110,7 +119,11 @@ public class TEExamRecord extends BaseEntity implements Serializable {
     }
 
     public BigDecimal getSumScore() {
-        return sumScore;
+        if (Objects.nonNull(sumScore)) {
+            return sumScore.setScale(2, BigDecimal.ROUND_HALF_UP);
+        } else {
+            return new BigDecimal(0);
+        }
     }
 
     public void setSumScore(BigDecimal sumScore) {

@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
-import com.qmth.wuda.teaching.base.BaseEntity;
 import com.qmth.wuda.teaching.util.UidUtil;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -55,17 +54,55 @@ public class TBModule implements Serializable {
     @TableField(value = "proficiency")
     private String proficiency;
 
+    @ApiModelProperty(value = "标题")
+    @TableField(value = "info")
+    private String info;
+
+    @ApiModelProperty(value = "备注")
+    @TableField(value = "remark")
+    private String remark;
+
+    @ApiModelProperty(value = "熟练度等级范围")
+    @TableField(value = "degree")
+    private String degree;
+
     public TBModule() {
 
     }
 
-    public TBModule(Long schoolId, String name, String code, String description, String proficiency) {
+    public TBModule(Long schoolId, String name, String code, String description, String proficiency, String info, String remark) {
         setId(UidUtil.nextId());
         this.schoolId = schoolId;
         this.name = name;
         this.code = code;
         this.description = description;
         this.proficiency = proficiency;
+        this.info = info;
+        this.remark = remark;
+    }
+
+    public String getDegree() {
+        return degree;
+    }
+
+    public void setDegree(String degree) {
+        this.degree = degree;
+    }
+
+    public String getInfo() {
+        return info;
+    }
+
+    public void setInfo(String info) {
+        this.info = info;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
     }
 
     public Long getId() {

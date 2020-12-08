@@ -57,4 +57,19 @@ public class TEExamRecordServiceImpl extends ServiceImpl<TEExamRecordMapper, TEE
     public SynthesisBean findByClassScore(Long schoolId, Long examId, Long collegeId, String classNo) {
         return teExamRecordMapper.findByClassScore(schoolId, examId, collegeId, classNo);
     }
+
+    /**
+     * 获取分数比自己低的人数
+     *
+     * @param schoolId
+     * @param examId
+     * @param collegeId
+     * @param examRecordId
+     * @return
+     */
+    @Override
+    @Cacheable(value = "low_score_cache", key = "#schoolId + '-' + #examId + '-' + #collegeId + '-' + #examRecordId", unless = "#result == null")
+    public Integer getLowScoreByMe(Long schoolId, Long examId, Long collegeId, Long examRecordId) {
+        return teExamRecordMapper.getLowScoreByMe(schoolId, examId, collegeId, examRecordId);
+    }
 }

@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Objects;
 
 /**
  * @Description: 综合bean
@@ -73,7 +74,11 @@ public class SynthesisBean implements Serializable {
     }
 
     public BigDecimal getMyScore() {
-        return myScore;
+        if (Objects.nonNull(myScore)) {
+            return myScore.setScale(2, BigDecimal.ROUND_HALF_UP);
+        } else {
+            return new BigDecimal(0);
+        }
     }
 
     public void setMyScore(BigDecimal myScore) {
@@ -81,7 +86,11 @@ public class SynthesisBean implements Serializable {
     }
 
     public BigDecimal getOverRate() {
-        return overRate;
+        if (Objects.nonNull(overRate)) {
+            return overRate.setScale(2, BigDecimal.ROUND_HALF_UP);
+        } else {
+            return new BigDecimal(0);
+        }
     }
 
     public void setOverRate(BigDecimal overRate) {
@@ -89,7 +98,11 @@ public class SynthesisBean implements Serializable {
     }
 
     public BigDecimal getCollegeMinScore() {
-        return collegeMinScore;
+        if (Objects.nonNull(collegeMinScore)) {
+            return collegeMinScore.setScale(2, BigDecimal.ROUND_HALF_UP);
+        } else {
+            return new BigDecimal(0);
+        }
     }
 
     public void setCollegeMinScore(BigDecimal collegeMinScore) {
@@ -97,7 +110,11 @@ public class SynthesisBean implements Serializable {
     }
 
     public BigDecimal getCollegeAvgScore() {
-        return collegeAvgScore;
+        if (Objects.nonNull(collegeAvgScore)) {
+            return collegeAvgScore.setScale(2, BigDecimal.ROUND_HALF_UP);
+        } else {
+            return new BigDecimal(0);
+        }
     }
 
     public void setCollegeAvgScore(BigDecimal collegeAvgScore) {
@@ -105,7 +122,11 @@ public class SynthesisBean implements Serializable {
     }
 
     public BigDecimal getCollegeMaxScore() {
-        return collegeMaxScore;
+        if (Objects.nonNull(collegeMaxScore)) {
+            return collegeMaxScore.setScale(2, BigDecimal.ROUND_HALF_UP);
+        } else {
+            return new BigDecimal(0);
+        }
     }
 
     public void setCollegeMaxScore(BigDecimal collegeMaxScore) {
@@ -113,7 +134,11 @@ public class SynthesisBean implements Serializable {
     }
 
     public BigDecimal getClazzMinScore() {
-        return clazzMinScore;
+        if (Objects.nonNull(clazzMinScore)) {
+            return clazzMinScore.setScale(2, BigDecimal.ROUND_HALF_UP);
+        } else {
+            return new BigDecimal(0);
+        }
     }
 
     public void setClazzMinScore(BigDecimal clazzMinScore) {
@@ -121,7 +146,11 @@ public class SynthesisBean implements Serializable {
     }
 
     public BigDecimal getClazzAvgScore() {
-        return clazzAvgScore;
+        if (Objects.nonNull(clazzAvgScore)) {
+            return clazzAvgScore.setScale(2, BigDecimal.ROUND_HALF_UP);
+        } else {
+            return new BigDecimal(0);
+        }
     }
 
     public void setClazzAvgScore(BigDecimal clazzAvgScore) {
@@ -129,7 +158,11 @@ public class SynthesisBean implements Serializable {
     }
 
     public BigDecimal getClazzMaxScore() {
-        return clazzMaxScore;
+        if (Objects.nonNull(clazzMaxScore)) {
+            return clazzMaxScore.setScale(2, BigDecimal.ROUND_HALF_UP);
+        } else {
+            return new BigDecimal(0);
+        }
     }
 
     public void setClazzMaxScore(BigDecimal clazzMaxScore) {
@@ -137,7 +170,11 @@ public class SynthesisBean implements Serializable {
     }
 
     public BigDecimal getFullScore() {
-        return fullScore;
+        if (Objects.nonNull(fullScore)) {
+            return fullScore.setScale(2, BigDecimal.ROUND_HALF_UP);
+        } else {
+            return new BigDecimal(0);
+        }
     }
 
     public void setFullScore(BigDecimal fullScore) {
@@ -145,7 +182,11 @@ public class SynthesisBean implements Serializable {
     }
 
     public BigDecimal getDifficult() {
-        return difficult;
+        if (Objects.nonNull(difficult)) {
+            return difficult.setScale(1, BigDecimal.ROUND_HALF_UP);
+        } else {
+            return new BigDecimal(0);
+        }
     }
 
     public void setDifficult(BigDecimal difficult) {
