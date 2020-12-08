@@ -39,6 +39,17 @@ public class ExamStudentDto extends ExamStudentCommonDto implements Serializable
     @ApiModelProperty(value = "考试记录id")
     private Long examRecordId;
 
+    @ApiModelProperty(value = "科目编码")
+    private String courseCode;
+
+    public String getCourseCode() {
+        return courseCode;
+    }
+
+    public void setCourseCode(String courseCode) {
+        this.courseCode = courseCode;
+    }
+
     public Long getExamRecordId() {
         return examRecordId;
     }

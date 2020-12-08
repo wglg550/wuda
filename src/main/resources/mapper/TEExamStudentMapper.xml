@@ -14,6 +14,7 @@
         tees.class_no as clazz,
         tee.name as examName,
         tees.course_name as subject,
+        tees.course_code as courseCode,
         from_unixtime(tee.start_time / 1000, '%Y年%m月%d日') as time,
         teer.objective_score as objectiveScore,
         teer.subjective_score as subjectiveScore,

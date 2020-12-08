@@ -5,4 +5,16 @@
     <delete id="deleteAll">
         delete t from t_e_paper t
     </delete>
+
+    <select id="findByExamIdAndCourseCode" resultType="com.qmth.wuda.teaching.entity.TEPaper">
+        select * from t_e_paper tep
+        <where>
+            <if test="examId != null and examId != ''">
+                and tep.exam_id = #{examId}
+            </if>
+            <if test="courseCode != null and courseCode != ''">
+                and tep.course_code = #{courseCode}
+            </if>
+        </where>
+    </select>
 </mapper>

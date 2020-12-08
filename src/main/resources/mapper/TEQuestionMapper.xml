@@ -5,4 +5,13 @@
     <delete id="deleteAll">
         delete t from t_e_question t
     </delete>
+
+    <select id="findByPaperId" resultType="com.qmth.wuda.teaching.entity.TEQuestion">
+        select * from t_e_question teq
+        <where>
+            <if test="paperId != null and paperId != ''">
+                and teq.paper_id = #{paperId}
+            </if>
+        </where>
+    </select>
 </mapper>

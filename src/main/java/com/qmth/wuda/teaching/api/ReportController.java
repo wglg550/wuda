@@ -8,10 +8,12 @@ import com.qmth.wuda.teaching.bean.report.*;
 import com.qmth.wuda.teaching.constant.SystemConstant;
 import com.qmth.wuda.teaching.dto.ExamStudentDto;
 import com.qmth.wuda.teaching.entity.TBLevel;
+import com.qmth.wuda.teaching.entity.TEPaper;
+import com.qmth.wuda.teaching.entity.TEQuestion;
 import com.qmth.wuda.teaching.enums.MissEnum;
-import com.qmth.wuda.teaching.service.TBLevelService;
-import com.qmth.wuda.teaching.service.TEExamRecordService;
-import com.qmth.wuda.teaching.service.TEExamStudentService;
+import com.qmth.wuda.teaching.enums.PaperDifficultEnum;
+import com.qmth.wuda.teaching.exception.BusinessException;
+import com.qmth.wuda.teaching.service.*;
 import com.qmth.wuda.teaching.util.ResultUtil;
 import io.swagger.annotations.*;
 import org.apache.commons.beanutils.ConvertUtils;
@@ -49,6 +51,12 @@ public class ReportController {
     @Resource
     TEExamRecordService teExamRecordService;
 
+    @Resource
+    TEPaperService tePaperService;
+
+    @Resource
+    TEQuestionService teQuestionService;
+
     @ApiOperation(value = "个人报告")
     @RequestMapping(value = "personal", method = RequestMethod.POST)
     @ApiResponses({@ApiResponse(code = 200, message = "{\"success\":true}", response = Result.class)})
@@ -60,7 +68,21 @@ public class ReportController {
             @ApiParam(value = "个人报告信息", required = true) @RequestBody Map<String, Object> mapParameter) {
         //报告第一页start
         List<TBLevel> tbLevelList = tbLevelService.findAll();
+        if (Objects.isNull(tbLevelList) || tbLevelList.size() == 0) {
+            throw new BusinessException("等级为空");
+        }
         ExamStudentDto examStudentDto = teExamStudentService.findByStudentNo((String) mapParameter.get("studentNo"));
+        if (Objects.isNull(examStudentDto)) {
+            throw new BusinessException("考生信息为空");
+        }
+        TEPaper tePaper = tePaperService.findByExamIdAndCourseCode(examStudentDto.getExamId(), examStudentDto.getCourseCode());
+        if (Objects.isNull(tePaper)) {
+            throw new BusinessException("试卷信息为空");
+        }
+        List<TEQuestion> teQuestionList = teQuestionService.findByPaperId(tePaper.getId());
+        if (Objects.isNull(teQuestionList) || teQuestionList.size() == 0) {
+            throw new BusinessException("题目信息为空");
+        }
         PersonalReportBean personalReportBean = new PersonalReportBean();
         Gson gson = new Gson();
         ExamStudentBean examStudentBean = gson.fromJson(gson.toJson(examStudentDto), ExamStudentBean.class);
@@ -87,10 +109,14 @@ public class ReportController {
         Integer actualCount = teExamStudentService.findByActualCount(examStudentDto.getSchoolId(), examStudentDto.getExamId(), examStudentDto.getCollegeId(), MissEnum.FALSE.getValue());
         SynthesisBean finalSynthesis = new SynthesisBean(examStudentDto.getMyScore(), actualCount, examStudentDto.getFullScore());
         Integer lowScoreCount = teExamRecordService.getLowScoreByMe(examStudentDto.getSchoolId(), examStudentDto.getExamId(), examStudentDto.getCollegeId(), examStudentDto.getExamRecordId());
-        BigDecimal bigDecimal = new BigDecimal(lowScoreCount).divide(new BigDecimal(finalSynthesis.getActualCount()), 2, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100)).setScale(2, BigDecimal.ROUND_HALF_UP);
+        BigDecimal bigDecimal = new BigDecimal(lowScoreCount).divide(new BigDecimal(finalSynthesis.getActualCount())).multiply(new BigDecimal(100));
         finalSynthesis.setOverRate(bigDecimal);
         finalSynthesis.setCollegeScore(collegeScore);
         finalSynthesis.setClassScore(calssScore);
+
+        BigDecimal difficult = finalSynthesis.getCollegeAvgScore().divide(tePaper.getTotalScore());
+        finalSynthesis.setDifficult(difficult);
+        finalSynthesis.setDifficultInfo(PaperDifficultEnum.convertToCode(difficult.doubleValue()));
         CollegeBean collegeBean = new CollegeBean(finalSynthesis);
         personalReportBean.setCollege(collegeBean);
         //报告第二页end
