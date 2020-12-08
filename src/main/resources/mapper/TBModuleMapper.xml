@@ -5,4 +5,13 @@
     <delete id="deleteAll">
         delete t from t_b_module t
     </delete>
+
+    <select id="findBySchoolId" resultType="com.qmth.wuda.teaching.entity.TBModule">
+        select * from t_b_module tbm
+        <where>
+            <if test="schoolId != null and schoolId != ''">
+                and tbm.school_id = #{schoolId}
+            </if>
+        </where>
+    </select>
 </mapper>

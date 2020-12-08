@@ -48,6 +48,10 @@ public class TEExam extends BaseEntity implements Serializable {
     @TableField(value = "enable")
     private Integer enable;
 
+    @ApiModelProperty(value = "是否赋分，0：不启用，1：启用")
+    @TableField(value = "contribution")
+    private Integer contribution;
+
     public TEExam() {
 
     }
@@ -60,6 +64,14 @@ public class TEExam extends BaseEntity implements Serializable {
         this.startTime = startTime;
         this.endTime = endTime;
         enable = 1;
+    }
+
+    public Integer getContribution() {
+        return contribution;
+    }
+
+    public void setContribution(Integer contribution) {
+        this.contribution = contribution;
     }
 
     public static long getSerialVersionUID() {

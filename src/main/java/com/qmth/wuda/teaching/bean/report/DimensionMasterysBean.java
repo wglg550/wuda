@@ -20,6 +20,15 @@ public class DimensionMasterysBean implements Serializable {
     @ApiModelProperty(value = "分数比")
     private List<Integer> grade;
 
+    public DimensionMasterysBean() {
+
+    }
+
+    public DimensionMasterysBean(String level, List<Integer> grade) {
+        this.level = level;
+        this.grade = grade;
+    }
+
     public String getLevel() {
         return level;
     }

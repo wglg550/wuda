@@ -4,9 +4,11 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.qmth.wuda.teaching.dao.TBDimensionMapper;
 import com.qmth.wuda.teaching.entity.TBDimension;
 import com.qmth.wuda.teaching.service.TBDimensionService;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * <p>
@@ -25,5 +27,18 @@ public class TBDimensionServiceImpl extends ServiceImpl<TBDimensionMapper, TBDim
     @Override
     public void deleteAll() {
         tbDimensionMapper.deleteAll();
+    }
+
+    /**
+     * 根据模块id和科目编码查找维度信息
+     *
+     * @param mouduleId
+     * @param courseCode
+     * @return
+     */
+    @Override
+    @Cacheable(value = "dimension_cache", key = "#mouduleId + '-' + #courseCode", unless = "#result == null")
+    public List<TBDimension> findByModuleIdAndCourseCode(Long mouduleId, String courseCode) {
+        return tbDimensionMapper.findByModuleIdAndCourseCode(mouduleId, courseCode);
     }
 }

@@ -15,7 +15,7 @@ import java.util.List;
 public class DiagnosisBean implements Serializable {
 
     @ApiModelProperty(value = "是否通过")
-    private boolean result;
+    private boolean result = false;
 
     @ApiModelProperty(value = "诊断详情")
     private List<DiagnosisDetailBean> list;

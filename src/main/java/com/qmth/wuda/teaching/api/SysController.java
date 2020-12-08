@@ -495,10 +495,15 @@ public class SysController {
                                 courseMap.put(dimensionImportDto.getCourseCode(), teCourse);
                             }
                             if (!moduleMap.containsKey(dimensionImportDto.getModuleName())) {
-                                TBModule tbModule = new TBModule(tbSchool.getId(), dimensionImportDto.getModuleName(), dimensionImportDto.getModuleName(), "课程标准规定的学科内容", "1.熟练：个人得分率≥85%\n" +
-                                        "2.基本熟练：60%≤个人得分率＜85%\n" +
-                                        "3.不熟练：个人得分率＜60%", "技能：学习和运用知识的心理加工过程；",
-                                        "与以往传统考试单纯以部分对学生进行排序的评价方式不同，四维诊断评价能够综合分析你的学业发展长短板、优劣势，经由系统分析后出具详细的学业诊断评价报告。");
+                                TBModule tbModule = null;
+                                if (Objects.equals(dimensionImportDto.getModuleName(), "知识")) {
+                                    tbModule = new TBModule(tbSchool.getId(), dimensionImportDto.getModuleName(), dimensionImportDto.getModuleName(), "课程标准规定的学科内容", "1.熟练：个人得分率≥85%\n" +
+                                            "2.基本熟练：60%≤个人得分率＜85%\n" +
+                                            "3.不熟练：个人得分率＜60%", "技能：学习和运用知识的心理加工过程；",
+                                            "与以往传统考试单纯以部分对学生进行排序的评价方式不同，四维诊断评价能够综合分析你的学业发展长短板、优劣势，经由系统分析后出具详细的学业诊断评价报告。");
+                                } else {
+                                    tbModule = new TBModule(tbSchool.getId(), dimensionImportDto.getModuleName(), dimensionImportDto.getModuleName(), "经学习与训练内化而成的心理结构", null, null, null);
+                                }
                                 moduleMap.put(dimensionImportDto.getModuleName(), tbModule);
                             }
                             TBDimension tbDimension = new TBDimension(moduleMap.get(dimensionImportDto.getModuleName()).getId(), dimensionImportDto.getCourseName(), dimensionImportDto.getCourseCode(), dimensionImportDto.getKnowledgeFirst(), dimensionImportDto.getIdentifierFirst(), dimensionImportDto.getKnowledgeSecond(), dimensionImportDto.getIdentifierSecond(), dimensionImportDto.getDescription());

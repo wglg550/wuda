@@ -23,6 +23,9 @@
         tee.id as examId,
         tee.school_id as schoolId,
         tep.total_score as fullScore,
+        tep.pass_score as passScore,
+        tep.contribution_score as contributionScore,
+        tee.contribution,
         teer.id as examRecordId
         from
         t_e_exam_record teer

@@ -5,4 +5,16 @@
     <delete id="deleteAll">
         delete t from t_b_dimension t
     </delete>
+
+    <select id="findByModuleIdAndCourseCode" resultType="com.qmth.wuda.teaching.entity.TBDimension">
+        select * from t_b_dimension tbd
+        <where>
+            <if test="mouduleId != null and mouduleId != ''">
+                and tbd.module_id = #{mouduleId}
+            </if>
+            <if test="courseCode != null and courseCode != ''">
+                and tbd.course_code = #{courseCode}
+            </if>
+        </where>
+    </select>
 </mapper>

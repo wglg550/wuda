@@ -1,7 +1,9 @@
 package com.qmth.wuda.teaching.service;
 
-import com.qmth.wuda.teaching.entity.TBModule;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.qmth.wuda.teaching.entity.TBModule;
+
+import java.util.List;
 
 /**
  * <p>
@@ -14,4 +16,12 @@ import com.baomidou.mybatisplus.extension.service.IService;
 public interface TBModuleService extends IService<TBModule> {
 
     void deleteAll();
+
+    /**
+     * 根据学校id获取模块
+     *
+     * @param schoolId
+     * @return
+     */
+    List<TBModule> findBySchoolId(Long schoolId);
 }

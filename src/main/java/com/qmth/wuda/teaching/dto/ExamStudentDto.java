@@ -1,10 +1,12 @@
 package com.qmth.wuda.teaching.dto;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.qmth.wuda.teaching.dto.common.ExamStudentCommonDto;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Objects;
 
 /**
  * @Description: 考生临时传输对象 dto
@@ -42,6 +44,47 @@ public class ExamStudentDto extends ExamStudentCommonDto implements Serializable
     @ApiModelProperty(value = "科目编码")
     private String courseCode;
 
+    @ApiModelProperty(value = "及格分")
+    private BigDecimal passScore;
+
+    @ApiModelProperty(value = "赋分")
+    private BigDecimal contributionScore;
+
+    @ApiModelProperty(value = "是否赋分，0：不启用，1：启用")
+    private Integer contribution;
+
+    public Integer getContribution() {
+        return contribution;
+    }
+
+    public void setContribution(Integer contribution) {
+        this.contribution = contribution;
+    }
+
+    public BigDecimal getPassScore() {
+        if (Objects.nonNull(passScore)) {
+            return passScore.setScale(2, BigDecimal.ROUND_HALF_UP);
+        } else {
+            return new BigDecimal(0);
+        }
+    }
+
+    public void setPassScore(BigDecimal passScore) {
+        this.passScore = passScore;
+    }
+
+    public BigDecimal getContributionScore() {
+        if (Objects.nonNull(contributionScore)) {
+            return contributionScore.setScale(2, BigDecimal.ROUND_HALF_UP);
+        } else {
+            return new BigDecimal(0);
+        }
+    }
+
+    public void setContributionScore(BigDecimal contributionScore) {
+        this.contributionScore = contributionScore;
+    }
+
     public String getCourseCode() {
         return courseCode;
     }
@@ -59,7 +102,11 @@ public class ExamStudentDto extends ExamStudentCommonDto implements Serializable
     }
 
     public BigDecimal getMyScore() {
-        return myScore;
+        if (Objects.nonNull(myScore)) {
+            return myScore.setScale(2, BigDecimal.ROUND_HALF_UP);
+        } else {
+            return new BigDecimal(0);
+        }
     }
 
     public void setMyScore(BigDecimal myScore) {
@@ -91,7 +138,11 @@ public class ExamStudentDto extends ExamStudentCommonDto implements Serializable
     }
 
     public BigDecimal getFullScore() {
-        return fullScore;
+        if (Objects.nonNull(fullScore)) {
+            return fullScore.setScale(2, BigDecimal.ROUND_HALF_UP);
+        } else {
+            return new BigDecimal(0);
+        }
     }
 
     public void setFullScore(BigDecimal fullScore) {
@@ -99,7 +150,11 @@ public class ExamStudentDto extends ExamStudentCommonDto implements Serializable
     }
 
     public BigDecimal getObjectiveScore() {
-        return objectiveScore;
+        if (Objects.nonNull(objectiveScore)) {
+            return objectiveScore.setScale(2, BigDecimal.ROUND_HALF_UP);
+        } else {
+            return new BigDecimal(0);
+        }
     }
 
     public void setObjectiveScore(BigDecimal objectiveScore) {
@@ -107,7 +162,11 @@ public class ExamStudentDto extends ExamStudentCommonDto implements Serializable
     }
 
     public BigDecimal getSubjectiveScore() {
-        return subjectiveScore;
+        if (Objects.nonNull(subjectiveScore)) {
+            return subjectiveScore.setScale(2, BigDecimal.ROUND_HALF_UP);
+        } else {
+            return new BigDecimal(0);
+        }
     }
 
     public void setSubjectiveScore(BigDecimal subjectiveScore) {
