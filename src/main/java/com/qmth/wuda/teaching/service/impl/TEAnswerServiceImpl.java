@@ -8,6 +8,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -39,5 +40,21 @@ public class TEAnswerServiceImpl extends ServiceImpl<TEAnswerMapper, TEAnswer> i
     @Cacheable(value = "answer_cache", key = "#examRecordId", unless = "#result == null")
     public List<TEAnswer> findByExamRecordId(Long examRecordId) {
         return teAnswerMapper.findByExamRecordId(examRecordId);
+    }
+
+    /**
+     * 根据维度求学院该维度的平均值
+     *
+     * @param schoolId
+     * @param examId
+     * @param collegeId
+     * @param courseCode
+     * @param dimension
+     * @return
+     */
+    @Override
+    @Cacheable(value = "calculate_college_avg_score_cache", key = "#schoolId + '-' + #examId + '-' + #collegeId + '-' + #courseCode + '-' + #dimension", unless = "#result == null")
+    public BigDecimal calculateCollegeAvgScoreByDimension(Long schoolId, Long examId, Long collegeId, String courseCode, String dimension) {
+        return teAnswerMapper.calculateCollegeAvgScoreByDimension(schoolId, examId, collegeId, courseCode, dimension);
     }
 }

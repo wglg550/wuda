@@ -222,7 +222,8 @@ public class ReportController {
                     }
                 });
                 moduleDetailBean.setRate(v1.getMyScore().divide(v1.getSumScore(), 2, BigDecimal.ROUND_HALF_UP));
-                moduleDetailBean.setCollegeRate(new BigDecimal(10));
+                BigDecimal collegeAvgScoreByDimension = teAnswerService.calculateCollegeAvgScoreByDimension(examStudentDto.getSchoolId(), examStudentDto.getExamId(), examStudentDto.getCollegeId(), examStudentDto.getCourseCode(), v1.getIdentifierFirst());
+                moduleDetailBean.setCollegeRate(collegeAvgScoreByDimension);
                 dios.add(moduleDetailBean);
             });
             moduleBean.setDios(dios);

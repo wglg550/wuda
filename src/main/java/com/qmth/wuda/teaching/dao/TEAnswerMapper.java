@@ -5,6 +5,7 @@ import com.qmth.wuda.teaching.entity.TEAnswer;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -27,4 +28,16 @@ public interface TEAnswerMapper extends BaseMapper<TEAnswer> {
      * @return
      */
     List<TEAnswer> findByExamRecordId(@Param("examRecordId") Long examRecordId);
+
+    /**
+     * 根据维度求学院该维度的平均值
+     *
+     * @param schoolId
+     * @param examId
+     * @param collegeId
+     * @param courseCode
+     * @param dimension
+     * @return
+     */
+    BigDecimal calculateCollegeAvgScoreByDimension(@Param("schoolId") Long schoolId, @Param("examId") Long examId, @Param("collegeId") Long collegeId, @Param("courseCode") String courseCode, @Param("dimension") String dimension);
 }
