@@ -22,9 +22,10 @@ public interface TEExamRecordService extends IService<TEExamRecord> {
      * @param schoolId
      * @param examId
      * @param collegeId
+     * @param courseCode
      * @return
      */
-    SynthesisBean findByCollegeScore(Long schoolId, Long examId, Long collegeId);
+    SynthesisBean findByCollegeScore(Long schoolId, Long examId, Long collegeId, String courseCode);
 
     /**
      * 获取班级分数
@@ -32,9 +33,10 @@ public interface TEExamRecordService extends IService<TEExamRecord> {
      * @param schoolId
      * @param examId
      * @param collegeId
+     * @param courseCode
      * @return
      */
-    SynthesisBean findByClassScore(Long schoolId, Long examId, Long collegeId, String classNo);
+    SynthesisBean findByClassScore(Long schoolId, Long examId, Long collegeId, String classNo, String courseCode);
 
     /**
      * 获取分数比自己低的人数
@@ -43,7 +45,8 @@ public interface TEExamRecordService extends IService<TEExamRecord> {
      * @param examId
      * @param collegeId
      * @param examRecordId
+     * @param courseCode
      * @return
      */
-    Integer getLowScoreByMe(Long schoolId, Long examId, Long collegeId, Long examRecordId);
+    Integer getLowScoreByMe(Long schoolId, Long examId, Long collegeId, Long examRecordId, String courseCode);
 }

@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Objects;
 
 /**
  * @Description: 模块详情bean
@@ -32,7 +33,11 @@ public class ModuleDetailBean implements Serializable {
     }
 
     public BigDecimal getRate() {
-        return rate;
+        if (Objects.nonNull(rate)) {
+            return rate.setScale(2, BigDecimal.ROUND_HALF_UP);
+        } else {
+            return new BigDecimal(0);
+        }
     }
 
     public void setRate(BigDecimal rate) {
@@ -40,7 +45,11 @@ public class ModuleDetailBean implements Serializable {
     }
 
     public BigDecimal getCollegeRate() {
-        return collegeRate;
+        if (Objects.nonNull(collegeRate)) {
+            return collegeRate.setScale(2, BigDecimal.ROUND_HALF_UP);
+        } else {
+            return new BigDecimal(0);
+        }
     }
 
     public void setCollegeRate(BigDecimal collegeRate) {

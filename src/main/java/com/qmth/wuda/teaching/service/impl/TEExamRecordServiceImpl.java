@@ -35,12 +35,13 @@ public class TEExamRecordServiceImpl extends ServiceImpl<TEExamRecordMapper, TEE
      * @param schoolId
      * @param examId
      * @param collegeId
+     * @param courseCode
      * @return
      */
     @Override
-    @Cacheable(value = "college_score_cache", key = "#schoolId + '-' + #examId + '-' + #collegeId", unless = "#result == null")
-    public SynthesisBean findByCollegeScore(Long schoolId, Long examId, Long collegeId) {
-        return teExamRecordMapper.findByCollegeScore(schoolId, examId, collegeId);
+    @Cacheable(value = "college_score_cache", key = "#schoolId + '-' + #examId + '-' + #collegeId + '-' + #courseCode", unless = "#result == null")
+    public SynthesisBean findByCollegeScore(Long schoolId, Long examId, Long collegeId, String courseCode) {
+        return teExamRecordMapper.findByCollegeScore(schoolId, examId, collegeId, courseCode);
     }
 
     /**
@@ -50,12 +51,13 @@ public class TEExamRecordServiceImpl extends ServiceImpl<TEExamRecordMapper, TEE
      * @param examId
      * @param collegeId
      * @param classNo
+     * @param courseCode
      * @return
      */
     @Override
-    @Cacheable(value = "class_score_cache", key = "#schoolId + '-' + #examId + '-' + #collegeId + '-' + #classNo", unless = "#result == null")
-    public SynthesisBean findByClassScore(Long schoolId, Long examId, Long collegeId, String classNo) {
-        return teExamRecordMapper.findByClassScore(schoolId, examId, collegeId, classNo);
+    @Cacheable(value = "class_score_cache", key = "#schoolId + '-' + #examId + '-' + #collegeId + '-' + #classNo + '-' + #courseCode", unless = "#result == null")
+    public SynthesisBean findByClassScore(Long schoolId, Long examId, Long collegeId, String classNo, String courseCode) {
+        return teExamRecordMapper.findByClassScore(schoolId, examId, collegeId, classNo, courseCode);
     }
 
     /**
@@ -65,11 +67,12 @@ public class TEExamRecordServiceImpl extends ServiceImpl<TEExamRecordMapper, TEE
      * @param examId
      * @param collegeId
      * @param examRecordId
+     * @param courseCode
      * @return
      */
     @Override
-    @Cacheable(value = "low_score_cache", key = "#schoolId + '-' + #examId + '-' + #collegeId + '-' + #examRecordId", unless = "#result == null")
-    public Integer getLowScoreByMe(Long schoolId, Long examId, Long collegeId, Long examRecordId) {
-        return teExamRecordMapper.getLowScoreByMe(schoolId, examId, collegeId, examRecordId);
+    @Cacheable(value = "low_score_cache", key = "#schoolId + '-' + #examId + '-' + #collegeId + '-' + #examRecordId + '-' + #courseCode", unless = "#result == null")
+    public Integer getLowScoreByMe(Long schoolId, Long examId, Long collegeId, Long examRecordId, String courseCode) {
+        return teExamRecordMapper.getLowScoreByMe(schoolId, examId, collegeId, examRecordId, courseCode);
     }
 }

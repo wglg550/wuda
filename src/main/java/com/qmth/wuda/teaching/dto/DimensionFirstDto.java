@@ -36,16 +36,40 @@ public class DimensionFirstDto implements Serializable {
     @ApiModelProperty(value = "个人知识点一级分数")
     private BigDecimal myScore;
 
+    @ApiModelProperty(value = "标题")
+    private String info;
+
+    @ApiModelProperty(value = "备注")
+    private String remark;
+
     public DimensionFirstDto() {
 
     }
 
-    public DimensionFirstDto(Long moduleId, String moduleCode, String courseCode, String knowledgeFirst, String identifierFirst) {
+    public DimensionFirstDto(Long moduleId, String moduleCode, String courseCode, String knowledgeFirst, String identifierFirst, String info, String remark) {
         this.moduleId = moduleId;
         this.moduleCode = moduleCode;
         this.courseCode = courseCode;
         this.knowledgeFirst = knowledgeFirst;
         this.identifierFirst = identifierFirst;
+        this.info = info;
+        this.remark = remark;
+    }
+
+    public String getInfo() {
+        return info;
+    }
+
+    public void setInfo(String info) {
+        this.info = info;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
     }
 
     public String getModuleCode() {

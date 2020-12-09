@@ -24,6 +24,9 @@
         <if test="collegeId != null and collegeId != ''">
             and tees.college_id = #{collegeId}
         </if>
+        <if test="courseCode != null and courseCode != ''">
+            and tees.course_code = #{courseCode}
+        </if>
     </sql>
 
     <select id="findByCollegeScore" resultType="com.qmth.wuda.teaching.bean.report.SynthesisBean">

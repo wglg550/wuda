@@ -145,7 +145,7 @@ public class ReportController {
                 Map<String, DimensionFirstDto> dimensionMap = new LinkedHashMap<>();
                 tbDimensionList.forEach(o -> {
                     if (!dimensionMap.containsKey(o.getKnowledgeFirst())) {
-                        dimensionMap.put(o.getKnowledgeFirst(), new DimensionFirstDto(o.getModuleId(), s.getCode(), o.getCourseCode(), o.getKnowledgeFirst(), o.getIdentifierFirst()));
+                        dimensionMap.put(o.getKnowledgeFirst(), new DimensionFirstDto(o.getModuleId(), s.getCode(), o.getCourseCode(), o.getKnowledgeFirst(), o.getIdentifierFirst(), s.getInfo(), s.getRemark()));
                     }
                     dimensionSecondMap.add(o.getIdentifierFirst(), o);
                 });
@@ -171,19 +171,19 @@ public class ReportController {
 
         //报告第二页start
         //学院分数
-        SynthesisBean collegeScore = teExamRecordService.findByCollegeScore(examStudentDto.getSchoolId(), examStudentDto.getExamId(), examStudentDto.getCollegeId());
+        SynthesisBean collegeScore = teExamRecordService.findByCollegeScore(examStudentDto.getSchoolId(), examStudentDto.getExamId(), examStudentDto.getCollegeId(), examStudentDto.getCourseCode());
         //班级分数
-        SynthesisBean calssScore = teExamRecordService.findByClassScore(examStudentDto.getSchoolId(), examStudentDto.getExamId(), examStudentDto.getCollegeId(), examStudentDto.getClazz());
+        SynthesisBean calssScore = teExamRecordService.findByClassScore(examStudentDto.getSchoolId(), examStudentDto.getExamId(), examStudentDto.getCollegeId(), examStudentDto.getClazz(), examStudentDto.getCourseCode());
         //获取实考人数
         Integer actualCount = teExamStudentService.findByActualCount(examStudentDto.getSchoolId(), examStudentDto.getExamId(), examStudentDto.getCollegeId(), MissEnum.FALSE.getValue());
         SynthesisBean finalSynthesis = new SynthesisBean(examStudentDto.getMyScore(), actualCount, examStudentDto.getFullScore());
-        Integer lowScoreCount = teExamRecordService.getLowScoreByMe(examStudentDto.getSchoolId(), examStudentDto.getExamId(), examStudentDto.getCollegeId(), examStudentDto.getExamRecordId());
-        BigDecimal bigDecimal = new BigDecimal(lowScoreCount).divide(new BigDecimal(finalSynthesis.getActualCount())).multiply(new BigDecimal(100));
+        Integer lowScoreCount = teExamRecordService.getLowScoreByMe(examStudentDto.getSchoolId(), examStudentDto.getExamId(), examStudentDto.getCollegeId(), examStudentDto.getExamRecordId(), examStudentDto.getCourseCode());
+        BigDecimal bigDecimal = new BigDecimal(lowScoreCount).divide(new BigDecimal(finalSynthesis.getActualCount()), 2, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100));
         finalSynthesis.setOverRate(bigDecimal);
         finalSynthesis.setCollegeScore(collegeScore);
         finalSynthesis.setClassScore(calssScore);
 
-        BigDecimal difficult = finalSynthesis.getCollegeAvgScore().divide(tePaper.getTotalScore());
+        BigDecimal difficult = finalSynthesis.getCollegeAvgScore().divide(tePaper.getTotalScore(), 2, BigDecimal.ROUND_HALF_UP);
         finalSynthesis.setDifficult(difficult);
         finalSynthesis.setDifficultInfo(PaperDifficultEnum.convertToCode(difficult.doubleValue()));
         CollegeBean collegeBean = new CollegeBean(finalSynthesis);
@@ -196,9 +196,18 @@ public class ReportController {
             diagnosisBean.setResult(true);
         }
 
+        List<DiagnosisDetailBean> diagnosisDetailBeanList = new ArrayList<>();
         //一级维度start
         dimensionFirstMap.forEach((k, v) -> {
+            DiagnosisDetailBean diagnosisDetailBean = new DiagnosisDetailBean();
+            diagnosisDetailBean.setName(k);
+            ModuleBean moduleBean = new ModuleBean();
+            List<ModuleDetailBean> dios = new ArrayList<>();
             v.forEach((k1, v1) -> {
+                moduleBean.setInfo(v1.getInfo());
+                moduleBean.setRemark(v1.getRemark());
+                ModuleDetailBean moduleDetailBean = new ModuleDetailBean();
+                moduleDetailBean.setName(v1.getKnowledgeFirst());
                 teQuestionMap.forEach((k2, v2) -> {
                     if (Objects.nonNull(v1.getModuleCode()) && Objects.equals(v1.getModuleCode(), ModuleEnum.KNOWLEDGE.name().toLowerCase())) {
                         if (Objects.nonNull(v2.getKnowledge()) && Arrays.asList(v2.getKnowledge().split(",")).contains(v1.getIdentifierFirst())) {
@@ -212,46 +221,52 @@ public class ReportController {
                         }
                     }
                 });
+                moduleDetailBean.setRate(v1.getMyScore().divide(v1.getSumScore(), 2, BigDecimal.ROUND_HALF_UP));
+                moduleDetailBean.setCollegeRate(new BigDecimal(10));
+                dios.add(moduleDetailBean);
             });
+            moduleBean.setDios(dios);
+            diagnosisDetailBean.setModules(moduleBean);
+            diagnosisDetailBeanList.add(diagnosisDetailBean);
         });
         //一级维度end
 
-        List<DiagnosisDetailBean> diagnosisDetailBeanList = new ArrayList<>();
-        DiagnosisDetailBean diagnosisDetailBean = new DiagnosisDetailBean();
-        diagnosisDetailBean.setName("知识");
+//        List<DiagnosisDetailBean> diagnosisDetailBeanList = new ArrayList<>();
+//        DiagnosisDetailBean diagnosisDetailBean = new DiagnosisDetailBean();
+//        diagnosisDetailBean.setName("知识");
 
-        ModuleBean moduleBean = new ModuleBean();
-        moduleBean.setInfo("测试1");
-        moduleBean.setRemark("测试1remark");
-        List<ModuleDetailBean> dios = new ArrayList<>();
-        ModuleDetailBean moduleDetailBean = new ModuleDetailBean();
-        moduleDetailBean.setName("记忆");
-        moduleDetailBean.setRate(new BigDecimal(8));
-        moduleDetailBean.setCollegeRate(new BigDecimal(10));
-        dios.add(moduleDetailBean);
-        moduleBean.setDios(dios);
+//        ModuleBean moduleBean = new ModuleBean();
+//        moduleBean.setInfo("测试1");
+//        moduleBean.setRemark("测试1remark");
+//        List<ModuleDetailBean> dios = new ArrayList<>();
+//        ModuleDetailBean moduleDetailBean = new ModuleDetailBean();
+//        moduleDetailBean.setName("记忆");
+//        moduleDetailBean.setRate(new BigDecimal(8));
+//        moduleDetailBean.setCollegeRate(new BigDecimal(10));
+//        dios.add(moduleDetailBean);
+//        moduleBean.setDios(dios);
 
-        diagnosisDetailBean.setModules(moduleBean);
+//        diagnosisDetailBean.setModules(moduleBean);
+//
+//        DimensionBean dimensionBean = new DimensionBean();
+//        dimensionBean.setMyScore(examStudentDto.getMyScore());
+//        dimensionBean.setMasteryRate(new BigDecimal(9));
+//        dimensionBean.setDioFullScore(new BigDecimal(100));
+//        List<DimensionDetailBean> subDios = new ArrayList<>();
+//        DimensionDetailBean dimensionDetailBean = new DimensionDetailBean();
+//        dimensionDetailBean.setCode("A1");
+//        dimensionDetailBean.setName("碱金属元素化合物");
+//        dimensionDetailBean.setProficiency("H");
+//        dimensionDetailBean.setScoreRate(new BigDecimal(10));
+//        dimensionDetailBean.setCollegeAvgScore(new BigDecimal(60));
+//        subDios.add(dimensionDetailBean);
+//
+//        dimensionBean.setSubDios(subDios);
+////        dimensionBean.setMasterys(levelBeanList);
+//
+//        diagnosisDetailBean.setDetail(dimensionBean);
 
-        DimensionBean dimensionBean = new DimensionBean();
-        dimensionBean.setMyScore(examStudentDto.getMyScore());
-        dimensionBean.setMasteryRate(new BigDecimal(9));
-        dimensionBean.setDioFullScore(new BigDecimal(100));
-        List<DimensionDetailBean> subDios = new ArrayList<>();
-        DimensionDetailBean dimensionDetailBean = new DimensionDetailBean();
-        dimensionDetailBean.setCode("A1");
-        dimensionDetailBean.setName("碱金属元素化合物");
-        dimensionDetailBean.setProficiency("H");
-        dimensionDetailBean.setScoreRate(new BigDecimal(10));
-        dimensionDetailBean.setCollegeAvgScore(new BigDecimal(60));
-        subDios.add(dimensionDetailBean);
-
-        dimensionBean.setSubDios(subDios);
-//        dimensionBean.setMasterys(levelBeanList);
-
-        diagnosisDetailBean.setDetail(dimensionBean);
-
-        diagnosisDetailBeanList.add(diagnosisDetailBean);
+//        diagnosisDetailBeanList.add(diagnosisDetailBean);
         diagnosisBean.setList(diagnosisDetailBeanList);
         collegeBean.setDiagnosis(diagnosisBean);
         //诊断页end
