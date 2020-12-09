@@ -164,8 +164,7 @@ public class SysController {
                 Map<String, TEQuestion> teQuestionMap = new LinkedHashMap<>();
                 if (Objects.nonNull(teQuestionList) && teQuestionList.size() > 0) {
                     teQuestionList.forEach(s -> {
-                        teQuestionMap.put(s.getType() + "题" + s.getMainNumber() + "-" + s.getSubNumber() + "作答", s);
-                        teQuestionMap.put(s.getType() + "题" + s.getMainNumber() + "-" + s.getSubNumber() + "得分", s);
+                        teQuestionMap.put(s.getMainNumber() + "-" + s.getSubNumber(), s);
                     });
                 }
 
@@ -228,16 +227,17 @@ public class SysController {
                             Map<String, String> extendColumnMap = examStudentImportDto.getExtendColumn();
                             extendColumnMap.forEach((k, v) -> {
                                 TEAnswer teAnswer = null;
-                                TEQuestion teQuestion = teQuestionMap.get(k);
+                                String filterTitle = SystemConstant.filterQuestion(k);
+                                TEQuestion teQuestion = teQuestionMap.get(filterTitle);
                                 Long examRecordId = examRecordMap.get(examStudentMap.get(examStudentImportDto.getIdcardNumber() + "_" + examStudentImportDto.getIdentity()).getId()).getId();
                                 if (!answerMap.containsKey(teQuestion.getId())) {
                                     teAnswer = new TEAnswer(teQuestion.getMainNumber(), teQuestion.getSubNumber(), teQuestion.getType(), examRecordId);
                                 } else {
                                     teAnswer = answerMap.get(teQuestion.getId());
                                 }
-                                if (k.contains("作答")) {
+                                if (k.contains("作答") || k.contains("选项")) {
                                     teAnswer.setAnswer(v);
-                                } else if (k.contains("得分")) {
+                                } else if (k.contains("得分") || Objects.equals(SystemConstant.filterQuestion(k), filterTitle)) {
                                     teAnswer.setScore(new BigDecimal(v));
                                 }
                                 teAnswer.setVersion(teAnswer.getVersion() + 1);
@@ -387,7 +387,7 @@ public class SysController {
                             line++;
                             PaperAndQuestionImportDto paperAndQuestionImportDto = (PaperAndQuestionImportDto) subList.get(y);
                             if (!paperMap.containsKey(paperAndQuestionImportDto.getPaperCode())) {
-                                TEPaper tePaper = new TEPaper(teExam.getId(), paperAndQuestionImportDto.getCourseName(), paperAndQuestionImportDto.getCourseCode(), paperAndQuestionImportDto.getPaperCode(), paperAndQuestionImportDto.getPaperCode(), new BigDecimal(100));
+                                TEPaper tePaper = new TEPaper(teExam.getId(), paperAndQuestionImportDto.getCourseName(), paperAndQuestionImportDto.getCourseCode(), paperAndQuestionImportDto.getPaperCode(), paperAndQuestionImportDto.getPaperCode(), new BigDecimal(100), new BigDecimal(60));
                                 paperMap.put(paperAndQuestionImportDto.getPaperCode(), tePaper);
                             }
                             TEQuestion teQuestion = new TEQuestion(paperMap.get(paperAndQuestionImportDto.getPaperCode()).getId(), Integer.parseInt(paperAndQuestionImportDto.getMainNumber()), Integer.parseInt(paperAndQuestionImportDto.getSubNumber()), paperAndQuestionImportDto.getType(), new BigDecimal(paperAndQuestionImportDto.getScore()), paperAndQuestionImportDto.getRule(), paperAndQuestionImportDto.getDescription(), paperAndQuestionImportDto.getKnowledge(), paperAndQuestionImportDto.getCapability());
@@ -501,9 +501,9 @@ public class SysController {
                                     tbModule = new TBModule(tbSchool.getId(), dimensionImportDto.getModuleName(), ModuleEnum.convertToName(dimensionImportDto.getModuleName()), "课程标准规定的学科内容", "1.熟练：个人得分率≥85%\n" +
                                             "2.基本熟练：60%≤个人得分率＜85%\n" +
                                             "3.不熟练：个人得分率＜60%", "技能：学习和运用知识的心理加工过程；",
-                                            "与以往传统考试单纯以部分对学生进行排序的评价方式不同，四维诊断评价能够综合分析你的学业发展长短板、优劣势，经由系统分析后出具详细的学业诊断评价报告。");
+                                            "与以往传统考试单纯以部分对学生进行排序的评价方式不同，四维诊断评价能够综合分析你的学业发展长短板、优劣势，经由系统分析后出具详细的学业诊断评价报告。", "{\"dimensionSecondMastery\":[{\"level\":\"H\",\"degree\":\"85,100\"},{\"level\":\"M\",\"degree\":\"60,85\"},{\"level\":\"L\",\"degree\":\"0,60\"}]}");
                                 } else {
-                                    tbModule = new TBModule(tbSchool.getId(), dimensionImportDto.getModuleName(), ModuleEnum.convertToName(dimensionImportDto.getModuleName()), "经学习与训练内化而成的心理结构", null, null, null);
+                                    tbModule = new TBModule(tbSchool.getId(), dimensionImportDto.getModuleName(), ModuleEnum.convertToName(dimensionImportDto.getModuleName()), "经学习与训练内化而成的心理结构", null, null, null, null);
                                 }
                                 moduleMap.put(dimensionImportDto.getModuleName(), tbModule);
                             }

@@ -70,7 +70,7 @@ public class TBModule implements Serializable {
 
     }
 
-    public TBModule(Long schoolId, String name, String code, String description, String proficiency, String info, String remark) {
+    public TBModule(Long schoolId, String name, String code, String description, String proficiency, String info, String remark, String degree) {
         setId(UidUtil.nextId());
         this.schoolId = schoolId;
         this.name = name;
@@ -79,6 +79,7 @@ public class TBModule implements Serializable {
         this.proficiency = proficiency;
         this.info = info;
         this.remark = remark;
+        this.degree = degree;
     }
 
     public String getDegree() {

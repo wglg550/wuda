@@ -61,7 +61,7 @@ public class TEPaper extends BaseEntity implements Serializable {
 
     }
 
-    public TEPaper(Long examId, String courseName, String courseCode, String name, String code, BigDecimal totalScore) {
+    public TEPaper(Long examId, String courseName, String courseCode, String name, String code, BigDecimal totalScore, BigDecimal passScore) {
         setId(UidUtil.nextId());
         this.examId = examId;
         this.courseName = courseName;
@@ -69,6 +69,7 @@ public class TEPaper extends BaseEntity implements Serializable {
         this.name = name;
         this.code = code;
         this.totalScore = totalScore;
+        this.passScore = passScore;
     }
 
     public BigDecimal getPassScore() {
