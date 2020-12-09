@@ -2,6 +2,8 @@ package com.qmth.wuda.teaching.constant;
 
 import java.io.File;
 import java.util.StringJoiner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class SystemConstant {
 
@@ -36,5 +38,18 @@ public class SystemConstant {
             tempdir.mkdirs();
         }
         TEMP_FILES_DIR = tempdir.getPath();
+    }
+
+    /**
+     * 过滤题号
+     *
+     * @param value
+     * @return
+     */
+    public static String filterQuestion(String value) {
+        String reg = "[^(0-9)-]";
+        Pattern pat = Pattern.compile(reg);
+        Matcher mat = pat.matcher(value);
+        return mat.replaceAll("");
     }
 }
