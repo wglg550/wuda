@@ -16,5 +16,6 @@
                 and tbd.course_code = #{courseCode}
             </if>
         </where>
+        order by tbd.id
     </select>
 </mapper>

@@ -17,7 +17,7 @@
 
     <select id="calculateCollegeAvgScoreByDimension" resultType="java.math.BigDecimal">
         select
-        avg(tea.score) as collegeAvgScore
+        sum(tea.score) as collegeSumScore
         from
         t_e_answer tea
         left join t_e_exam_record teer on

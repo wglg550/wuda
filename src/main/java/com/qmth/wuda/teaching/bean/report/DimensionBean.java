@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @Description: 维度bean
@@ -31,7 +32,11 @@ public class DimensionBean implements Serializable {
     private List<DimensionMasterysBean> masterys;
 
     public BigDecimal getMyScore() {
-        return myScore;
+        if (Objects.nonNull(myScore)) {
+            return myScore.setScale(2, BigDecimal.ROUND_HALF_UP);
+        } else {
+            return new BigDecimal(0);
+        }
     }
 
     public void setMyScore(BigDecimal myScore) {
@@ -39,7 +44,11 @@ public class DimensionBean implements Serializable {
     }
 
     public BigDecimal getMasteryRate() {
-        return masteryRate;
+        if (Objects.nonNull(masteryRate)) {
+            return masteryRate.setScale(2, BigDecimal.ROUND_HALF_UP);
+        } else {
+            return new BigDecimal(0);
+        }
     }
 
     public void setMasteryRate(BigDecimal masteryRate) {
@@ -47,7 +56,11 @@ public class DimensionBean implements Serializable {
     }
 
     public BigDecimal getDioFullScore() {
-        return dioFullScore;
+        if (Objects.nonNull(dioFullScore)) {
+            return dioFullScore.setScale(2, BigDecimal.ROUND_HALF_UP);
+        } else {
+            return new BigDecimal(0);
+        }
     }
 
     public void setDioFullScore(BigDecimal dioFullScore) {

@@ -54,7 +54,7 @@ public class TBDimension implements Serializable {
     @TableField(value = "knowledge_second")
     private String knowledgeSecond;
 
-    @ApiModelProperty(value = "编号一级")
+    @ApiModelProperty(value = "编号二级")
     @TableField(value = "identifier_second")
     private String identifierSecond;
 

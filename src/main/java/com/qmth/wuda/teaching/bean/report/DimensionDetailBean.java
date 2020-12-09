@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Objects;
 
 /**
  * @Description: 维度详情bean
@@ -54,7 +55,11 @@ public class DimensionDetailBean implements Serializable {
     }
 
     public BigDecimal getScoreRate() {
-        return scoreRate;
+        if (Objects.nonNull(scoreRate)) {
+            return scoreRate.setScale(2, BigDecimal.ROUND_HALF_UP);
+        } else {
+            return new BigDecimal(0);
+        }
     }
 
     public void setScoreRate(BigDecimal scoreRate) {
@@ -62,7 +67,11 @@ public class DimensionDetailBean implements Serializable {
     }
 
     public BigDecimal getCollegeAvgScore() {
-        return collegeAvgScore;
+        if (Objects.nonNull(collegeAvgScore)) {
+            return collegeAvgScore.setScale(2, BigDecimal.ROUND_HALF_UP);
+        } else {
+            return new BigDecimal(0);
+        }
     }
 
     public void setCollegeAvgScore(BigDecimal collegeAvgScore) {
