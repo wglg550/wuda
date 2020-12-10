@@ -28,6 +28,11 @@ public class TBLevel implements Serializable {
     @TableId(value = "id")
     private Long id;
 
+    @JsonSerialize(using = ToStringSerializer.class)
+    @ApiModelProperty(value = "模块id")
+    @TableId(value = "module_id")
+    private Long moduleId;
+
     @ApiModelProperty(value = "等级")
     @TableField(value = "code")
     private String code;
@@ -47,6 +52,38 @@ public class TBLevel implements Serializable {
     @ApiModelProperty(value = "分数范围")
     @TableField(value = "degree")
     private String degree;
+
+    @ApiModelProperty(value = "诊断结果")
+    @TableField(value = "diagnose_result")
+    private String diagnoseResult;
+
+    @ApiModelProperty(value = "学习建议")
+    @TableField(value = "learn_advice")
+    private String learnAdvice;
+
+    public Long getModuleId() {
+        return moduleId;
+    }
+
+    public void setModuleId(Long moduleId) {
+        this.moduleId = moduleId;
+    }
+
+    public String getDiagnoseResult() {
+        return diagnoseResult;
+    }
+
+    public void setDiagnoseResult(String diagnoseResult) {
+        this.diagnoseResult = diagnoseResult;
+    }
+
+    public String getLearnAdvice() {
+        return learnAdvice;
+    }
+
+    public void setLearnAdvice(String learnAdvice) {
+        this.learnAdvice = learnAdvice;
+    }
 
     public Long getId() {
         return id;

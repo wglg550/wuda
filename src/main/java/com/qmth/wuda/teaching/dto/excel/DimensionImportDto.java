@@ -31,11 +31,9 @@ public class DimensionImportDto implements Serializable {
     private String identifierFirst;
 
     @ExcelNote(value = "二级知识维度")
-    @ExcelNotNull
     private String knowledgeSecond;
 
     @ExcelNote(value = "二级维度编号")
-    @ExcelNotNull
     private String identifierSecond;
 
     @ExcelNote(value = "一级维度术语解释")
