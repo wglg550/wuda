@@ -20,6 +20,7 @@ import com.qmth.wuda.teaching.util.ExcelUtil;
 import com.qmth.wuda.teaching.util.ResultUtil;
 import com.qmth.wuda.teaching.util.ServletUtil;
 import io.swagger.annotations.*;
+import net.sf.ehcache.CacheManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
@@ -96,6 +97,15 @@ public class SysController {
 
     @Resource
     TEAnswerService teAnswerService;
+
+    @ApiOperation(value = "更新缓存接口")
+    @RequestMapping(value = "/updateCache", method = RequestMethod.POST)
+    @ApiResponses({@ApiResponse(code = 200, message = "{\"success\":true}", response = Result.class)})
+    public Result updateCache() {
+        CacheManager cacheManager = CacheManager.getInstance();
+        cacheManager.clearAll();
+        return ResultUtil.ok(Collections.singletonMap(SystemConstant.SUCCESS, true));
+    }
 
     @ApiOperation(value = "测试接口")
     @RequestMapping(value = "/test", method = RequestMethod.POST)

@@ -1,5 +1,7 @@
 package com.qmth.wuda.teaching.service;
 
+import com.qmth.wuda.teaching.bean.report.PersonalReportBean;
+
 /**
  * @Description: ehcache 服务类
  * @Param:
@@ -9,18 +11,22 @@ package com.qmth.wuda.teaching.service;
  */
 public interface CacheService {
 
-//    /**
-//     * 添加用户缓存
-//     *
-//     * @param userId
-//     * @return
-//     */
-//    public AuthDto addAccountCache(Long userId);
-//
-//    /**
-//     * 删除用户缓存
-//     *
-//     * @param userId
-//     */
-//    public void removeAccountCache(Long userId);
+    /**
+     * 生成个人报告
+     *
+     * @param schoolId
+     * @param collegeId
+     * @param studentNo
+     * @return
+     */
+    PersonalReportBean addPersonalReport(Long schoolId, Long collegeId, String studentNo);
+
+    /**
+     * 删除个人报告
+     *
+     * @param schoolId
+     * @param collegeId
+     * @param studentNo
+     */
+    void removePersonalReport(Long schoolId, Long collegeId, String studentNo);
 }
