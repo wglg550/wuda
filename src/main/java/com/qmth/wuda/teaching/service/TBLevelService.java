@@ -15,6 +15,8 @@ import java.util.List;
  */
 public interface TBLevelService extends IService<TBLevel> {
 
+    void deleteAll();
+
     /**
      * 查询所有等级
      *

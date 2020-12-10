@@ -36,9 +36,9 @@ public class TEStudent extends BaseEntity implements Serializable {
     @TableField(value = "password")
     private String password;
 
-    @ApiModelProperty(value = "身份证号")
-    @TableField(value = "idcard_number")
-    private String idcardNumber;
+    @ApiModelProperty(value = "学号")
+    @TableField(value = "identity")
+    private String identity;
 
     @ApiModelProperty(value = "年龄")
     @TableField(value = "age")
@@ -64,11 +64,11 @@ public class TEStudent extends BaseEntity implements Serializable {
 
     }
 
-    public TEStudent(Long schoolId, String name, String idcardNumber) {
+    public TEStudent(Long schoolId, String name, String identity) {
         setId(UidUtil.nextId());
         this.schoolId = schoolId;
         this.name = name;
-        this.idcardNumber = idcardNumber;
+        this.identity = identity;
         this.password = "123456";
         this.enable = 1;
     }
@@ -101,12 +101,12 @@ public class TEStudent extends BaseEntity implements Serializable {
         this.password = password;
     }
 
-    public String getIdcardNumber() {
-        return idcardNumber;
+    public String getIdentity() {
+        return identity;
     }
 
-    public void setIdcardNumber(String idcardNumber) {
-        this.idcardNumber = idcardNumber;
+    public void setIdentity(String identity) {
+        this.identity = identity;
     }
 
     public Integer getAge() {

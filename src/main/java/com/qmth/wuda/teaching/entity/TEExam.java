@@ -52,18 +52,44 @@ public class TEExam extends BaseEntity implements Serializable {
     @TableField(value = "contribution")
     private Integer contribution;
 
+    @ApiModelProperty(value = "科目名称")
+    @TableField(value = "course_name")
+    private String courseName;
+
+    @ApiModelProperty(value = "科目编码")
+    @TableField(value = "course_code")
+    private String courseCode;
+
     public TEExam() {
 
     }
 
-    public TEExam(Long schoolId, String name, String code, Long startTime, Long endTime) {
+    public TEExam(Long schoolId, String name, String code, Long startTime, Long endTime, String courseName, String courseCode) {
         setId(UidUtil.nextId());
         this.schoolId = schoolId;
         this.name = name;
         this.code = code;
         this.startTime = startTime;
         this.endTime = endTime;
+        this.courseName = courseName;
+        this.courseCode = courseCode;
         enable = 1;
+    }
+
+    public String getCourseName() {
+        return courseName;
+    }
+
+    public void setCourseName(String courseName) {
+        this.courseName = courseName;
+    }
+
+    public String getCourseCode() {
+        return courseCode;
+    }
+
+    public void setCourseCode(String courseCode) {
+        this.courseCode = courseCode;
     }
 
     public Integer getContribution() {

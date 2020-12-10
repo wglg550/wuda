@@ -54,10 +54,6 @@ public class TBModule implements Serializable {
     @TableField(value = "proficiency")
     private String proficiency;
 
-    @ApiModelProperty(value = "标题")
-    @TableField(value = "info")
-    private String info;
-
     @ApiModelProperty(value = "备注")
     @TableField(value = "remark")
     private String remark;
@@ -70,14 +66,13 @@ public class TBModule implements Serializable {
 
     }
 
-    public TBModule(Long schoolId, String name, String code, String description, String proficiency, String info, String remark, String degree) {
+    public TBModule(Long schoolId, String name, String code, String description, String proficiency, String remark, String degree) {
         setId(UidUtil.nextId());
         this.schoolId = schoolId;
         this.name = name;
         this.code = code;
         this.description = description;
         this.proficiency = proficiency;
-        this.info = info;
         this.remark = remark;
         this.degree = degree;
     }
@@ -88,14 +83,6 @@ public class TBModule implements Serializable {
 
     public void setDegree(String degree) {
         this.degree = degree;
-    }
-
-    public String getInfo() {
-        return info;
-    }
-
-    public void setInfo(String info) {
-        this.info = info;
     }
 
     public String getRemark() {

@@ -39,4 +39,19 @@ public enum ModuleEnum {
         }
         return null;
     }
+
+    /**
+     * 状态转换 toCode
+     *
+     * @param value
+     * @return
+     */
+    public static String convertToCode(String value) {
+        for (ModuleEnum e : ModuleEnum.values()) {
+            if (Objects.equals(e.name(), value.toUpperCase())) {
+                return e.getCode();
+            }
+        }
+        return null;
+    }
 }

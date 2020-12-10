@@ -36,7 +36,6 @@ public class PaperAndQuestionImportDto implements Serializable {
     private String score;
 
     @ExcelNote(value = "计分规则")
-    @ExcelNotNull
     private String rule;
 
     @ExcelNote(value = "规则说明")
@@ -46,15 +45,27 @@ public class PaperAndQuestionImportDto implements Serializable {
     @ExcelNotNull
     private String courseName;
 
-    @ExcelNote(value = "科目名称")
+    @ExcelNote(value = "科目编码")
     @ExcelNotNull
     private String courseCode;
+
+    @ExcelNote(value = "考试编码")
+    @ExcelNotNull
+    private String examCode;
 
     @ExcelNote(value = "知识维度")
     private String knowledge;
 
     @ExcelNote(value = "能力维度")
     private String capability;
+
+    public String getExamCode() {
+        return examCode;
+    }
+
+    public void setExamCode(String examCode) {
+        this.examCode = examCode;
+    }
 
     public String getCourseName() {
         return courseName;

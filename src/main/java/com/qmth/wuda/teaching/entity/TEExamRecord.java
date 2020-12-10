@@ -52,11 +52,19 @@ public class TEExamRecord extends BaseEntity implements Serializable {
     @TableField(value = "sum_score")
     private BigDecimal sumScore;
 
+    @ApiModelProperty(value = "评分明细")
+    @TableField(value = "mark_detail")
+    private String markDetail;
+
+    @ApiModelProperty(value = "备注")
+    @TableField(value = "remark")
+    private String remark;
+
     public TEExamRecord() {
 
     }
 
-    public TEExamRecord(Long examId, Long paperId, Long examStudentId, BigDecimal objectiveScore, BigDecimal subjectiveScore, BigDecimal sumScore) {
+    public TEExamRecord(Long examId, Long paperId, Long examStudentId, BigDecimal objectiveScore, BigDecimal subjectiveScore, BigDecimal sumScore,String markDetail,String remark) {
         setId(UidUtil.nextId());
         this.examId = examId;
         this.paperId = paperId;
@@ -64,6 +72,24 @@ public class TEExamRecord extends BaseEntity implements Serializable {
         this.objectiveScore = objectiveScore;
         this.subjectiveScore = subjectiveScore;
         this.sumScore = sumScore;
+        this.markDetail = markDetail;
+        this.remark = remark;
+    }
+
+    public String getMarkDetail() {
+        return markDetail;
+    }
+
+    public void setMarkDetail(String markDetail) {
+        this.markDetail = markDetail;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
     }
 
     public static long getSerialVersionUID() {

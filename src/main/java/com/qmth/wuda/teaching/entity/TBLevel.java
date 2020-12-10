@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
-import com.qmth.wuda.teaching.base.BaseEntity;
+import com.qmth.wuda.teaching.util.UidUtil;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -41,10 +41,6 @@ public class TBLevel implements Serializable {
     @TableField(value = "level")
     private String level;
 
-    @ApiModelProperty(value = "说明")
-    @TableField(value = "description")
-    private String description;
-
     @ApiModelProperty(value = "规则")
     @TableField(value = "rule")
     private String rule;
@@ -60,6 +56,21 @@ public class TBLevel implements Serializable {
     @ApiModelProperty(value = "学习建议")
     @TableField(value = "learn_advice")
     private String learnAdvice;
+
+    public TBLevel() {
+
+    }
+
+    public TBLevel(Long moduleId, String code, String level, String rule, String degree, String diagnoseResult, String learnAdvice) {
+        setId(UidUtil.nextId());
+        this.moduleId = moduleId;
+        this.code = code;
+        this.level = level;
+        this.rule = rule;
+        this.degree = degree;
+        this.diagnoseResult = diagnoseResult;
+        this.learnAdvice = learnAdvice;
+    }
 
     public Long getModuleId() {
         return moduleId;
@@ -119,14 +130,6 @@ public class TBLevel implements Serializable {
 
     public void setLevel(String level) {
         this.level = level;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public String getRule() {

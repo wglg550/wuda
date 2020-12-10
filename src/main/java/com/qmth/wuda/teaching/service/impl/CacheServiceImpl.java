@@ -125,7 +125,7 @@ public class CacheServiceImpl implements CacheService {
                 Map<String, DimensionFirstDto> dimensionMap = new LinkedHashMap<>();
                 tbDimensionList.forEach(o -> {
                     if (!dimensionMap.containsKey(o.getKnowledgeFirst())) {
-                        dimensionMap.put(o.getKnowledgeFirst(), new DimensionFirstDto(o.getModuleId(), s.getCode(), o.getCourseCode(), o.getKnowledgeFirst(), o.getIdentifierFirst(), s.getInfo(), s.getRemark()));
+                        dimensionMap.put(o.getKnowledgeFirst(), new DimensionFirstDto(o.getModuleId(), s.getCode(), o.getCourseCode(), o.getKnowledgeFirst(), o.getIdentifierFirst(), s.getDescription(), s.getRemark()));
                     }
                     DimensionSecondDto dimensionSecondDto = gson.fromJson(gson.toJson(o), DimensionSecondDto.class);
                     dimensionSecondDto.setModuleCode(s.getCode());

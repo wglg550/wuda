@@ -31,11 +31,10 @@ public class ExamStudentImportDto implements Serializable {
     @ExcelNotNull
     private String level;
 
-    @ExcelNote(value = "是否缺考")
-    @ExcelNotNull
-    private String miss;
+    @ExcelNote(value = "专业类别")
+    private String majorType;
 
-    @ExcelNote(value = "身份证号")
+    @ExcelNote(value = "准考证号")
     @ExcelNotNull
     private String idcardNumber;
 
@@ -46,22 +45,6 @@ public class ExamStudentImportDto implements Serializable {
     @ExcelNote(value = "姓名")
     @ExcelNotNull
     private String examStudentName;
-
-    @ExcelNote(value = "教师")
-    @ExcelNotNull
-    private String teacherName;
-
-    @ExcelNote(value = "年级")
-    @ExcelNotNull
-    private String grade;
-
-    @ExcelNote(value = "专业")
-    @ExcelNotNull
-    private String majorName;
-
-    @ExcelNote(value = "班级")
-    @ExcelNotNull
-    private String classNo;
 
     @ExcelNote(value = "客观分")
     @ExcelNotNull
@@ -75,8 +58,52 @@ public class ExamStudentImportDto implements Serializable {
     @ExcelNotNull
     private String sumScore;
 
+    @ExcelNote(value = "评分明细")
+    @ExcelNotNull
+    private String markDetail;
+
+    @ExcelNote(value = "备注")
+    @ExcelNotNull
+    private String remark;
+
+    @ExcelNote(value = "班级")
+    @ExcelNotNull
+    private String classNo;
+
+    @ExcelNote(value = "专业")
+    @ExcelNotNull
+    private String majorName;
+
+    @ExcelNote(value = "任课老师")
+    @ExcelNotNull
+    private String teacherName;
+
     @ExcelNote(value = "答题记录扩展")
-    private Map<String, String> extendColumn;
+    private Map<String, Object> extendColumn;
+
+    public String getMajorType() {
+        return majorType;
+    }
+
+    public void setMajorType(String majorType) {
+        this.majorType = majorType;
+    }
+
+    public String getMarkDetail() {
+        return markDetail;
+    }
+
+    public void setMarkDetail(String markDetail) {
+        this.markDetail = markDetail;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
 
     public String getClassNo() {
         return classNo;
@@ -118,14 +145,6 @@ public class ExamStudentImportDto implements Serializable {
         this.level = level;
     }
 
-    public String getMiss() {
-        return miss;
-    }
-
-    public void setMiss(String miss) {
-        this.miss = miss;
-    }
-
     public String getIdcardNumber() {
         return idcardNumber;
     }
@@ -156,14 +175,6 @@ public class ExamStudentImportDto implements Serializable {
 
     public void setTeacherName(String teacherName) {
         this.teacherName = teacherName;
-    }
-
-    public String getGrade() {
-        return grade;
-    }
-
-    public void setGrade(String grade) {
-        this.grade = grade;
     }
 
     public String getMajorName() {
@@ -198,11 +209,11 @@ public class ExamStudentImportDto implements Serializable {
         this.sumScore = sumScore;
     }
 
-    public Map<String, String> getExtendColumn() {
+    public Map<String, Object> getExtendColumn() {
         return extendColumn;
     }
 
-    public void setExtendColumn(Map<String, String> extendColumn) {
+    public void setExtendColumn(Map<String, Object> extendColumn) {
         this.extendColumn = extendColumn;
     }
 }

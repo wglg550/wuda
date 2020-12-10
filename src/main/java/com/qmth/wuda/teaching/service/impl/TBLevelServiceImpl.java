@@ -21,6 +21,14 @@ import java.util.List;
 @Service
 public class TBLevelServiceImpl extends ServiceImpl<TBLevelMapper, TBLevel> implements TBLevelService {
 
+    @Resource
+    TBLevelMapper tbLevelMapper;
+
+    @Override
+    public void deleteAll() {
+        tbLevelMapper.deleteAll();
+    }
+
     @Override
     @Cacheable(value = "level_cache", key = "methodName")
     public List<TBLevel> findAll() {
