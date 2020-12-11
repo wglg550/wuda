@@ -5,6 +5,13 @@ import java.util.StringJoiner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * @Description: 系统constant
+ * @Param:
+ * @return:
+ * @Author: wangliang
+ * @Date: 2020/12/11
+ */
 public class SystemConstant {
 
     public static final String CHARSET_NAME = "UTF-8";
@@ -20,6 +27,8 @@ public class SystemConstant {
     public static final String EXTEND_COLUMN = "extendColumn";
     public static final String MAP = "Map";
     public static final int MAX_IMPORT_SIZE = 500;
+    public static final int BYTE_LEN = 102400; // 100KB
+
     public static String TEMP_FILES_DIR;
 
     /**
