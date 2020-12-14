@@ -26,6 +26,7 @@ public class SystemConstant {
     public static final String SUCCESS = "success";
     public static final String EXTEND_COLUMN = "extendColumn";
     public static final String MAP = "Map";
+    public static final String METHOD = "post";
     public static final int MAX_IMPORT_SIZE = 500;
     public static final int BYTE_LEN = 102400; // 100KB
 
