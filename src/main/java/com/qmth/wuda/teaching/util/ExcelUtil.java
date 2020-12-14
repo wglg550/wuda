@@ -116,7 +116,7 @@ public class ExcelUtil {
                     finalOList.add(oList);
                     finalColumnNameList.add(columnNameList);
                 }
-                log.info("读取了{}条数据", oList.get(0).size());
+                log.info("读取了{}条数据", oList.get(y).size());
             }
             long end = System.currentTimeMillis();
             log.info("读取excel里的数据结束,============耗时============:{}秒", (end - start) / 1000);

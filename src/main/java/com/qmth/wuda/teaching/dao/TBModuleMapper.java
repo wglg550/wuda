@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * <p>
@@ -18,7 +19,13 @@ import java.util.List;
 @Mapper
 public interface TBModuleMapper extends BaseMapper<TBModule> {
 
-    void deleteAll();
+    /**
+     * 根据学校id和模块名称删除
+     *
+     * @param schoolId
+     * @param moduleNames
+     */
+    void deleteAll(@Param("schoolId") Long schoolId, @Param("moduleNames") Set<String> moduleNames);
 
     /**
      * 根据学校id获取模块

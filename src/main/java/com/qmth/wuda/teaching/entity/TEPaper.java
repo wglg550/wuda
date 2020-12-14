@@ -57,6 +57,10 @@ public class TEPaper extends BaseEntity implements Serializable {
     @TableField(value = "contribution_score")
     private BigDecimal contributionScore;
 
+    @ApiModelProperty(value = "是否赋分，0：不启用，1：启用")
+    @TableField(value = "contribution")
+    private Integer contribution;
+
     public TEPaper() {
 
     }
@@ -70,6 +74,14 @@ public class TEPaper extends BaseEntity implements Serializable {
         this.code = code;
         this.totalScore = totalScore;
         this.passScore = passScore;
+    }
+
+    public Integer getContribution() {
+        return contribution;
+    }
+
+    public void setContribution(Integer contribution) {
+        this.contribution = contribution;
     }
 
     public BigDecimal getPassScore() {

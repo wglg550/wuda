@@ -4,6 +4,17 @@
 
     <delete id="deleteAll">
         delete t from t_b_module t
+        <where>
+            <if test="schoolId != null and schoolId != ''">
+                and t.school_id = #{schoolId}
+            </if>
+            <if test="moduleNames != null">
+                and t.name in
+                <foreach collection="moduleNames" item="moduleName" index="index" open="(" close=")" separator=",">
+                    #{moduleName}
+                </foreach>
+            </if>
+        </where>
     </delete>
 
     <select id="findBySchoolId" resultType="com.qmth.wuda.teaching.entity.TBModule">

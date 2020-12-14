@@ -15,12 +15,18 @@ import java.util.List;
  */
 public interface TBLevelService extends IService<TBLevel> {
 
-    void deleteAll();
+    /**
+     * 根据学校id删除等级
+     *
+     * @param schoolId
+     */
+    void deleteAll(Long schoolId);
 
     /**
-     * 查询所有等级
+     * 根据学校id查询所有等级
      *
+     * @param schoolId
      * @return
      */
-    List<TBLevel> findAll();
+    List<TBLevel> findBySchoolId(Long schoolId);
 }

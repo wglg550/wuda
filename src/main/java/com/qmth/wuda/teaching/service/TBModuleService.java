@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.qmth.wuda.teaching.entity.TBModule;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * <p>
@@ -15,7 +16,13 @@ import java.util.List;
  */
 public interface TBModuleService extends IService<TBModule> {
 
-    void deleteAll();
+    /**
+     * 根据学校id和模块名称删除
+     *
+     * @param schoolId
+     * @param moduleNames
+     */
+    void deleteAll(Long schoolId, Set<String> moduleNames);
 
     /**
      * 根据学校id获取模块
@@ -24,4 +31,19 @@ public interface TBModuleService extends IService<TBModule> {
      * @return
      */
     List<TBModule> findBySchoolId(Long schoolId);
+
+    /**
+     * 根据学校id更新模块
+     *
+     * @param schoolId
+     * @return
+     */
+    List<TBModule> updateBySchoolId(Long schoolId);
+
+    /**
+     * 根据学校id删除模块
+     *
+     * @param schoolId
+     */
+    void deleteBySchoolId(Long schoolId);
 }

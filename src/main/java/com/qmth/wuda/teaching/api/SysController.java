@@ -7,10 +7,7 @@ import com.qmth.wuda.teaching.bean.Result;
 import com.qmth.wuda.teaching.bean.excel.ExcelCallback;
 import com.qmth.wuda.teaching.bean.excel.ExcelError;
 import com.qmth.wuda.teaching.constant.SystemConstant;
-import com.qmth.wuda.teaching.dto.excel.DimensionImportDto;
-import com.qmth.wuda.teaching.dto.excel.ExamStudentImportDto;
-import com.qmth.wuda.teaching.dto.excel.ModuleAndLevelImportDto;
-import com.qmth.wuda.teaching.dto.excel.PaperAndQuestionImportDto;
+import com.qmth.wuda.teaching.dto.excel.*;
 import com.qmth.wuda.teaching.entity.*;
 import com.qmth.wuda.teaching.enums.ExceptionResultEnum;
 import com.qmth.wuda.teaching.enums.ModuleEnum;
@@ -167,7 +164,7 @@ public class SysController {
                 ExamStudentImportDto examStudent = (ExamStudentImportDto) finalList.get(0).get(0).get(0);
                 QueryWrapper<TEExam> teExamQueryWrapper = new QueryWrapper<>();
                 teExamQueryWrapper.lambda().eq(TEExam::getSchoolId, tbSchool.getId())
-                        .eq(TEExam::getCourseCode, examStudent.getCourseCode());
+                        .eq(TEExam::getCode, examStudent.getCourseCode());
                 TEExam teExam = teExamService.getOne(teExamQueryWrapper);
 
                 QueryWrapper<TEPaper> tePaperQueryWrapper = new QueryWrapper<>();
@@ -403,7 +400,7 @@ public class SysController {
                             line++;
                             PaperAndQuestionImportDto paperAndQuestionImportDto = (PaperAndQuestionImportDto) subList.get(y);
                             if (!examMap.containsKey(paperAndQuestionImportDto.getExamCode())) {
-                                TEExam teExam = new TEExam(tbSchool.getId(), paperAndQuestionImportDto.getExamCode(), paperAndQuestionImportDto.getExamCode(), System.currentTimeMillis(), System.currentTimeMillis(), paperAndQuestionImportDto.getCourseName(), paperAndQuestionImportDto.getCourseCode());
+                                TEExam teExam = new TEExam(tbSchool.getId(), paperAndQuestionImportDto.getExamCode(), paperAndQuestionImportDto.getExamCode(), System.currentTimeMillis(), System.currentTimeMillis());
                                 examMap.put(paperAndQuestionImportDto.getExamCode(), teExam);
                             }
                             if (!paperMap.containsKey(paperAndQuestionImportDto.getPaperCode())) {
@@ -570,7 +567,7 @@ public class SysController {
         return ResultUtil.ok(Collections.singletonMap(SystemConstant.SUCCESS, true));
     }
 
-    @ApiOperation(value = "模块导入接口")
+    @ApiOperation(value = "模块和等级导入接口")
     @RequestMapping(value = "/moduleLevel/import", method = RequestMethod.POST)
     @Transactional
     @ApiResponses({@ApiResponse(code = 200, message = "{\"success\":true}", response = Result.class)})
@@ -586,16 +583,22 @@ public class SysController {
             if (Objects.isNull(tbAttachment)) {
                 throw new BusinessException(ExceptionResultEnum.ATTACHMENT_ERROR);
             }
-            List<LinkedMultiValueMap<Integer, Object>> finalList = ExcelUtil.excelReader(file.getInputStream(), Lists.newArrayList(ModuleAndLevelImportDto.class), new ExcelCallback() {
+            List<LinkedMultiValueMap<Integer, Object>> finalList = ExcelUtil.excelReader(file.getInputStream(), Lists.newArrayList(ModuleImportDto.class, LevelImportDto.class), new ExcelCallback() {
                 @Override
                 public List<LinkedMultiValueMap<Integer, Object>> callback(List<LinkedMultiValueMap<Integer, Object>> finalList, List<LinkedMultiValueMap<Integer, String>> finalColumnNameList) throws IllegalAccessException, IOException {
                     List<ExcelError> excelErrorList = new ArrayList<>();
                     for (int i = 0; i < finalList.size(); i++) {
                         LinkedMultiValueMap<Integer, Object> map = finalList.get(i);
-                        List<Object> dimensionImportList = map.get(i);
-                        for (int y = 0; y < dimensionImportList.size(); y++) {
-                            ModuleAndLevelImportDto moduleImportDto = (ModuleAndLevelImportDto) dimensionImportList.get(y);
-                            List<ExcelError> excelErrorTemp = ExcelUtil.checkExcelField(moduleImportDto, y, i);
+                        List<Object> moduleLevelImportList = map.get(i);
+                        for (int y = 0; y < moduleLevelImportList.size(); y++) {
+                            List<ExcelError> excelErrorTemp = null;
+                            if (moduleLevelImportList.get(y) instanceof ModuleImportDto) {
+                                ModuleImportDto moduleImportDto = (ModuleImportDto) moduleLevelImportList.get(y);
+                                excelErrorTemp = ExcelUtil.checkExcelField(moduleImportDto, y, i);
+                            } else if (moduleLevelImportList.get(y) instanceof LevelImportDto) {
+                                LevelImportDto levelImportDto = (LevelImportDto) moduleLevelImportList.get(y);
+                                excelErrorTemp = ExcelUtil.checkExcelField(levelImportDto, y, i);
+                            }
                             if (excelErrorTemp.size() > 0) {
                                 excelErrorList.addAll(excelErrorTemp);
                             }
@@ -627,13 +630,17 @@ public class SysController {
                         List subList = moduleImportDtoList.subList(min, max);
                         for (int y = 0; y < subList.size(); y++) {
                             line++;
-                            ModuleAndLevelImportDto moduleImportDto = (ModuleAndLevelImportDto) subList.get(y);
-                            if (!moduleMap.containsKey(moduleImportDto.getModuleName())) {
-                                TBModule tbModule = new TBModule(tbSchool.getId(), ModuleEnum.convertToCode(moduleImportDto.getModuleName()), moduleImportDto.getModuleName(), moduleImportDto.getDescription(), moduleImportDto.getProficiency(), moduleImportDto.getRemark(), moduleImportDto.getProficiencyDegree());
-                                moduleMap.put(moduleImportDto.getModuleName(), tbModule);
+                            if (subList.get(y) instanceof ModuleImportDto) {
+                                ModuleImportDto moduleImportDto = (ModuleImportDto) subList.get(y);
+                                if (!moduleMap.containsKey(moduleImportDto.getName())) {
+                                    TBModule tbModule = new TBModule(tbSchool.getId(), moduleImportDto.getName(), ModuleEnum.convertToName(moduleImportDto.getName()), moduleImportDto.getDescription(), moduleImportDto.getProficiency(), moduleImportDto.getRemark(), moduleImportDto.getProficiencyDegree());
+                                    moduleMap.put(moduleImportDto.getName(), tbModule);
+                                }
+                            } else if (subList.get(y) instanceof LevelImportDto) {
+                                LevelImportDto levelImportDto = (LevelImportDto) subList.get(y);
+                                TBLevel tbLevel = new TBLevel(tbSchool.getId(), moduleMap.get(levelImportDto.getModuleName()).getId(), levelImportDto.getCode(), levelImportDto.getLevel(), levelImportDto.getLevelDegree(), levelImportDto.getDiagnoseResult(), levelImportDto.getLearnAdvice(), levelImportDto.getFormula());
+                                levelMap.add(levelImportDto.getModuleName(), tbLevel);
                             }
-                            TBLevel tbLevel = new TBLevel(moduleMap.get(moduleImportDto.getModuleName()).getId(), moduleImportDto.getCode(), moduleImportDto.getLevel(), moduleImportDto.getRule(), moduleImportDto.getLevelDegree(), moduleImportDto.getDiagnoseResult(), moduleImportDto.getLearnAdvice());
-                            levelMap.add(moduleImportDto.getModuleName(), tbLevel);
                         }
                         if (max == size) {
                             break;
@@ -645,8 +652,8 @@ public class SysController {
                         }
                     }
                 }
-                tbModuleService.deleteAll();
-                tbLevelService.deleteAll();
+                tbModuleService.deleteAll(tbSchool.getId(), new HashSet<String>(moduleMap.keySet()));
+                tbLevelService.deleteAll(tbSchool.getId());
 
                 List<TBModule> moduleList = new ArrayList<>();
                 List<TBLevel> tbLevelList = new ArrayList<>();
