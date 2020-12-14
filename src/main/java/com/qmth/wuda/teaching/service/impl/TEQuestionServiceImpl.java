@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.qmth.wuda.teaching.dao.TEQuestionMapper;
 import com.qmth.wuda.teaching.entity.TEQuestion;
 import com.qmth.wuda.teaching.service.TEQuestionService;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -24,9 +25,15 @@ public class TEQuestionServiceImpl extends ServiceImpl<TEQuestionMapper, TEQuest
     @Resource
     TEQuestionMapper teQuestionMapper;
 
+    /**
+     * 根据试卷id删除题目
+     *
+     * @param paperId
+     */
     @Override
-    public void deleteAll() {
-        teQuestionMapper.deleteAll();
+    @CacheEvict(value = "question_cache", key = "#paperId")
+    public void deleteAll(Long paperId) {
+        teQuestionMapper.deleteAll(paperId);
     }
 
     /**

@@ -18,7 +18,12 @@ import java.util.List;
 @Mapper
 public interface TEQuestionMapper extends BaseMapper<TEQuestion> {
 
-    void deleteAll();
+    /**
+     * 根据试卷id删除题目
+     *
+     * @param paperId
+     */
+    void deleteAll(@Param("paperId") Long paperId);
 
     /**
      * 根据试卷id查询题目

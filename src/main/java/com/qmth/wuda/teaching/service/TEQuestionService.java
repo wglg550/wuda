@@ -15,7 +15,12 @@ import java.util.List;
  */
 public interface TEQuestionService extends IService<TEQuestion> {
 
-    void deleteAll();
+    /**
+     * 根据试卷id删除题目
+     *
+     * @param paperId
+     */
+    void deleteAll(Long paperId);
 
     /**
      * 根据试卷id查询题目

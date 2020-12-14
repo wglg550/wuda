@@ -436,7 +436,7 @@ public class SysController {
                     }
                 }
 //                tePaperService.deleteAll();
-                teQuestionService.deleteAll();
+//                teQuestionService.deleteAll();
 //                teExamService.deleteAll();
 
 //                List<TEExam> examList = new ArrayList();
@@ -453,6 +453,7 @@ public class SysController {
 
                 List<TEQuestion> questionList = new ArrayList();
                 questionMap.forEach((k, v) -> {
+                    teQuestionService.deleteAll(k);
                     questionList.addAll(v);
                 });
                 teQuestionService.saveOrUpdateBatch(questionList);
