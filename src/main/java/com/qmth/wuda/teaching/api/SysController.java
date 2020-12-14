@@ -521,7 +521,7 @@ public class SysController {
                             }
                             if (!moduleMap.containsKey(dimensionImportDto.getModuleName())) {
                                 QueryWrapper<TBModule> tbModuleQueryWrapper = new QueryWrapper<>();
-                                tbModuleQueryWrapper.lambda().eq(TBModule::getCode, dimensionImportDto.getModuleName())
+                                tbModuleQueryWrapper.lambda().eq(TBModule::getCode, ModuleEnum.convertToName(dimensionImportDto.getModuleName()).toLowerCase())
                                         .eq(TBModule::getSchoolId, tbSchool.getId());
                                 moduleMap.put(dimensionImportDto.getModuleName(), tbModuleService.getOne(tbModuleQueryWrapper));
                             }
