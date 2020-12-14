@@ -13,9 +13,9 @@ import java.util.Objects;
  * @Author: wangliang
  * @Date: 2020/12/2
  */
-public class PaperAndQuestionImportDto implements Serializable {
+public class QuestionImportDto implements Serializable {
 
-    @ExcelNote(value = "试卷编号")
+    @ExcelNote(value = "试卷类型")
     @ExcelNotNull
     private String paperCode;
 
@@ -49,23 +49,11 @@ public class PaperAndQuestionImportDto implements Serializable {
     @ExcelNotNull
     private String courseCode;
 
-    @ExcelNote(value = "考试编码")
-    @ExcelNotNull
-    private String examCode;
-
     @ExcelNote(value = "知识维度")
     private String knowledge;
 
     @ExcelNote(value = "能力维度")
     private String capability;
-
-    public String getExamCode() {
-        return examCode;
-    }
-
-    public void setExamCode(String examCode) {
-        this.examCode = examCode;
-    }
 
     public String getCourseName() {
         return courseName;

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Set;
 
 /**
  * <p>
@@ -24,9 +25,14 @@ public class TBDimensionServiceImpl extends ServiceImpl<TBDimensionMapper, TBDim
     @Resource
     TBDimensionMapper tbDimensionMapper;
 
+    /**
+     * 根据模块id删除维度
+     *
+     * @param moduleIds
+     */
     @Override
-    public void deleteAll() {
-        tbDimensionMapper.deleteAll();
+    public void deleteAll(Set<Long> moduleIds) {
+        tbDimensionMapper.deleteAll(moduleIds);
     }
 
     /**

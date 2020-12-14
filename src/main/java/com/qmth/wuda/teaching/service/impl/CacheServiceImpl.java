@@ -87,7 +87,7 @@ public class CacheServiceImpl implements CacheService {
         if (Objects.isNull(examStudentDto)) {
             throw new BusinessException("考生信息为空");
         }
-        TEPaper tePaper = tePaperService.findByExamIdAndCourseCode(examStudentDto.getExamId(), examStudentDto.getCourseCode());
+        TEPaper tePaper = tePaperService.findByExamIdAndCodeAndCourseCode(examStudentDto.getExamId(), examStudentDto.getPaperCode(), examStudentDto.getCourseCode());
         if (Objects.isNull(tePaper)) {
             throw new BusinessException("试卷信息为空");
         }

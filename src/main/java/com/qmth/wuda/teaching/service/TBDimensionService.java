@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.qmth.wuda.teaching.entity.TBDimension;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * <p>
@@ -15,7 +16,12 @@ import java.util.List;
  */
 public interface TBDimensionService extends IService<TBDimension> {
 
-    void deleteAll();
+    /**
+     * 根据模块id删除维度
+     *
+     * @param moduleIds
+     */
+    void deleteAll(Set<Long> moduleIds);
 
     /**
      * 根据模块id和科目编码查找维度信息

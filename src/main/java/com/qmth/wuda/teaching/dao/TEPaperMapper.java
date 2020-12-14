@@ -1,7 +1,7 @@
 package com.qmth.wuda.teaching.dao;
 
-import com.qmth.wuda.teaching.entity.TEPaper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.qmth.wuda.teaching.entity.TEPaper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -16,14 +16,21 @@ import org.apache.ibatis.annotations.Param;
 @Mapper
 public interface TEPaperMapper extends BaseMapper<TEPaper> {
 
-    void deleteAll();
+    /**
+     * 根据考试id和试卷code和科目编码删除试卷
+     *
+     * @param examId
+     * @param code
+     * @param courseCode
+     */
+    void deleteAll(@Param("examId") Long examId, @Param("code") String code, @Param("courseCode") String courseCode);
 
     /**
-     * 根据考试id和科目编码查询试卷
+     * 根据考试id和试卷code和科目编码查询试卷
      *
      * @param examId
      * @param courseCode
      * @return
      */
-    TEPaper findByExamIdAndCourseCode(@Param("examId") Long examId, @Param("courseCode") String courseCode);
+    TEPaper findByExamIdAndCodeAndCourseCode(@Param("examId") Long examId, @Param("code") String code, @Param("courseCode") String courseCode);
 }

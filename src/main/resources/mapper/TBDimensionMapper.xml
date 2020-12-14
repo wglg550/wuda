@@ -4,6 +4,14 @@
 
     <delete id="deleteAll">
         delete t from t_b_dimension t
+        <where>
+            <if test="moduleIds != null">
+                and t.module_id in
+                <foreach collection="moduleIds" item="moduleId" index="index" open="(" close=")" separator=",">
+                    #{moduleId}
+                </foreach>
+            </if>
+        </where>
     </delete>
 
     <select id="findByModuleIdAndCourseCode" resultType="com.qmth.wuda.teaching.entity.TBDimension">

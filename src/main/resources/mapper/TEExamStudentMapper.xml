@@ -26,7 +26,8 @@
         tep.pass_score as passScore,
         tep.contribution_score as contributionScore,
         tee.contribution,
-        teer.id as examRecordId
+        teer.id as examRecordId,
+        tep.code as paperCode
         from
         t_e_exam_record teer
         left join t_e_exam_student tees on

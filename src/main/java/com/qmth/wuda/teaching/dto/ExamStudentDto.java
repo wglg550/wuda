@@ -53,6 +53,17 @@ public class ExamStudentDto extends ExamStudentCommonDto implements Serializable
     @ApiModelProperty(value = "是否赋分，0：不启用，1：启用")
     private Integer contribution;
 
+    @ApiModelProperty(value = "试卷编码")
+    private String paperCode;
+
+    public String getPaperCode() {
+        return paperCode;
+    }
+
+    public void setPaperCode(String paperCode) {
+        this.paperCode = paperCode;
+    }
+
     public Integer getContribution() {
         return contribution;
     }

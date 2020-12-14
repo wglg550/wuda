@@ -1,7 +1,9 @@
 package com.qmth.wuda.teaching.service;
 
-import com.qmth.wuda.teaching.entity.TECourse;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.qmth.wuda.teaching.entity.TECourse;
+
+import java.util.Set;
 
 /**
  * <p>
@@ -13,5 +15,11 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface TECourseService extends IService<TECourse> {
 
-    void deleteAll();
+    /**
+     * 根据学校id和科目代码删除科目
+     *
+     * @param schoolId
+     * @param courseCodes
+     */
+    void deleteAll(Long schoolId, Set<String> courseCodes);
 }

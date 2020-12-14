@@ -23,21 +23,29 @@ public class TEPaperServiceImpl extends ServiceImpl<TEPaperMapper, TEPaper> impl
     @Resource
     TEPaperMapper tePaperMapper;
 
+    /**
+     * 根据考试id和试卷code和科目编码删除试卷
+     *
+     * @param examId
+     * @param code
+     * @param courseCode
+     */
     @Override
-    public void deleteAll() {
-        tePaperMapper.deleteAll();
+    public void deleteAll(Long examId, String code, String courseCode) {
+        tePaperMapper.deleteAll(examId, code, courseCode);
     }
 
     /**
-     * 根据考试id和科目编码查询试卷
+     * 根据考试id和试卷code和科目编码查询试卷
      *
      * @param examId
+     * @param code
      * @param courseCode
      * @return
      */
     @Override
-    @Cacheable(value = "paper_cache", key = "#examId + '-' + #courseCode", unless = "#result == null")
-    public TEPaper findByExamIdAndCourseCode(Long examId, String courseCode) {
-        return tePaperMapper.findByExamIdAndCourseCode(examId, courseCode);
+    @Cacheable(value = "paper_cache", key = "#examId + '-' + #code + '-' + #courseCode", unless = "#result == null")
+    public TEPaper findByExamIdAndCodeAndCourseCode(Long examId, String code, String courseCode) {
+        return tePaperMapper.findByExamIdAndCodeAndCourseCode(examId, code, courseCode);
     }
 }

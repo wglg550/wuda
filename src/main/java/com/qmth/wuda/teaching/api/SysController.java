@@ -356,16 +356,22 @@ public class SysController {
             if (Objects.isNull(tbAttachment)) {
                 throw new BusinessException(ExceptionResultEnum.ATTACHMENT_ERROR);
             }
-            List<LinkedMultiValueMap<Integer, Object>> finalList = ExcelUtil.excelReader(file.getInputStream(), Lists.newArrayList(PaperAndQuestionImportDto.class), new ExcelCallback() {
+            List<LinkedMultiValueMap<Integer, Object>> finalList = ExcelUtil.excelReader(file.getInputStream(), Lists.newArrayList(PaperImportDto.class, QuestionImportDto.class), new ExcelCallback() {
                 @Override
                 public List<LinkedMultiValueMap<Integer, Object>> callback(List<LinkedMultiValueMap<Integer, Object>> finalList, List<LinkedMultiValueMap<Integer, String>> finalColumnNameList) throws IllegalAccessException, IOException {
                     List<ExcelError> excelErrorList = new ArrayList<>();
                     for (int i = 0; i < finalList.size(); i++) {
                         LinkedMultiValueMap<Integer, Object> map = finalList.get(i);
-                        List<Object> paperAndQuestionImportDtoList = map.get(i);
-                        for (int y = 0; y < paperAndQuestionImportDtoList.size(); y++) {
-                            PaperAndQuestionImportDto paperAndQuestionImportDto = (PaperAndQuestionImportDto) paperAndQuestionImportDtoList.get(y);
-                            List<ExcelError> excelErrorTemp = ExcelUtil.checkExcelField(paperAndQuestionImportDto, y, i);
+                        List<Object> paperQuestionImportDtoList = map.get(i);
+                        for (int y = 0; y < paperQuestionImportDtoList.size(); y++) {
+                            List<ExcelError> excelErrorTemp = null;
+                            if (paperQuestionImportDtoList.get(y) instanceof PaperImportDto) {
+                                PaperImportDto paperImportDto = (PaperImportDto) paperQuestionImportDtoList.get(y);
+                                excelErrorTemp = ExcelUtil.checkExcelField(paperImportDto, y, i);
+                            } else if (paperQuestionImportDtoList.get(y) instanceof QuestionImportDto) {
+                                QuestionImportDto questionImportDto = (QuestionImportDto) paperQuestionImportDtoList.get(y);
+                                excelErrorTemp = ExcelUtil.checkExcelField(questionImportDto, y, i);
+                            }
                             if (excelErrorTemp.size() > 0) {
                                 excelErrorList.addAll(excelErrorTemp);
                             }
@@ -385,30 +391,39 @@ public class SysController {
                 TBSchool tbSchool = tbSchoolService.getOne(tbSchoolQueryWrapper);
                 Map<String, TEPaper> paperMap = new LinkedHashMap<>();
                 LinkedMultiValueMap<Long, TEQuestion> questionMap = new LinkedMultiValueMap<>();
-                Map<String, TEExam> examMap = new LinkedHashMap<>();
+//                Map<String, TEExam> examMap = new LinkedHashMap<>();
                 for (int i = 0; i < finalList.size(); i++) {
                     LinkedMultiValueMap<Integer, Object> finalMap = finalList.get(i);
-                    List<Object> paperImportDtoList = finalMap.get(i);
+                    List<Object> paperQuestionImportDtoList = finalMap.get(i);
                     int min = 0;
-                    int max = SystemConstant.MAX_IMPORT_SIZE, size = paperImportDtoList.size();
+                    int max = SystemConstant.MAX_IMPORT_SIZE, size = paperQuestionImportDtoList.size();
                     if (max >= size) {
                         max = size;
                     }
                     while (max <= size) {
-                        List subList = paperImportDtoList.subList(min, max);
+                        List subList = paperQuestionImportDtoList.subList(min, max);
                         for (int y = 0; y < subList.size(); y++) {
                             line++;
-                            PaperAndQuestionImportDto paperAndQuestionImportDto = (PaperAndQuestionImportDto) subList.get(y);
-                            if (!examMap.containsKey(paperAndQuestionImportDto.getExamCode())) {
-                                TEExam teExam = new TEExam(tbSchool.getId(), paperAndQuestionImportDto.getExamCode(), paperAndQuestionImportDto.getExamCode(), System.currentTimeMillis(), System.currentTimeMillis());
-                                examMap.put(paperAndQuestionImportDto.getExamCode(), teExam);
+                            if (subList.get(y) instanceof PaperImportDto) {
+                                PaperImportDto paperImportDto = (PaperImportDto) paperQuestionImportDtoList.get(y);
+                                if (!paperMap.containsKey(paperImportDto.getPaperCode() + "_" + paperImportDto.getCourseCode())) {
+                                    TEPaper tePaper = new TEPaper(paperImportDto.getCourseName(), paperImportDto.getCourseCode(), paperImportDto.getPaperCode(), paperImportDto.getPaperCode(), new BigDecimal(paperImportDto.getTotalScore()), new BigDecimal(paperImportDto.getPassScore()), Objects.nonNull(paperImportDto.getContribution()) && Objects.equals(paperImportDto.getContribution(), "是") ? 1 : 0, Objects.nonNull(paperImportDto.getContributionScore()) ? new BigDecimal(paperImportDto.getContributionScore()) : new BigDecimal(0));
+                                    paperMap.put(paperImportDto.getPaperCode() + "_" + paperImportDto.getCourseCode(), tePaper);
+                                }
+                            } else if (subList.get(y) instanceof QuestionImportDto) {
+                                QuestionImportDto questionImportDto = (QuestionImportDto) paperQuestionImportDtoList.get(y);
+                                TEQuestion teQuestion = new TEQuestion(paperMap.get(questionImportDto.getPaperCode() + "_" + questionImportDto.getCourseCode()).getId(), Integer.parseInt(questionImportDto.getMainNumber()), Integer.parseInt(questionImportDto.getSubNumber()), questionImportDto.getType(), new BigDecimal(questionImportDto.getScore()), questionImportDto.getRule(), questionImportDto.getDescription(), questionImportDto.getKnowledge(), questionImportDto.getCapability());
+                                questionMap.add(paperMap.get(questionImportDto.getPaperCode() + "_" + questionImportDto.getCourseCode()).getId(), teQuestion);
                             }
-                            if (!paperMap.containsKey(paperAndQuestionImportDto.getPaperCode())) {
-                                TEPaper tePaper = new TEPaper(examMap.get(paperAndQuestionImportDto.getExamCode()).getId(), paperAndQuestionImportDto.getCourseName(), paperAndQuestionImportDto.getCourseCode(), paperAndQuestionImportDto.getPaperCode(), paperAndQuestionImportDto.getPaperCode(), new BigDecimal(100), new BigDecimal(60));
-                                paperMap.put(paperAndQuestionImportDto.getPaperCode(), tePaper);
-                            }
-                            TEQuestion teQuestion = new TEQuestion(paperMap.get(paperAndQuestionImportDto.getPaperCode()).getId(), Integer.parseInt(paperAndQuestionImportDto.getMainNumber()), Integer.parseInt(paperAndQuestionImportDto.getSubNumber()), paperAndQuestionImportDto.getType(), new BigDecimal(paperAndQuestionImportDto.getScore()), paperAndQuestionImportDto.getRule(), paperAndQuestionImportDto.getDescription(), paperAndQuestionImportDto.getKnowledge(), paperAndQuestionImportDto.getCapability());
-                            questionMap.add(paperMap.get(paperAndQuestionImportDto.getPaperCode()).getId(), teQuestion);
+//                            QuestionImportDto paperAndQuestionImportDto = (QuestionImportDto) subList.get(y);
+//                            if (!examMap.containsKey(paperAndQuestionImportDto.getExamCode())) {
+//                                TEExam teExam = new TEExam(tbSchool.getId(), paperAndQuestionImportDto.getExamCode(), paperAndQuestionImportDto.getExamCode(), System.currentTimeMillis(), System.currentTimeMillis());
+//                                examMap.put(paperAndQuestionImportDto.getExamCode(), teExam);
+//                            }
+//                            if (!paperMap.containsKey(paperAndQuestionImportDto.getPaperCode())) {
+//                                TEPaper tePaper = new TEPaper(examMap.get(paperAndQuestionImportDto.getExamCode()).getId(), paperAndQuestionImportDto.getCourseName(), paperAndQuestionImportDto.getCourseCode(), paperAndQuestionImportDto.getPaperCode(), paperAndQuestionImportDto.getPaperCode(), new BigDecimal(100), new BigDecimal(60));
+//                                paperMap.put(paperAndQuestionImportDto.getPaperCode(), tePaper);
+//                            }
                         }
                         if (max == size) {
                             break;
@@ -420,27 +435,27 @@ public class SysController {
                         }
                     }
                 }
-                tePaperService.deleteAll();
+//                tePaperService.deleteAll();
                 teQuestionService.deleteAll();
-                teExamService.deleteAll();
+//                teExamService.deleteAll();
 
-                List<TEExam> examList = new ArrayList();
-                examMap.forEach((k, v) -> {
-                    examList.add(v);
-                });
-                teExamService.saveBatch(examList);
+//                List<TEExam> examList = new ArrayList();
+//                examMap.forEach((k, v) -> {
+//                    examList.add(v);
+//                });
+//                teExamService.saveOrUpdateBatch(examList);
 
                 List<TEPaper> paperList = new ArrayList();
                 paperMap.forEach((k, v) -> {
                     paperList.add(v);
                 });
-                tePaperService.saveBatch(paperList);
+                tePaperService.saveOrUpdateBatch(paperList);
 
                 List<TEQuestion> questionList = new ArrayList();
                 questionMap.forEach((k, v) -> {
                     questionList.addAll(v);
                 });
-                teQuestionService.saveBatch(questionList);
+                teQuestionService.saveOrUpdateBatch(questionList);
             }
         } catch (Exception e) {
             log.error("请求出错", e);
@@ -538,20 +553,20 @@ public class SysController {
                         }
                     }
                 }
-                teCourseService.deleteAll();
-                tbDimensionService.deleteAll();
+                teCourseService.deleteAll(tbSchool.getId(), new HashSet<>(courseMap.keySet()));
+                tbDimensionService.deleteAll(new HashSet<>(dimensionMap.keySet()));
 
                 List<TECourse> courseList = new ArrayList();
                 courseMap.forEach((k, v) -> {
                     courseList.add(v);
                 });
-                teCourseService.saveBatch(courseList);
+                teCourseService.saveOrUpdateBatch(courseList);
 
                 List<TBDimension> tbDimensionList = new ArrayList<>();
                 dimensionMap.forEach((k, v) -> {
                     tbDimensionList.addAll(v);
                 });
-                tbDimensionService.saveBatch(tbDimensionList);
+                tbDimensionService.saveOrUpdateBatch(tbDimensionList);
             }
         } catch (Exception e) {
             log.error("请求出错", e);
@@ -652,7 +667,7 @@ public class SysController {
                         }
                     }
                 }
-                tbModuleService.deleteAll(tbSchool.getId(), new HashSet<String>(moduleMap.keySet()));
+                tbModuleService.deleteAll(tbSchool.getId(), new HashSet<>(moduleMap.keySet()));
                 tbLevelService.deleteAll(tbSchool.getId());
 
                 List<TBModule> moduleList = new ArrayList<>();
@@ -661,8 +676,8 @@ public class SysController {
                     moduleList.add(v);
                     tbLevelList.addAll(levelMap.get(k));
                 });
-                tbModuleService.saveBatch(moduleList);
-                tbLevelService.saveBatch(tbLevelList);
+                tbModuleService.saveOrUpdateBatch(moduleList);
+                tbLevelService.saveOrUpdateBatch(tbLevelList);
             }
         } catch (Exception e) {
             log.error("请求出错", e);

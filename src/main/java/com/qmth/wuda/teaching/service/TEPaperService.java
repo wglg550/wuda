@@ -13,14 +13,22 @@ import com.qmth.wuda.teaching.entity.TEPaper;
  */
 public interface TEPaperService extends IService<TEPaper> {
 
-    void deleteAll();
-
     /**
-     * 根据考试id和科目编码查询试卷
+     * 根据考试id和试卷code和科目编码删除试卷
      *
      * @param examId
+     * @param code
+     * @param courseCode
+     */
+    void deleteAll(Long examId, String code, String courseCode);
+
+    /**
+     * 根据考试id和试卷code和科目编码查询试卷
+     *
+     * @param examId
+     * @param code
      * @param courseCode
      * @return
      */
-    TEPaper findByExamIdAndCourseCode(Long examId, String courseCode);
+    TEPaper findByExamIdAndCodeAndCourseCode(Long examId, String code, String courseCode);
 }

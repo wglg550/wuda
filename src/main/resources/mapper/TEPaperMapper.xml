@@ -4,13 +4,27 @@
 
     <delete id="deleteAll">
         delete t from t_e_paper t
+        <where>
+            <if test="examId != null and examId != ''">
+                and t.exam_id = #{examId}
+            </if>
+            <if test="code != null and code != ''">
+                and t.code = #{code}
+            </if>
+            <if test="courseCode != null and courseCode != ''">
+                and t.course_code = #{courseCode}
+            </if>
+        </where>
     </delete>
 
-    <select id="findByExamIdAndCourseCode" resultType="com.qmth.wuda.teaching.entity.TEPaper">
+    <select id="findByExamIdAndCodeAndCourseCode" resultType="com.qmth.wuda.teaching.entity.TEPaper">
         select * from t_e_paper tep
         <where>
             <if test="examId != null and examId != ''">
                 and tep.exam_id = #{examId}
+            </if>
+            <if test="code != null and code != ''">
+                and tep.code = #{code}
             </if>
             <if test="courseCode != null and courseCode != ''">
                 and tep.course_code = #{courseCode}
