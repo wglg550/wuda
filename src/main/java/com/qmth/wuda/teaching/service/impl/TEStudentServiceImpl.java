@@ -29,15 +29,15 @@ public class TEStudentServiceImpl extends ServiceImpl<TEStudentMapper, TEStudent
     }
 
     /**
-     * 根据学号(身份证号)获取学生信息
+     * 根据学号获取学生信息
      *
-     * @param studentNo
+     * @param studentCode
      * @return
      */
     @Override
-    public TEStudent findByStudentNo(String studentNo) {
+    public TEStudent findByStudentCode(String studentCode) {
         QueryWrapper<TEStudent> teStudentQueryWrapper = new QueryWrapper<>();
-        teStudentQueryWrapper.lambda().eq(TEStudent::getIdentity, studentNo);
+        teStudentQueryWrapper.lambda().eq(TEStudent::getStudentCode, studentCode);
         return this.getOne(teStudentQueryWrapper);
     }
 }

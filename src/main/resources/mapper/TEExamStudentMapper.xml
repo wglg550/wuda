@@ -76,7 +76,9 @@
     <select id="findByStudentIdAndExamId" resultType="com.qmth.wuda.teaching.dto.ExamCourseDto">
         select
         DISTINCT tees.course_name as courseName,
-        tees.course_code as courseCode
+        tees.course_code as courseCode,
+        tees.miss,
+        tees.id as examStudentId
         from
         t_e_exam_student tees
         <where>

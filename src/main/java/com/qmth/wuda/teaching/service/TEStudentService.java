@@ -16,10 +16,10 @@ public interface TEStudentService extends IService<TEStudent> {
     void deleteAll();
 
     /**
-     * 根据学号(身份证号)获取学生信息
+     * 根据学号获取学生信息
      *
-     * @param studentNo
+     * @param studentCode
      * @return
      */
-    TEStudent findByStudentNo(String studentNo);
+    TEStudent findByStudentCode(String studentCode);
 }

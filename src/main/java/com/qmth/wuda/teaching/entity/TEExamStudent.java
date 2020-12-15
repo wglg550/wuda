@@ -51,12 +51,12 @@ public class TEExamStudent extends BaseEntity implements Serializable {
     private String name;
 
     @ApiModelProperty(value = "学号")
-    @TableField(value = "identity")
-    private String identity;
+    @TableField(value = "student_code")
+    private String studentCode;
 
     @ApiModelProperty(value = "准考证号")
-    @TableField(value = "idcard_number")
-    private String idcardNumber;
+    @TableField(value = "exam_number")
+    private String examNumber;
 
     @ApiModelProperty(value = "年级")
     @TableField(value = "grade")
@@ -83,7 +83,7 @@ public class TEExamStudent extends BaseEntity implements Serializable {
 
     }
 
-    public TEExamStudent(Long examId, Long studentId, Long collegeId, Long majorId, String courseName, String courseCode, String name, String identity, String idcardNumber, Integer miss, String classNo) {
+    public TEExamStudent(Long examId, Long studentId, Long collegeId, Long majorId, String courseName, String courseCode, String name, String studentCode, String examNumber, Integer miss, String classNo) {
         setId(UidUtil.nextId());
         this.examId = examId;
         this.studentId = studentId;
@@ -92,8 +92,8 @@ public class TEExamStudent extends BaseEntity implements Serializable {
         this.courseName = courseName;
         this.courseCode = courseCode;
         this.name = name;
-        this.identity = identity;
-        this.idcardNumber = idcardNumber;
+        this.studentCode = studentCode;
+        this.examNumber = examNumber;
         this.miss = miss;
         this.classNo = classNo;
         this.enable = 1;
@@ -151,20 +151,20 @@ public class TEExamStudent extends BaseEntity implements Serializable {
         this.name = name;
     }
 
-    public String getIdentity() {
-        return identity;
+    public String getStudentCode() {
+        return studentCode;
     }
 
-    public void setIdentity(String identity) {
-        this.identity = identity;
+    public void setStudentCode(String studentCode) {
+        this.studentCode = studentCode;
     }
 
-    public String getIdcardNumber() {
-        return idcardNumber;
+    public String getExamNumber() {
+        return examNumber;
     }
 
-    public void setIdcardNumber(String idcardNumber) {
-        this.idcardNumber = idcardNumber;
+    public void setExamNumber(String examNumber) {
+        this.examNumber = examNumber;
     }
 
     public String getGrade() {

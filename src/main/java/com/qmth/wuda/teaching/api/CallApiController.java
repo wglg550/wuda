@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import javax.management.Query;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,14 +50,14 @@ public class CallApiController {
     @ApiResponses({@ApiResponse(code = 200, message = "{\"success\":true}", response = Result.class)})
     public Result studentInfo(
             @ApiJsonObject(name = "callStudentInfo", value = {
-                    @ApiJsonProperty(key = "studentNo", description = "身份证号")
+                    @ApiJsonProperty(key = "studentCode", description = "学号")
             })
             @ApiParam(value = "获取学生信息", required = true) @RequestBody Map<String, Object> mapParameter) {
-        if (Objects.isNull(mapParameter.get("studentNo")) || Objects.equals(mapParameter.get("studentNo"), "")) {
-            throw new BusinessException("学生身份证号不能为空");
+        if (Objects.isNull(mapParameter.get("studentCode")) || Objects.equals(mapParameter.get("studentCode"), "")) {
+            throw new BusinessException("学号不能为空");
         }
-        String studentNo = (String) mapParameter.get("studentNo");
-        return ResultUtil.ok(teStudentService.findByStudentNo(studentNo));
+        String studentCode = (String) mapParameter.get("studentCode");
+        return ResultUtil.ok(teStudentService.findByStudentCode(studentCode));
     }
 
     @ApiOperation(value = "获取考生科目接口")
@@ -107,10 +106,16 @@ public class CallApiController {
         } else if (Objects.nonNull(examCode)) {
             params.put("examCode", examCode);
         }
+        TEExam teExam = null;
+        if (Objects.nonNull(examId)) {
+            teExam = teExamService.getById(examId);
+        } else {
+            QueryWrapper<TEExam> teExamQueryWrapper = new QueryWrapper<>();
+            teExamQueryWrapper.lambda().eq(TEExam::getCode, examCode);
+            teExam = teExamService.getOne(teExamQueryWrapper);
+        }
         Long timestamp = System.currentTimeMillis();
-        String accessKey = "a063f96182164154bf7428b3cb0fadf2";
-        String accessSecret = "M6SCQbJELhbtshzG6Kyz8jvh";
-        String test = SignatureInfo.build(SignatureType.SECRET, SystemConstant.METHOD, dictionaryConfig.yunMarkDomain().getStudentScoreApi(), timestamp, accessKey, accessSecret);
+        String test = SignatureInfo.build(SignatureType.SECRET, SystemConstant.METHOD, dictionaryConfig.yunMarkDomain().getStudentScoreApi(), timestamp, teExam.getAccessKey(), teExam.getAccessSecret());
         String result = HttpUtil.post(url, params, test, timestamp);
         List<Map> students = JSONObject.parseArray(JSONObject.toJSON(result).toString(), Map.class);
         return ResultUtil.ok(students);
