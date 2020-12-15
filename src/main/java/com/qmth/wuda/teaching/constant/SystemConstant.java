@@ -1,7 +1,10 @@
 package com.qmth.wuda.teaching.constant;
 
+import org.apache.commons.lang3.RandomStringUtils;
+
 import java.io.File;
 import java.util.StringJoiner;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -61,5 +64,13 @@ public class SystemConstant {
         Pattern pat = Pattern.compile(reg);
         Matcher mat = pat.matcher(value);
         return mat.replaceAll("");
+    }
+
+    public static String randomString(int length) {
+        return RandomStringUtils.random(length, true, true);
+    }
+
+    public static String uuidString() {
+        return UUID.randomUUID().toString().replaceAll("-", "");
     }
 }

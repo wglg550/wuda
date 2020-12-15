@@ -26,9 +26,9 @@ public interface TEExamService extends IService<TEExam> {
      *
      * @param examId
      * @param examCode
-     * @param collegeName
      * @param accessKey
      * @param accessSecret
+     * @return
      */
-    void saveExam(Long examId, String examCode, String collegeName, String accessKey, String accessSecret);
+    TEExam saveExam(Long examId, String examCode, String accessKey, String accessSecret);
 }

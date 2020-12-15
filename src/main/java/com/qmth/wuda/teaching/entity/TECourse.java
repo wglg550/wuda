@@ -25,9 +25,9 @@ public class TECourse extends BaseEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @JsonSerialize(using = ToStringSerializer.class)
-    @ApiModelProperty(value = "学校id")
-    @TableField(value = "school_id")
-    private Long schoolId;
+    @ApiModelProperty(value = "考试id")
+    @TableField(value = "exam_id")
+    private Long examId;
 
     @ApiModelProperty(value = "科目名称")
     @TableField(value = "course_name")
@@ -41,9 +41,9 @@ public class TECourse extends BaseEntity implements Serializable {
 
     }
 
-    public TECourse(Long schoolId, String courseName, String courseCode) {
+    public TECourse(Long examId, String courseName, String courseCode) {
         setId(UidUtil.nextId());
-        this.schoolId = schoolId;
+        this.examId = examId;
         this.courseName = courseName;
         this.courseCode = courseCode;
     }
@@ -52,12 +52,12 @@ public class TECourse extends BaseEntity implements Serializable {
         return serialVersionUID;
     }
 
-    public Long getSchoolId() {
-        return schoolId;
+    public Long getExamId() {
+        return examId;
     }
 
-    public void setSchoolId(Long schoolId) {
-        this.schoolId = schoolId;
+    public void setExamId(Long examId) {
+        this.examId = examId;
     }
 
     public String getCourseName() {

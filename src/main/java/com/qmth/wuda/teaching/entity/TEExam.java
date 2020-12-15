@@ -1,8 +1,6 @@
 package com.qmth.wuda.teaching.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.qmth.wuda.teaching.base.BaseEntity;
 import com.qmth.wuda.teaching.util.UidUtil;
 import io.swagger.annotations.ApiModel;
@@ -23,16 +21,6 @@ public class TEExam extends BaseEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @JsonSerialize(using = ToStringSerializer.class)
-    @ApiModelProperty(value = "学校id")
-    @TableField(value = "school_id")
-    private Long schoolId;
-
-    @JsonSerialize(using = ToStringSerializer.class)
-    @ApiModelProperty(value = "学院id")
-    @TableField(value = "college_id")
-    private Long collegeId;
-
     @ApiModelProperty(value = "名称")
     @TableField(value = "name")
     private String name;
@@ -41,62 +29,58 @@ public class TEExam extends BaseEntity implements Serializable {
     @TableField(value = "code")
     private String code;
 
-    @ApiModelProperty(value = "开始时间")
-    @TableField(value = "start_time")
-    private Long startTime;
-
-    @ApiModelProperty(value = "结束时间")
-    @TableField(value = "end_time")
-    private Long endTime;
-
     @ApiModelProperty(value = "是否启用，0：停用，1：启用")
     @TableField(value = "enable")
     private Integer enable;
 
-    @ApiModelProperty(value = "是否赋分，0：不启用，1：启用")
-    @TableField(value = "contribution")
-    private Integer contribution;
+    @ApiModelProperty(value = "密钥key")
+    @TableField(value = "access_key")
+    private String accessKey;
+
+    @ApiModelProperty(value = "密钥secret")
+    @TableField(value = "access_secret")
+    private String accessSecret;
 
     public TEExam() {
 
     }
 
-    public TEExam(Long schoolId, String name, String code) {
-        setId(UidUtil.nextId());
-        this.schoolId = schoolId;
+    public TEExam(Long examId, String name, String code, String accessKey, String accessSecret) {
+        setId(examId);
         this.name = name;
         this.code = code;
-        this.startTime = System.currentTimeMillis();
-        this.endTime = System.currentTimeMillis();
+        this.accessKey = accessKey;
+        this.accessSecret = accessSecret;
         this.enable = 1;
     }
 
-    public Long getCollegeId() {
-        return collegeId;
+    public TEExam(String name, String code, String accessKey, String accessSecret) {
+        setId(UidUtil.nextId());
+        this.accessKey = accessKey;
+        this.accessSecret = accessSecret;
+        this.name = name;
+        this.code = code;
+        this.enable = 1;
     }
 
-    public void setCollegeId(Long collegeId) {
-        this.collegeId = collegeId;
+    public String getAccessKey() {
+        return accessKey;
     }
 
-    public Integer getContribution() {
-        return contribution;
+    public void setAccessKey(String accessKey) {
+        this.accessKey = accessKey;
     }
 
-    public void setContribution(Integer contribution) {
-        this.contribution = contribution;
+    public String getAccessSecret() {
+        return accessSecret;
+    }
+
+    public void setAccessSecret(String accessSecret) {
+        this.accessSecret = accessSecret;
     }
 
     public static long getSerialVersionUID() {
         return serialVersionUID;
-    }
-
-    public Long getSchoolId() {
-        return schoolId;
-    }
-
-    public void setSchoolId(Long schoolId) {
-        this.schoolId = schoolId;
     }
 
     public String getName() {
@@ -113,22 +97,6 @@ public class TEExam extends BaseEntity implements Serializable {
 
     public void setCode(String code) {
         this.code = code;
-    }
-
-    public Long getStartTime() {
-        return startTime;
-    }
-
-    public void setStartTime(Long startTime) {
-        this.startTime = startTime;
-    }
-
-    public Long getEndTime() {
-        return endTime;
-    }
-
-    public void setEndTime(Long endTime) {
-        this.endTime = endTime;
     }
 
     public Integer getEnable() {

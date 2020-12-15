@@ -3,6 +3,8 @@ package com.qmth.wuda.teaching.api;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.google.common.collect.Lists;
+import com.qmth.wuda.teaching.annotation.ApiJsonObject;
+import com.qmth.wuda.teaching.annotation.ApiJsonProperty;
 import com.qmth.wuda.teaching.bean.Result;
 import com.qmth.wuda.teaching.bean.excel.ExcelCallback;
 import com.qmth.wuda.teaching.bean.excel.ExcelError;
@@ -23,10 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
@@ -70,6 +69,9 @@ public class SysController {
 
     @Resource
     TBLevelService tbLevelService;
+
+    @Resource
+    TEExamService teExamService;
 
     @ApiOperation(value = "更新缓存接口")
     @RequestMapping(value = "/updateCache", method = RequestMethod.POST)
@@ -378,7 +380,7 @@ public class SysController {
                             if (subList.get(y) instanceof PaperImportDto) {
                                 PaperImportDto paperImportDto = (PaperImportDto) paperStructImportDtoList.get(y);
                                 if (!paperMap.containsKey(paperImportDto.getPaperCode() + "_" + paperImportDto.getCourseCode())) {
-                                    TEPaper tePaper = new TEPaper(paperImportDto.getCourseName(), paperImportDto.getCourseCode(), paperImportDto.getPaperCode(), paperImportDto.getPaperCode(), new BigDecimal(paperImportDto.getTotalScore()), new BigDecimal(paperImportDto.getPassScore()), Objects.nonNull(paperImportDto.getContribution()) && Objects.equals(paperImportDto.getContribution(), "是") ? 1 : 0, Objects.nonNull(paperImportDto.getContributionScore()) ? new BigDecimal(paperImportDto.getContributionScore()) : new BigDecimal(0));
+                                    TEPaper tePaper = new TEPaper(paperImportDto.getPaperCode(), paperImportDto.getPaperCode(), new BigDecimal(paperImportDto.getTotalScore()), new BigDecimal(paperImportDto.getPassScore()), Objects.nonNull(paperImportDto.getContribution()) && Objects.equals(paperImportDto.getContribution(), "是") ? 1 : 0, Objects.nonNull(paperImportDto.getContributionScore()) ? new BigDecimal(paperImportDto.getContributionScore()) : new BigDecimal(0));
                                     paperMap.put(paperImportDto.getPaperCode() + "_" + paperImportDto.getCourseCode(), tePaper);
                                 }
                             } else if (subList.get(y) instanceof PaperStructImportDto) {
@@ -663,6 +665,39 @@ public class SysController {
                 throw new RuntimeException(e);
             }
         }
+        return ResultUtil.ok(Collections.singletonMap(SystemConstant.SUCCESS, true));
+    }
+
+    @ApiOperation(value = "创建考试信息接口")
+    @RequestMapping(value = "/create/exam", method = RequestMethod.POST)
+    @ApiResponses({@ApiResponse(code = 200, message = "{\"success\":true}", response = Result.class)})
+    public Result createExam(
+            @ApiJsonObject(name = "sysCreateExam", value = {
+                    @ApiJsonProperty(key = "examId", description = "考试id"),
+                    @ApiJsonProperty(key = "examCode", description = "考试编码"),
+                    @ApiJsonProperty(key = "accessKey", description = "密钥key"),
+                    @ApiJsonProperty(key = "accessSecret", description = "密钥secret"),
+            })
+            @ApiParam(value = "创建考试信息", required = true) @RequestBody Map<String, Object> mapParameter) {
+        Long examId = null;
+        String examCode = null;
+        if (Objects.nonNull(mapParameter.get("examId")) && !Objects.equals(mapParameter.get("examId"), "")) {
+            examId = Long.parseLong(String.valueOf(mapParameter.get("examId")));
+        } else if (Objects.nonNull(mapParameter.get("examCode")) && !Objects.equals(mapParameter.get("examCode"), "")) {
+            examCode = (String) mapParameter.get("examCode");
+        }
+        if (Objects.isNull(examId) && Objects.isNull(examCode)) {
+            throw new BusinessException("考试id或考试code必须传一个");
+        }
+        if (Objects.isNull(mapParameter.get("accessKey")) || Objects.equals(mapParameter.get("accessKey"), "")) {
+            throw new BusinessException("密钥key不能为空");
+        }
+        String accessKey = (String) mapParameter.get("accessKey");
+        if (Objects.isNull(mapParameter.get("accessSecret")) || Objects.equals(mapParameter.get("accessSecret"), "")) {
+            throw new BusinessException("密钥secret不能为空");
+        }
+        String accessSecret = (String) mapParameter.get("accessSecret");
+        teExamService.saveExam(examId, examCode, accessKey, accessSecret);
         return ResultUtil.ok(Collections.singletonMap(SystemConstant.SUCCESS, true));
     }
 }

@@ -2,17 +2,19 @@ package com.qmth.wuda.teaching.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.qmth.wuda.teaching.constant.SystemConstant;
 import com.qmth.wuda.teaching.dao.TEExamMapper;
-import com.qmth.wuda.teaching.entity.TBSchool;
-import com.qmth.wuda.teaching.entity.TBSchoolCollege;
 import com.qmth.wuda.teaching.entity.TEExam;
 import com.qmth.wuda.teaching.service.TBSchoolCollegeService;
 import com.qmth.wuda.teaching.service.TBSchoolService;
 import com.qmth.wuda.teaching.service.TEExamService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.time.LocalDate;
 import java.util.Objects;
 
 /**
@@ -25,15 +27,10 @@ import java.util.Objects;
  */
 @Service
 public class TEExamServiceImpl extends ServiceImpl<TEExamMapper, TEExam> implements TEExamService {
+    private final static Logger log = LoggerFactory.getLogger(TEExamServiceImpl.class);
 
     @Resource
     TEExamMapper teExamMapper;
-
-    @Resource
-    TBSchoolService tbSchoolService;
-
-    @Resource
-    TBSchoolCollegeService tbSchoolCollegeService;
 
     /**
      * 根据考试id或考试编码删除考试
@@ -51,42 +48,46 @@ public class TEExamServiceImpl extends ServiceImpl<TEExamMapper, TEExam> impleme
      *
      * @param examId
      * @param examCode
-     * @param collegeName
      * @param accessKey
      * @param accessSecret
+     * @return
      */
     @Override
     @Transactional
-    public void saveExam(Long examId, String examCode, String collegeName, String accessKey, String accessSecret) {
-        QueryWrapper<TBSchool> tbSchoolQueryWrapper = new QueryWrapper<>();
-        tbSchoolQueryWrapper.lambda().eq(TBSchool::getCode, "whdx");
-        TBSchool tbSchool = tbSchoolService.getOne(tbSchoolQueryWrapper);
+    public TEExam saveExam(Long examId, String examCode, String accessKey, String accessSecret) {
         TEExam teExam = null;
+        LocalDate today = LocalDate.now();
+        int year = today.getYear();
+        int month = today.getMonthValue();
+        int nextYear = today.plusYears(1L).getYear();
+        log.info("year:{},nextYear:{},month:{}", year, nextYear, month);
+        String term = "学年上学期期末考试";
+        if (month > 6) {
+            term = "学年下学期期末考试";
+        }
+        String examName = year + "~" + nextYear + term;
         if (Objects.nonNull(examId)) {
             teExam = this.getById(examId);
         } else {
             QueryWrapper<TEExam> teExamQueryWrapper = new QueryWrapper<>();
-            teExamQueryWrapper.lambda().eq(TEExam::getSchoolId, tbSchool.getId())
+            teExamQueryWrapper.lambda().eq(TEExam::getAccessKey, accessKey)
+                    .eq(TEExam::getAccessSecret, accessSecret)
                     .eq(TEExam::getCode, examCode);
             teExam = this.getOne(teExamQueryWrapper);
         }
         if (Objects.isNull(teExam)) {
-            teExam = new TEExam(tbSchool.getId(), "武汉大学考试", examCode);
-        }
-        QueryWrapper<TBSchoolCollege> tbSchoolCollegeQueryWrapper = new QueryWrapper<>();
-        tbSchoolCollegeQueryWrapper.lambda().eq(TBSchoolCollege::getSchoolId, tbSchool.getId())
-                .eq(TBSchoolCollege::getName, collegeName);
-        TBSchoolCollege tbSchoolCollege = tbSchoolCollegeService.getOne(tbSchoolCollegeQueryWrapper);
-        if (Objects.isNull(tbSchoolCollege)) {
-            tbSchoolCollege = new TBSchoolCollege(tbSchool.getId(), collegeName, collegeName, accessKey, accessSecret);
+            if (Objects.nonNull(examId)) {
+                teExam = new TEExam(examId, examName, Objects.isNull(examCode) ? SystemConstant.uuidString() : examCode, accessKey, accessSecret);
+            } else {
+                teExam = new TEExam(examName, Objects.isNull(examCode) ? SystemConstant.uuidString() : examCode, accessKey, accessSecret);
+            }
         } else {
-            tbSchoolCollege.setName(collegeName);
-            tbSchoolCollege.setCode(collegeName);
-            tbSchoolCollege.setAccessKey(accessKey);
-            tbSchoolCollege.setAccessSecret(accessSecret);
+            if (Objects.nonNull(examCode)) {
+                teExam.setCode(examCode);
+                teExam.setName(examName);
+            }
         }
-        teExam.setCollegeId(tbSchoolCollege.getId());
-        tbSchoolCollegeService.saveOrUpdate(tbSchoolCollege);
         this.saveOrUpdate(teExam);
+        return teExam;
     }
 }
