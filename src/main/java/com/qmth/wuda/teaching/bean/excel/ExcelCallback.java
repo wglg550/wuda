@@ -2,7 +2,6 @@ package com.qmth.wuda.teaching.bean.excel;
 
 import org.springframework.util.LinkedMultiValueMap;
 
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -19,7 +18,8 @@ public interface ExcelCallback {
      *
      * @param finalList
      * @param finalColumnNameList
-     * @throws IllegalAccessException ß
+     * @return
+     * @throws IllegalAccessException
      */
-    public List<LinkedMultiValueMap<Integer, Object>> callback(List<LinkedMultiValueMap<Integer, Object>> finalList, List<LinkedMultiValueMap<Integer, String>> finalColumnNameList) throws IllegalAccessException, IOException;
+    public List<LinkedMultiValueMap<Integer, Object>> callback(List<LinkedMultiValueMap<Integer, Object>> finalList, List<LinkedMultiValueMap<Integer, String>> finalColumnNameList) throws IllegalAccessException;
 }

@@ -1,5 +1,7 @@
 package com.qmth.wuda.teaching.bean.excel;
 
+import java.io.Serializable;
+
 /**
  * @Description: excel导入错误
  * @Param:
@@ -7,7 +9,7 @@ package com.qmth.wuda.teaching.bean.excel;
  * @Author: wangliang
  * @Date: 2020/5/20
  */
-public class ExcelError {
+public class ExcelError implements Serializable {
 
     /**
      * 错误行数

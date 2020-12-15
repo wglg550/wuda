@@ -31,7 +31,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -135,7 +134,7 @@ public class SysController {
             }
             List<LinkedMultiValueMap<Integer, Object>> finalList = ExcelUtil.excelReader(file.getInputStream(), Lists.newArrayList(ExamStudentImportDto.class), new ExcelCallback() {
                 @Override
-                public List<LinkedMultiValueMap<Integer, Object>> callback(List<LinkedMultiValueMap<Integer, Object>> finalList, List<LinkedMultiValueMap<Integer, String>> finalColumnNameList) throws IllegalAccessException, IOException {
+                public List<LinkedMultiValueMap<Integer, Object>> callback(List<LinkedMultiValueMap<Integer, Object>> finalList, List<LinkedMultiValueMap<Integer, String>> finalColumnNameList) throws IllegalAccessException {
                     List<ExcelError> excelErrorList = new ArrayList<>();
                     for (int i = 0; i < finalList.size(); i++) {
                         LinkedMultiValueMap<Integer, Object> map = finalList.get(i);
@@ -358,7 +357,7 @@ public class SysController {
             }
             List<LinkedMultiValueMap<Integer, Object>> finalList = ExcelUtil.excelReader(file.getInputStream(), Lists.newArrayList(PaperImportDto.class, QuestionImportDto.class), new ExcelCallback() {
                 @Override
-                public List<LinkedMultiValueMap<Integer, Object>> callback(List<LinkedMultiValueMap<Integer, Object>> finalList, List<LinkedMultiValueMap<Integer, String>> finalColumnNameList) throws IllegalAccessException, IOException {
+                public List<LinkedMultiValueMap<Integer, Object>> callback(List<LinkedMultiValueMap<Integer, Object>> finalList, List<LinkedMultiValueMap<Integer, String>> finalColumnNameList) throws IllegalAccessException {
                     List<ExcelError> excelErrorList = new ArrayList<>();
                     for (int i = 0; i < finalList.size(); i++) {
                         LinkedMultiValueMap<Integer, Object> map = finalList.get(i);
@@ -412,7 +411,7 @@ public class SysController {
                                 }
                             } else if (subList.get(y) instanceof QuestionImportDto) {
                                 QuestionImportDto questionImportDto = (QuestionImportDto) paperQuestionImportDtoList.get(y);
-                                TEQuestion teQuestion = new TEQuestion(paperMap.get(questionImportDto.getPaperCode() + "_" + questionImportDto.getCourseCode()).getId(), Integer.parseInt(questionImportDto.getMainNumber()), Integer.parseInt(questionImportDto.getSubNumber()), questionImportDto.getType(), new BigDecimal(questionImportDto.getScore()), questionImportDto.getRule(), questionImportDto.getDescription(), questionImportDto.getKnowledge(), questionImportDto.getCapability());
+                                TEQuestion teQuestion = new TEQuestion(paperMap.get(questionImportDto.getPaperCode() + "_" + questionImportDto.getCourseCode()).getId(), questionImportDto.getMainNumber().intValue(), questionImportDto.getSubNumber().intValue(), questionImportDto.getType(), new BigDecimal(questionImportDto.getScore()), questionImportDto.getRule(), questionImportDto.getDescription(), questionImportDto.getKnowledge(), questionImportDto.getCapability());
                                 questionMap.add(paperMap.get(questionImportDto.getPaperCode() + "_" + questionImportDto.getCourseCode()).getId(), teQuestion);
                             }
 //                            QuestionImportDto paperAndQuestionImportDto = (QuestionImportDto) subList.get(y);
@@ -447,6 +446,7 @@ public class SysController {
 
                 List<TEPaper> paperList = new ArrayList();
                 paperMap.forEach((k, v) -> {
+                    v.setExamId(1L);
                     paperList.add(v);
                 });
                 tePaperService.saveOrUpdateBatch(paperList);
@@ -490,7 +490,7 @@ public class SysController {
             }
             List<LinkedMultiValueMap<Integer, Object>> finalList = ExcelUtil.excelReader(file.getInputStream(), Lists.newArrayList(DimensionImportDto.class), new ExcelCallback() {
                 @Override
-                public List<LinkedMultiValueMap<Integer, Object>> callback(List<LinkedMultiValueMap<Integer, Object>> finalList, List<LinkedMultiValueMap<Integer, String>> finalColumnNameList) throws IllegalAccessException, IOException {
+                public List<LinkedMultiValueMap<Integer, Object>> callback(List<LinkedMultiValueMap<Integer, Object>> finalList, List<LinkedMultiValueMap<Integer, String>> finalColumnNameList) throws IllegalAccessException {
                     List<ExcelError> excelErrorList = new ArrayList<>();
                     for (int i = 0; i < finalList.size(); i++) {
                         LinkedMultiValueMap<Integer, Object> map = finalList.get(i);
@@ -601,7 +601,7 @@ public class SysController {
             }
             List<LinkedMultiValueMap<Integer, Object>> finalList = ExcelUtil.excelReader(file.getInputStream(), Lists.newArrayList(ModuleImportDto.class, LevelImportDto.class), new ExcelCallback() {
                 @Override
-                public List<LinkedMultiValueMap<Integer, Object>> callback(List<LinkedMultiValueMap<Integer, Object>> finalList, List<LinkedMultiValueMap<Integer, String>> finalColumnNameList) throws IllegalAccessException, IOException {
+                public List<LinkedMultiValueMap<Integer, Object>> callback(List<LinkedMultiValueMap<Integer, Object>> finalList, List<LinkedMultiValueMap<Integer, String>> finalColumnNameList) throws IllegalAccessException {
                     List<ExcelError> excelErrorList = new ArrayList<>();
                     for (int i = 0; i < finalList.size(); i++) {
                         LinkedMultiValueMap<Integer, Object> map = finalList.get(i);

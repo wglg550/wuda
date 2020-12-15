@@ -4,6 +4,7 @@ import com.qmth.wuda.teaching.annotation.ExcelNotNull;
 import com.qmth.wuda.teaching.annotation.ExcelNote;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Objects;
 
 /**
@@ -21,11 +22,11 @@ public class QuestionImportDto implements Serializable {
 
     @ExcelNote(value = "大题号")
     @ExcelNotNull
-    private String mainNumber;
+    private Double mainNumber;
 
     @ExcelNote(value = "小题号")
     @ExcelNotNull
-    private String subNumber;
+    private Double subNumber;
 
     @ExcelNote(value = "反应类型")
     @ExcelNotNull
@@ -33,7 +34,7 @@ public class QuestionImportDto implements Serializable {
 
     @ExcelNote(value = "题目满分")
     @ExcelNotNull
-    private String score;
+    private Double score;
 
     @ExcelNote(value = "计分规则")
     private String rule;
@@ -91,22 +92,6 @@ public class QuestionImportDto implements Serializable {
         this.paperCode = paperCode;
     }
 
-    public String getMainNumber() {
-        return mainNumber;
-    }
-
-    public void setMainNumber(String mainNumber) {
-        this.mainNumber = mainNumber;
-    }
-
-    public String getSubNumber() {
-        return subNumber;
-    }
-
-    public void setSubNumber(String subNumber) {
-        this.subNumber = subNumber;
-    }
-
     public String getType() {
         return type;
     }
@@ -115,11 +100,27 @@ public class QuestionImportDto implements Serializable {
         this.type = type;
     }
 
-    public String getScore() {
+    public Double getMainNumber() {
+        return mainNumber;
+    }
+
+    public void setMainNumber(Double mainNumber) {
+        this.mainNumber = mainNumber;
+    }
+
+    public Double getSubNumber() {
+        return subNumber;
+    }
+
+    public void setSubNumber(Double subNumber) {
+        this.subNumber = subNumber;
+    }
+
+    public Double getScore() {
         return score;
     }
 
-    public void setScore(String score) {
+    public void setScore(Double score) {
         this.score = score;
     }
 

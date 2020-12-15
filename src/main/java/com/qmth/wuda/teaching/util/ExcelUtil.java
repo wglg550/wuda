@@ -38,9 +38,10 @@ public class ExcelUtil {
      * @param clazz
      * @param callback
      * @return
+     * @throws NoSuchFieldException
      * @throws IOException
      */
-    public static List<LinkedMultiValueMap<Integer, Object>> excelReader(InputStream inputStream, List<Class<?>> clazz, ExcelCallback callback) throws IOException, NoSuchFieldException {
+    public static List<LinkedMultiValueMap<Integer, Object>> excelReader(InputStream inputStream, List<Class<?>> clazz, ExcelCallback callback) throws NoSuchFieldException, IOException {
         Object o = null;
         try {
             log.info("开始读取excel里的数据");
@@ -124,7 +125,7 @@ public class ExcelUtil {
         } catch (Exception e) {
             log.error("excel读取报错", e);
             if (e instanceof IllegalArgumentException) {
-                String errorColumn = e.getMessage().toString();
+                String errorColumn = e.getMessage();
                 if (errorColumn.indexOf("Can not set java.lang.String field") != -1 && errorColumn.indexOf("to java.lang.Long") != -1) {
                     String column = errorColumn.substring(errorColumn.indexOf("Can not set java.lang.String field") + 1, errorColumn.indexOf("to java.lang.Long"));
                     column = column.substring(column.lastIndexOf(".") + 1, column.length());
@@ -151,13 +152,17 @@ public class ExcelUtil {
      * @return
      */
     private static Object convert(Cell cell) {
-        switch (cell.getCellType()) {
-            case Cell.CELL_TYPE_STRING:
-                return String.valueOf(cell.getStringCellValue());
-            case Cell.CELL_TYPE_BOOLEAN:
-                return String.valueOf(cell.getBooleanCellValue());
-            case Cell.CELL_TYPE_NUMERIC:
-                return Math.round(cell.getNumericCellValue());
+        switch (cell.getCellTypeEnum()) {
+            case NUMERIC:
+                return cell.getNumericCellValue();
+            case STRING:
+                return cell.getStringCellValue();
+            case FORMULA:
+                return cell.getCellFormula();
+            case BOOLEAN:
+                return cell.getBooleanCellValue();
+            case ERROR:
+                return cell.getErrorCellValue();
         }
         return null;
     }

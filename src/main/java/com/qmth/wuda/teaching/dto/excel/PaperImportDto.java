@@ -5,6 +5,7 @@ import com.qmth.wuda.teaching.annotation.ExcelNote;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Objects;
 
 /**
  * @Description: 试卷和题型导入 dto
@@ -23,15 +24,15 @@ public class PaperImportDto implements Serializable {
     private String contribution;
 
     @ExcelNote(value = "赋分系数")
-    private String contributionScore;
+    private Double contributionScore;
 
     @ExcelNote(value = "及格分")
     @ExcelNotNull
-    private String passScore;
+    private Double passScore;
 
     @ExcelNote(value = "试卷总分")
     @ExcelNotNull
-    private String totalScore;
+    private Double totalScore;
 
     @ExcelNote(value = "科目名称")
     @ExcelNotNull
@@ -73,27 +74,27 @@ public class PaperImportDto implements Serializable {
         this.contribution = contribution;
     }
 
-    public String getContributionScore() {
+    public Double getContributionScore() {
         return contributionScore;
     }
 
-    public void setContributionScore(String contributionScore) {
+    public void setContributionScore(Double contributionScore) {
         this.contributionScore = contributionScore;
     }
 
-    public String getPassScore() {
+    public Double getPassScore() {
         return passScore;
     }
 
-    public void setPassScore(String passScore) {
+    public void setPassScore(Double passScore) {
         this.passScore = passScore;
     }
 
-    public String getTotalScore() {
+    public Double getTotalScore() {
         return totalScore;
     }
 
-    public void setTotalScore(String totalScore) {
+    public void setTotalScore(Double totalScore) {
         this.totalScore = totalScore;
     }
 }
