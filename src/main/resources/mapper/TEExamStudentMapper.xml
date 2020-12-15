@@ -53,9 +53,9 @@
 
     <select id="findByActualCount" resultType="java.lang.Integer">
         select
-            count(1)
+        count(1)
         from
-            t_e_exam_student tees
+        t_e_exam_student tees
         left join t_e_exam tee on tee.id = tees.exam_id
         <where>
             <if test="schoolId != null and schoolId != ''">
@@ -69,6 +69,22 @@
             </if>
             <if test="miss != null and miss != '' or miss == 0">
                 and tees.miss = #{miss}
+            </if>
+        </where>
+    </select>
+
+    <select id="findByStudentIdAndExamId" resultType="com.qmth.wuda.teaching.dto.ExamCourseDto">
+        select
+        DISTINCT tees.course_name as courseName,
+        tees.course_code as courseCode
+        from
+        t_e_exam_student tees
+        <where>
+            <if test="studentId != null and studentId != ''">
+                and tees.student_id = #{studentId}
+            </if>
+            <if test="examId != null and examId != ''">
+                and tees.exam_id = #{examId}
             </if>
         </where>
     </select>

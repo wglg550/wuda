@@ -1,10 +1,13 @@
 package com.qmth.wuda.teaching.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.qmth.wuda.teaching.dto.ExamCourseDto;
 import com.qmth.wuda.teaching.dto.ExamStudentDto;
 import com.qmth.wuda.teaching.entity.TEExamStudent;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * <p>
@@ -36,5 +39,14 @@ public interface TEExamStudentMapper extends BaseMapper<TEExamStudent> {
      * @param miss
      * @return
      */
-    Integer findByActualCount(@Param("schoolId") Long schoolId, @Param("examId") Long examId, @Param("collegeId") Long collegeId,@Param("miss") Integer miss);
+    Integer findByActualCount(@Param("schoolId") Long schoolId, @Param("examId") Long examId, @Param("collegeId") Long collegeId, @Param("miss") Integer miss);
+
+    /**
+     * 根据学生id和考试id获取考试科目
+     *
+     * @param studentId
+     * @param examId
+     * @return
+     */
+    List<ExamCourseDto> findByStudentIdAndExamId(@Param("studentId") Long studentId, @Param("examId") Long examId);
 }
