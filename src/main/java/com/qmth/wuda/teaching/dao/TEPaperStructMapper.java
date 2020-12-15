@@ -1,7 +1,7 @@
 package com.qmth.wuda.teaching.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.qmth.wuda.teaching.entity.TEQuestion;
+import com.qmth.wuda.teaching.entity.TEPaperStruct;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -16,7 +16,7 @@ import java.util.List;
  * @since 2020-12-01
  */
 @Mapper
-public interface TEQuestionMapper extends BaseMapper<TEQuestion> {
+public interface TEPaperStructMapper extends BaseMapper<TEPaperStruct> {
 
     /**
      * 根据试卷id删除题目
@@ -31,5 +31,5 @@ public interface TEQuestionMapper extends BaseMapper<TEQuestion> {
      * @param paperId
      * @return
      */
-    List<TEQuestion> findByPaperId(@Param("paperId") Long paperId);
+    List<TEPaperStruct> findByPaperId(@Param("paperId") Long paperId);
 }

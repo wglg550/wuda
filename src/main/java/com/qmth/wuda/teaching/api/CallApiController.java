@@ -37,14 +37,12 @@ public class CallApiController {
     public Result studentScore(
             @ApiJsonObject(name = "callStudentScore", value = {
                     @ApiJsonProperty(key = "examId", description = "考试id"),
-                    @ApiJsonProperty(key = "examCode", description = "考试code"),
-                    @ApiJsonProperty(key = "collegeCode", description = "学院code", required = true)
+                    @ApiJsonProperty(key = "examCode", description = "考试code")
             })
             @ApiParam(value = "获取考生成绩", required = true) @RequestBody Map<String, Object> mapParameter) {
         if (Objects.isNull(mapParameter.get("collegeCode")) || Objects.equals(mapParameter.get("collegeCode"), "")) {
             throw new BusinessException("学院编码不能为空");
         }
-        String collegeCode = (String) mapParameter.get("collegeCode");
         Long examId = null;
         String examCode = null;
         if (Objects.nonNull(mapParameter.get("examId")) && !Objects.equals(mapParameter.get("examId"), "")) {

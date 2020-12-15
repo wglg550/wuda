@@ -15,7 +15,6 @@ import com.qmth.wuda.teaching.enums.UploadFileEnum;
 import com.qmth.wuda.teaching.exception.BusinessException;
 import com.qmth.wuda.teaching.service.*;
 import com.qmth.wuda.teaching.util.ExcelUtil;
-import com.qmth.wuda.teaching.util.JacksonUtil;
 import com.qmth.wuda.teaching.util.ResultUtil;
 import com.qmth.wuda.teaching.util.ServletUtil;
 import io.swagger.annotations.*;
@@ -64,37 +63,10 @@ public class SysController {
     TBDimensionService tbDimensionService;
 
     @Resource
-    TEExamService teExamService;
-
-    @Resource
     TEPaperService tePaperService;
 
     @Resource
-    TEQuestionService teQuestionService;
-
-    @Resource
-    TBSchoolCollegeService tbSchoolCollegeService;
-
-    @Resource
-    TEStudentService teStudentService;
-
-    @Resource
-    TEExamStudentService teExamStudentService;
-
-    @Resource
-    TBMajorService tbMajorService;
-
-    @Resource
-    TBTeacherService tbTeacherService;
-
-    @Resource
-    TBTeacherExamStudentService tbTeacherExamStudentService;
-
-    @Resource
-    TEExamRecordService teExamRecordService;
-
-    @Resource
-    TEAnswerService teAnswerService;
+    TEPaperStructService tePaperStructService;
 
     @Resource
     TBLevelService tbLevelService;
@@ -116,234 +88,234 @@ public class SysController {
         return ResultUtil.ok(Collections.singletonMap(SystemConstant.SUCCESS, true));
     }
 
-    @ApiOperation(value = "考生导入接口")
-    @RequestMapping(value = "/examStudent/import", method = RequestMethod.POST)
-    @Transactional
-    @ApiResponses({@ApiResponse(code = 200, message = "{\"success\":true}", response = Result.class)})
-    public Result examStudentImport(@ApiParam(value = "上传文件", required = true) @RequestParam MultipartFile file) {
-        if (Objects.isNull(file) || Objects.equals(file, "")) {
-            throw new BusinessException(ExceptionResultEnum.ATTACHMENT_IS_NULL);
-        }
-        TBAttachment tbAttachment = null;
-        try {
-            tbAttachment = tbAttachmentService
-                    .saveAttachment(file, ServletUtil.getRequestMd5(), ServletUtil.getRequestPath(),
-                            UploadFileEnum.file, null, null);
-            if (Objects.isNull(tbAttachment)) {
-                throw new BusinessException(ExceptionResultEnum.ATTACHMENT_ERROR);
-            }
-            List<LinkedMultiValueMap<Integer, Object>> finalList = ExcelUtil.excelReader(file.getInputStream(), Lists.newArrayList(ExamStudentImportDto.class), new ExcelCallback() {
-                @Override
-                public List<LinkedMultiValueMap<Integer, Object>> callback(List<LinkedMultiValueMap<Integer, Object>> finalList, List<LinkedMultiValueMap<Integer, String>> finalColumnNameList) throws IllegalAccessException {
-                    List<ExcelError> excelErrorList = new ArrayList<>();
-                    for (int i = 0; i < finalList.size(); i++) {
-                        LinkedMultiValueMap<Integer, Object> map = finalList.get(i);
-                        List<Object> examStudentImportDtoList = map.get(i);
-                        for (int y = 0; y < examStudentImportDtoList.size(); y++) {
-                            ExamStudentImportDto examStudentImportDto = (ExamStudentImportDto) examStudentImportDtoList.get(y);
-                            List<ExcelError> excelErrorTemp = ExcelUtil.checkExcelField(examStudentImportDto, y, i);
-                            if (excelErrorTemp.size() > 0) {
-                                excelErrorList.addAll(excelErrorTemp);
-                            }
-                        }
-                    }
-                    if (excelErrorList.size() > 0) {
-                        throw new BusinessException(JSONObject.toJSONString(excelErrorList));
-                    }
-                    return finalList;
-                }
-            });
-            int line = 0;
-            //保存到数据库
-            if (Objects.nonNull(finalList) && finalList.size() > 0) {
-                QueryWrapper<TBSchool> tbSchoolQueryWrapper = new QueryWrapper<>();
-                tbSchoolQueryWrapper.lambda().eq(TBSchool::getCode, "whdx");
-                TBSchool tbSchool = tbSchoolService.getOne(tbSchoolQueryWrapper);
-
-                ExamStudentImportDto examStudent = (ExamStudentImportDto) finalList.get(0).get(0).get(0);
-                QueryWrapper<TEExam> teExamQueryWrapper = new QueryWrapper<>();
-                teExamQueryWrapper.lambda().eq(TEExam::getSchoolId, tbSchool.getId())
-                        .eq(TEExam::getCode, examStudent.getCourseCode());
-                TEExam teExam = teExamService.getOne(teExamQueryWrapper);
-
-                QueryWrapper<TEPaper> tePaperQueryWrapper = new QueryWrapper<>();
-                tePaperQueryWrapper.lambda().eq(TEPaper::getExamId, teExam.getId());
-                TEPaper tePaper = tePaperService.getOne(tePaperQueryWrapper);
-
-                QueryWrapper<TEQuestion> teQuestionQueryWrapper = new QueryWrapper<>();
-                teQuestionQueryWrapper.lambda().eq(TEQuestion::getPaperId, tePaper.getId());
-                List<TEQuestion> teQuestionList = teQuestionService.list(teQuestionQueryWrapper);
-                Map<String, TEQuestion> teQuestionMap = new LinkedHashMap<>();
-                if (Objects.nonNull(teQuestionList) && teQuestionList.size() > 0) {
-                    teQuestionList.forEach(s -> {
-                        teQuestionMap.put(s.getMainNumber() + "-" + s.getSubNumber(), s);
-                    });
-                }
-
-                QueryWrapper<TECourse> teCourseQueryWrapper = new QueryWrapper<>();
-                teCourseQueryWrapper.lambda().eq(TECourse::getSchoolId, tbSchool.getId())
-                        .eq(TECourse::getCourseCode, examStudent.getCourseCode());
-                TECourse teCourse = teCourseService.getOne(teCourseQueryWrapper);
-
-                Map<String, TBSchoolCollege> collegeMap = new LinkedHashMap<>();
-                Map<String, TEStudent> studentMap = new LinkedHashMap<>();
-                Map<String, TEExamStudent> examStudentMap = new LinkedHashMap<>();
-                Map<String, TBMajor> majorMap = new LinkedHashMap<>();
-                Map<String, TBTeacher> teacherMap = new LinkedHashMap<>();
-                LinkedMultiValueMap<Long, TBTeacherExamStudent> teacherExamStudentMap = new LinkedMultiValueMap<>();
-                Map<Long, TEExamRecord> examRecordMap = new LinkedHashMap<>();
-                List<TEAnswer> teAnswerList = new ArrayList();
-
-                for (int i = 0; i < finalList.size(); i++) {
-                    LinkedMultiValueMap<Integer, Object> finalMap = finalList.get(i);
-                    List<Object> examStudentImportDtoList = finalMap.get(i);
-                    int min = 0;
-                    int max = SystemConstant.MAX_IMPORT_SIZE, size = examStudentImportDtoList.size();
-                    if (max >= size) {
-                        max = size;
-                    }
-                    while (max <= size) {
-                        List subList = examStudentImportDtoList.subList(min, max);
-                        for (int y = 0; y < subList.size(); y++) {
-                            line++;
-                            ExamStudentImportDto examStudentImportDto = (ExamStudentImportDto) subList.get(y);
-                            Map<String, Object> extendColumnMap = examStudentImportDto.getExtendColumn();
-                            if (!collegeMap.containsKey(examStudentImportDto.getCollegeName())) {
-                                TBSchoolCollege tbSchoolCollege = new TBSchoolCollege(tbSchool.getId(), examStudentImportDto.getCollegeName(), examStudentImportDto.getCollegeName());
-                                collegeMap.put(examStudentImportDto.getCollegeName(), tbSchoolCollege);
-                            }
-                            if (!majorMap.containsKey(examStudentImportDto.getMajorName())) {
-                                TBMajor tbMajor = new TBMajor(tbSchool.getId(), examStudentImportDto.getMajorName(), examStudentImportDto.getMajorName());
-                                majorMap.put(examStudentImportDto.getMajorName(), tbMajor);
-                            }
-                            if (!studentMap.containsKey(examStudentImportDto.getIdentity())) {
-                                TEStudent teStudent = new TEStudent(tbSchool.getId(), examStudentImportDto.getExamStudentName(), examStudentImportDto.getIdentity());
-                                studentMap.put(examStudentImportDto.getIdentity(), teStudent);
-                            }
-                            if (!examStudentMap.containsKey(examStudentImportDto.getIdcardNumber() + "_" + examStudentImportDto.getIdentity())) {
-                                TEExamStudent teExamStudent = new TEExamStudent(teExam.getId(), studentMap.get(examStudentImportDto.getIdentity()).getId(), collegeMap.get(examStudentImportDto.getCollegeName()).getId(), majorMap.get(examStudentImportDto.getMajorName()).getId(), teCourse.getCourseName(), teCourse.getCourseCode(), examStudentImportDto.getExamStudentName(), examStudentImportDto.getIdentity(), examStudentImportDto.getIdcardNumber(), Objects.isNull(extendColumnMap) || extendColumnMap.size() == 0 ? 1 : 0, examStudentImportDto.getClassNo());
-                                examStudentMap.put(examStudentImportDto.getIdcardNumber() + "_" + examStudentImportDto.getIdentity(), teExamStudent);
-                            }
-                            if (!teacherMap.containsKey(examStudentImportDto.getTeacherName())) {
-                                TBTeacher tbTeacher = new TBTeacher(tbSchool.getId(), collegeMap.get(examStudentImportDto.getCollegeName()).getId(), majorMap.get(examStudentImportDto.getMajorName()).getId(), examStudentImportDto.getTeacherName());
-                                teacherMap.put(examStudentImportDto.getTeacherName(), tbTeacher);
-                            }
-                            TBTeacherExamStudent tbTeacherExamStudent = new TBTeacherExamStudent(teacherMap.get(examStudentImportDto.getTeacherName()).getId(), examStudentMap.get(examStudentImportDto.getIdcardNumber() + "_" + examStudentImportDto.getIdentity()).getId());
-                            teacherExamStudentMap.add(teacherMap.get(examStudentImportDto.getTeacherName()).getId(), tbTeacherExamStudent);
-
-                            if (!examRecordMap.containsKey(examStudentMap.get(examStudentImportDto.getIdcardNumber() + "_" + examStudentImportDto.getIdentity()).getId())) {
-                                TEExamRecord teExamRecord = new TEExamRecord(teExam.getId(), tePaper.getId(), examStudentMap.get(examStudentImportDto.getIdcardNumber() + "_" + examStudentImportDto.getIdentity()).getId(), new BigDecimal(examStudentImportDto.getObjectiveScore()), new BigDecimal(examStudentImportDto.getSubjectiveScore()), new BigDecimal(examStudentImportDto.getSumScore()), examStudentImportDto.getMarkDetail(), examStudentImportDto.getRemark());
-                                examRecordMap.put(examStudentMap.get(examStudentImportDto.getIdcardNumber() + "_" + examStudentImportDto.getIdentity()).getId(), teExamRecord);
-                            }
-
-                            Map<Long, TEAnswer> answerMap = new LinkedHashMap<>();
-                            extendColumnMap.forEach((k, v) -> {
-                                TEAnswer teAnswer = null;
-                                String filterTitle = SystemConstant.filterQuestion(k);
-                                log.info("filterTitle:{}", filterTitle);
-                                TEQuestion teQuestion = teQuestionMap.get(filterTitle);
-                                log.info("teQuestion:{}", JacksonUtil.parseJson(teQuestion));
-                                Long examRecordId = examRecordMap.get(examStudentMap.get(examStudentImportDto.getIdcardNumber() + "_" + examStudentImportDto.getIdentity()).getId()).getId();
-                                if (!answerMap.containsKey(teQuestion.getId())) {
-                                    teAnswer = new TEAnswer(teQuestion.getMainNumber(), teQuestion.getSubNumber(), teQuestion.getType(), examRecordId);
-                                } else {
-                                    teAnswer = answerMap.get(teQuestion.getId());
-                                }
-                                if ((k.contains("作答") || k.contains("选项")) && Objects.nonNull(v)) {
-                                    teAnswer.setAnswer((String) v);
-                                } else if ((k.contains("得分") || Objects.equals(SystemConstant.filterQuestion(k), filterTitle)) && Objects.nonNull(v)) {
-                                    teAnswer.setScore(new BigDecimal(String.valueOf(v)));
-                                }
-                                teAnswer.setVersion(teAnswer.getVersion() + 1);
-                                answerMap.put(teQuestion.getId(), teAnswer);
-                            });
-
-                            answerMap.forEach((k, v) -> {
-                                teAnswerList.add(v);
-                            });
-                        }
-                        if (max == size) {
-                            break;
-                        }
-                        min = max;
-                        max += SystemConstant.MAX_IMPORT_SIZE;
-                        if (max >= size) {
-                            max = size;
-                        }
-                    }
-                }
-                tbSchoolCollegeService.deleteAll();
-                teStudentService.deleteAll();
-                teExamStudentService.deleteAll();
-                tbMajorService.deleteAll();
-                tbTeacherService.deleteAll();
-                tbTeacherExamStudentService.deleteAll();
-                teExamRecordService.deleteAll();
-                teAnswerService.deleteAll();
-
-                List<TBSchoolCollege> tbSchoolCollegeList = new ArrayList();
-                collegeMap.forEach((k, v) -> {
-                    tbSchoolCollegeList.add(v);
-                });
-                tbSchoolCollegeService.saveBatch(tbSchoolCollegeList);
-
-                List<TBMajor> tbMajorList = new ArrayList<>();
-                majorMap.forEach((k, v) -> {
-                    tbMajorList.add(v);
-                });
-                tbMajorService.saveBatch(tbMajorList);
-
-                List<TEStudent> teStudentList = new ArrayList();
-                studentMap.forEach((k, v) -> {
-                    teStudentList.add(v);
-                });
-                teStudentService.saveBatch(teStudentList);
-
-                List<TEExamStudent> teExamStudentList = new ArrayList();
-                examStudentMap.forEach((k, v) -> {
-                    teExamStudentList.add(v);
-                });
-                teExamStudentService.saveBatch(teExamStudentList);
-
-                List<TBTeacher> tbTeacherList = new ArrayList();
-                teacherMap.forEach((k, v) -> {
-                    tbTeacherList.add(v);
-                });
-                tbTeacherService.saveBatch(tbTeacherList);
-
-                List<TBTeacherExamStudent> tbTeacherExamStudentList = new ArrayList();
-                teacherExamStudentMap.forEach((k, v) -> {
-                    tbTeacherExamStudentList.addAll(v);
-                });
-                tbTeacherExamStudentService.saveBatch(tbTeacherExamStudentList);
-
-                List<TEExamRecord> teExamRecordList = new ArrayList();
-                examRecordMap.forEach((k, v) -> {
-                    teExamRecordList.add(v);
-                });
-                teExamRecordService.saveBatch(teExamRecordList);
-
-                teAnswerService.saveBatch(teAnswerList);
-            }
-        } catch (Exception e) {
-            log.error("请求出错", e);
-            if (Objects.nonNull(tbAttachment)) {
-                tbAttachmentService.deleteAttachment(UploadFileEnum.file, tbAttachment);
-            }
-            if (e instanceof BusinessException) {
-                throw new BusinessException(e.getMessage());
-            } else {
-                throw new RuntimeException(e);
-            }
-        }
-        return ResultUtil.ok(Collections.singletonMap(SystemConstant.SUCCESS, true));
-    }
+//    @ApiOperation(value = "考生导入接口")
+//    @RequestMapping(value = "/examStudent/import", method = RequestMethod.POST)
+//    @Transactional
+//    @ApiResponses({@ApiResponse(code = 200, message = "{\"success\":true}", response = Result.class)})
+//    public Result examStudentImport(@ApiParam(value = "上传文件", required = true) @RequestParam MultipartFile file) {
+//        if (Objects.isNull(file) || Objects.equals(file, "")) {
+//            throw new BusinessException(ExceptionResultEnum.ATTACHMENT_IS_NULL);
+//        }
+//        TBAttachment tbAttachment = null;
+//        try {
+//            tbAttachment = tbAttachmentService
+//                    .saveAttachment(file, ServletUtil.getRequestMd5(), ServletUtil.getRequestPath(),
+//                            UploadFileEnum.file, null, null);
+//            if (Objects.isNull(tbAttachment)) {
+//                throw new BusinessException(ExceptionResultEnum.ATTACHMENT_ERROR);
+//            }
+//            List<LinkedMultiValueMap<Integer, Object>> finalList = ExcelUtil.excelReader(file.getInputStream(), Lists.newArrayList(ExamStudentImportDto.class), new ExcelCallback() {
+//                @Override
+//                public List<LinkedMultiValueMap<Integer, Object>> callback(List<LinkedMultiValueMap<Integer, Object>> finalList, List<LinkedMultiValueMap<Integer, String>> finalColumnNameList) throws IllegalAccessException {
+//                    List<ExcelError> excelErrorList = new ArrayList<>();
+//                    for (int i = 0; i < finalList.size(); i++) {
+//                        LinkedMultiValueMap<Integer, Object> map = finalList.get(i);
+//                        List<Object> examStudentImportDtoList = map.get(i);
+//                        for (int y = 0; y < examStudentImportDtoList.size(); y++) {
+//                            ExamStudentImportDto examStudentImportDto = (ExamStudentImportDto) examStudentImportDtoList.get(y);
+//                            List<ExcelError> excelErrorTemp = ExcelUtil.checkExcelField(examStudentImportDto, y, i);
+//                            if (excelErrorTemp.size() > 0) {
+//                                excelErrorList.addAll(excelErrorTemp);
+//                            }
+//                        }
+//                    }
+//                    if (excelErrorList.size() > 0) {
+//                        throw new BusinessException(JSONObject.toJSONString(excelErrorList));
+//                    }
+//                    return finalList;
+//                }
+//            });
+//            int line = 0;
+//            //保存到数据库
+//            if (Objects.nonNull(finalList) && finalList.size() > 0) {
+//                QueryWrapper<TBSchool> tbSchoolQueryWrapper = new QueryWrapper<>();
+//                tbSchoolQueryWrapper.lambda().eq(TBSchool::getCode, "whdx");
+//                TBSchool tbSchool = tbSchoolService.getOne(tbSchoolQueryWrapper);
+//
+//                ExamStudentImportDto examStudent = (ExamStudentImportDto) finalList.get(0).get(0).get(0);
+//                QueryWrapper<TEExam> teExamQueryWrapper = new QueryWrapper<>();
+//                teExamQueryWrapper.lambda().eq(TEExam::getSchoolId, tbSchool.getId())
+//                        .eq(TEExam::getCode, examStudent.getCourseCode());
+//                TEExam teExam = teExamService.getOne(teExamQueryWrapper);
+//
+//                QueryWrapper<TEPaper> tePaperQueryWrapper = new QueryWrapper<>();
+//                tePaperQueryWrapper.lambda().eq(TEPaper::getExamId, teExam.getId());
+//                TEPaper tePaper = tePaperService.getOne(tePaperQueryWrapper);
+//
+//                QueryWrapper<TEQuestion> teQuestionQueryWrapper = new QueryWrapper<>();
+//                teQuestionQueryWrapper.lambda().eq(TEQuestion::getPaperId, tePaper.getId());
+//                List<TEQuestion> teQuestionList = teQuestionService.list(teQuestionQueryWrapper);
+//                Map<String, TEQuestion> teQuestionMap = new LinkedHashMap<>();
+//                if (Objects.nonNull(teQuestionList) && teQuestionList.size() > 0) {
+//                    teQuestionList.forEach(s -> {
+//                        teQuestionMap.put(s.getMainNumber() + "-" + s.getSubNumber(), s);
+//                    });
+//                }
+//
+//                QueryWrapper<TECourse> teCourseQueryWrapper = new QueryWrapper<>();
+//                teCourseQueryWrapper.lambda().eq(TECourse::getSchoolId, tbSchool.getId())
+//                        .eq(TECourse::getCourseCode, examStudent.getCourseCode());
+//                TECourse teCourse = teCourseService.getOne(teCourseQueryWrapper);
+//
+//                Map<String, TBSchoolCollege> collegeMap = new LinkedHashMap<>();
+//                Map<String, TEStudent> studentMap = new LinkedHashMap<>();
+//                Map<String, TEExamStudent> examStudentMap = new LinkedHashMap<>();
+//                Map<String, TBMajor> majorMap = new LinkedHashMap<>();
+//                Map<String, TBTeacher> teacherMap = new LinkedHashMap<>();
+//                LinkedMultiValueMap<Long, TBTeacherExamStudent> teacherExamStudentMap = new LinkedMultiValueMap<>();
+//                Map<Long, TEExamRecord> examRecordMap = new LinkedHashMap<>();
+//                List<TEAnswer> teAnswerList = new ArrayList();
+//
+//                for (int i = 0; i < finalList.size(); i++) {
+//                    LinkedMultiValueMap<Integer, Object> finalMap = finalList.get(i);
+//                    List<Object> examStudentImportDtoList = finalMap.get(i);
+//                    int min = 0;
+//                    int max = SystemConstant.MAX_IMPORT_SIZE, size = examStudentImportDtoList.size();
+//                    if (max >= size) {
+//                        max = size;
+//                    }
+//                    while (max <= size) {
+//                        List subList = examStudentImportDtoList.subList(min, max);
+//                        for (int y = 0; y < subList.size(); y++) {
+//                            line++;
+//                            ExamStudentImportDto examStudentImportDto = (ExamStudentImportDto) subList.get(y);
+//                            Map<String, Object> extendColumnMap = examStudentImportDto.getExtendColumn();
+//                            if (!collegeMap.containsKey(examStudentImportDto.getCollegeName())) {
+//                                TBSchoolCollege tbSchoolCollege = new TBSchoolCollege(tbSchool.getId(), examStudentImportDto.getCollegeName(), examStudentImportDto.getCollegeName());
+//                                collegeMap.put(examStudentImportDto.getCollegeName(), tbSchoolCollege);
+//                            }
+//                            if (!majorMap.containsKey(examStudentImportDto.getMajorName())) {
+//                                TBMajor tbMajor = new TBMajor(tbSchool.getId(), examStudentImportDto.getMajorName(), examStudentImportDto.getMajorName());
+//                                majorMap.put(examStudentImportDto.getMajorName(), tbMajor);
+//                            }
+//                            if (!studentMap.containsKey(examStudentImportDto.getIdentity())) {
+//                                TEStudent teStudent = new TEStudent(tbSchool.getId(), examStudentImportDto.getExamStudentName(), examStudentImportDto.getIdentity());
+//                                studentMap.put(examStudentImportDto.getIdentity(), teStudent);
+//                            }
+//                            if (!examStudentMap.containsKey(examStudentImportDto.getIdcardNumber() + "_" + examStudentImportDto.getIdentity())) {
+//                                TEExamStudent teExamStudent = new TEExamStudent(teExam.getId(), studentMap.get(examStudentImportDto.getIdentity()).getId(), collegeMap.get(examStudentImportDto.getCollegeName()).getId(), majorMap.get(examStudentImportDto.getMajorName()).getId(), teCourse.getCourseName(), teCourse.getCourseCode(), examStudentImportDto.getExamStudentName(), examStudentImportDto.getIdentity(), examStudentImportDto.getIdcardNumber(), Objects.isNull(extendColumnMap) || extendColumnMap.size() == 0 ? 1 : 0, examStudentImportDto.getClassNo());
+//                                examStudentMap.put(examStudentImportDto.getIdcardNumber() + "_" + examStudentImportDto.getIdentity(), teExamStudent);
+//                            }
+//                            if (!teacherMap.containsKey(examStudentImportDto.getTeacherName())) {
+//                                TBTeacher tbTeacher = new TBTeacher(tbSchool.getId(), collegeMap.get(examStudentImportDto.getCollegeName()).getId(), majorMap.get(examStudentImportDto.getMajorName()).getId(), examStudentImportDto.getTeacherName());
+//                                teacherMap.put(examStudentImportDto.getTeacherName(), tbTeacher);
+//                            }
+//                            TBTeacherExamStudent tbTeacherExamStudent = new TBTeacherExamStudent(teacherMap.get(examStudentImportDto.getTeacherName()).getId(), examStudentMap.get(examStudentImportDto.getIdcardNumber() + "_" + examStudentImportDto.getIdentity()).getId());
+//                            teacherExamStudentMap.add(teacherMap.get(examStudentImportDto.getTeacherName()).getId(), tbTeacherExamStudent);
+//
+//                            if (!examRecordMap.containsKey(examStudentMap.get(examStudentImportDto.getIdcardNumber() + "_" + examStudentImportDto.getIdentity()).getId())) {
+//                                TEExamRecord teExamRecord = new TEExamRecord(teExam.getId(), tePaper.getId(), examStudentMap.get(examStudentImportDto.getIdcardNumber() + "_" + examStudentImportDto.getIdentity()).getId(), new BigDecimal(examStudentImportDto.getObjectiveScore()), new BigDecimal(examStudentImportDto.getSubjectiveScore()), new BigDecimal(examStudentImportDto.getSumScore()), examStudentImportDto.getMarkDetail(), examStudentImportDto.getRemark());
+//                                examRecordMap.put(examStudentMap.get(examStudentImportDto.getIdcardNumber() + "_" + examStudentImportDto.getIdentity()).getId(), teExamRecord);
+//                            }
+//
+//                            Map<Long, TEAnswer> answerMap = new LinkedHashMap<>();
+//                            extendColumnMap.forEach((k, v) -> {
+//                                TEAnswer teAnswer = null;
+//                                String filterTitle = SystemConstant.filterQuestion(k);
+//                                log.info("filterTitle:{}", filterTitle);
+//                                TEQuestion teQuestion = teQuestionMap.get(filterTitle);
+//                                log.info("teQuestion:{}", JacksonUtil.parseJson(teQuestion));
+//                                Long examRecordId = examRecordMap.get(examStudentMap.get(examStudentImportDto.getIdcardNumber() + "_" + examStudentImportDto.getIdentity()).getId()).getId();
+//                                if (!answerMap.containsKey(teQuestion.getId())) {
+//                                    teAnswer = new TEAnswer(teQuestion.getMainNumber(), teQuestion.getSubNumber(), teQuestion.getType(), examRecordId);
+//                                } else {
+//                                    teAnswer = answerMap.get(teQuestion.getId());
+//                                }
+//                                if ((k.contains("作答") || k.contains("选项")) && Objects.nonNull(v)) {
+//                                    teAnswer.setAnswer((String) v);
+//                                } else if ((k.contains("得分") || Objects.equals(SystemConstant.filterQuestion(k), filterTitle)) && Objects.nonNull(v)) {
+//                                    teAnswer.setScore(new BigDecimal(String.valueOf(v)));
+//                                }
+//                                teAnswer.setVersion(teAnswer.getVersion() + 1);
+//                                answerMap.put(teQuestion.getId(), teAnswer);
+//                            });
+//
+//                            answerMap.forEach((k, v) -> {
+//                                teAnswerList.add(v);
+//                            });
+//                        }
+//                        if (max == size) {
+//                            break;
+//                        }
+//                        min = max;
+//                        max += SystemConstant.MAX_IMPORT_SIZE;
+//                        if (max >= size) {
+//                            max = size;
+//                        }
+//                    }
+//                }
+//                tbSchoolCollegeService.deleteAll();
+//                teStudentService.deleteAll();
+//                teExamStudentService.deleteAll();
+//                tbMajorService.deleteAll();
+//                tbTeacherService.deleteAll();
+//                tbTeacherExamStudentService.deleteAll();
+//                teExamRecordService.deleteAll();
+//                teAnswerService.deleteAll();
+//
+//                List<TBSchoolCollege> tbSchoolCollegeList = new ArrayList();
+//                collegeMap.forEach((k, v) -> {
+//                    tbSchoolCollegeList.add(v);
+//                });
+//                tbSchoolCollegeService.saveBatch(tbSchoolCollegeList);
+//
+//                List<TBMajor> tbMajorList = new ArrayList<>();
+//                majorMap.forEach((k, v) -> {
+//                    tbMajorList.add(v);
+//                });
+//                tbMajorService.saveBatch(tbMajorList);
+//
+//                List<TEStudent> teStudentList = new ArrayList();
+//                studentMap.forEach((k, v) -> {
+//                    teStudentList.add(v);
+//                });
+//                teStudentService.saveBatch(teStudentList);
+//
+//                List<TEExamStudent> teExamStudentList = new ArrayList();
+//                examStudentMap.forEach((k, v) -> {
+//                    teExamStudentList.add(v);
+//                });
+//                teExamStudentService.saveBatch(teExamStudentList);
+//
+//                List<TBTeacher> tbTeacherList = new ArrayList();
+//                teacherMap.forEach((k, v) -> {
+//                    tbTeacherList.add(v);
+//                });
+//                tbTeacherService.saveBatch(tbTeacherList);
+//
+//                List<TBTeacherExamStudent> tbTeacherExamStudentList = new ArrayList();
+//                teacherExamStudentMap.forEach((k, v) -> {
+//                    tbTeacherExamStudentList.addAll(v);
+//                });
+//                tbTeacherExamStudentService.saveBatch(tbTeacherExamStudentList);
+//
+//                List<TEExamRecord> teExamRecordList = new ArrayList();
+//                examRecordMap.forEach((k, v) -> {
+//                    teExamRecordList.add(v);
+//                });
+//                teExamRecordService.saveBatch(teExamRecordList);
+//
+//                teAnswerService.saveBatch(teAnswerList);
+//            }
+//        } catch (Exception e) {
+//            log.error("请求出错", e);
+//            if (Objects.nonNull(tbAttachment)) {
+//                tbAttachmentService.deleteAttachment(UploadFileEnum.file, tbAttachment);
+//            }
+//            if (e instanceof BusinessException) {
+//                throw new BusinessException(e.getMessage());
+//            } else {
+//                throw new RuntimeException(e);
+//            }
+//        }
+//        return ResultUtil.ok(Collections.singletonMap(SystemConstant.SUCCESS, true));
+//    }
 
     @ApiOperation(value = "试卷题型导入接口")
-    @RequestMapping(value = "/paperQuestion/import", method = RequestMethod.POST)
+    @RequestMapping(value = "/paperStruct/import", method = RequestMethod.POST)
     @Transactional
     @ApiResponses({@ApiResponse(code = 200, message = "{\"success\":true}", response = Result.class)})
-    public Result paperQuestionImport(@ApiParam(value = "上传文件", required = true) @RequestParam MultipartFile file) {
+    public Result paperStructImport(@ApiParam(value = "上传文件", required = true) @RequestParam MultipartFile file) {
         if (Objects.isNull(file) || Objects.equals(file, "")) {
             throw new BusinessException(ExceptionResultEnum.ATTACHMENT_IS_NULL);
         }
@@ -355,21 +327,21 @@ public class SysController {
             if (Objects.isNull(tbAttachment)) {
                 throw new BusinessException(ExceptionResultEnum.ATTACHMENT_ERROR);
             }
-            List<LinkedMultiValueMap<Integer, Object>> finalList = ExcelUtil.excelReader(file.getInputStream(), Lists.newArrayList(PaperImportDto.class, QuestionImportDto.class), new ExcelCallback() {
+            List<LinkedMultiValueMap<Integer, Object>> finalList = ExcelUtil.excelReader(file.getInputStream(), Lists.newArrayList(PaperImportDto.class, PaperStructImportDto.class), new ExcelCallback() {
                 @Override
                 public List<LinkedMultiValueMap<Integer, Object>> callback(List<LinkedMultiValueMap<Integer, Object>> finalList, List<LinkedMultiValueMap<Integer, String>> finalColumnNameList) throws IllegalAccessException {
                     List<ExcelError> excelErrorList = new ArrayList<>();
                     for (int i = 0; i < finalList.size(); i++) {
                         LinkedMultiValueMap<Integer, Object> map = finalList.get(i);
-                        List<Object> paperQuestionImportDtoList = map.get(i);
-                        for (int y = 0; y < paperQuestionImportDtoList.size(); y++) {
+                        List<Object> paperStructImportDtoList = map.get(i);
+                        for (int y = 0; y < paperStructImportDtoList.size(); y++) {
                             List<ExcelError> excelErrorTemp = null;
-                            if (paperQuestionImportDtoList.get(y) instanceof PaperImportDto) {
-                                PaperImportDto paperImportDto = (PaperImportDto) paperQuestionImportDtoList.get(y);
+                            if (paperStructImportDtoList.get(y) instanceof PaperImportDto) {
+                                PaperImportDto paperImportDto = (PaperImportDto) paperStructImportDtoList.get(y);
                                 excelErrorTemp = ExcelUtil.checkExcelField(paperImportDto, y, i);
-                            } else if (paperQuestionImportDtoList.get(y) instanceof QuestionImportDto) {
-                                QuestionImportDto questionImportDto = (QuestionImportDto) paperQuestionImportDtoList.get(y);
-                                excelErrorTemp = ExcelUtil.checkExcelField(questionImportDto, y, i);
+                            } else if (paperStructImportDtoList.get(y) instanceof PaperStructImportDto) {
+                                PaperStructImportDto paperStructImportDto = (PaperStructImportDto) paperStructImportDtoList.get(y);
+                                excelErrorTemp = ExcelUtil.checkExcelField(paperStructImportDto, y, i);
                             }
                             if (excelErrorTemp.size() > 0) {
                                 excelErrorList.addAll(excelErrorTemp);
@@ -389,30 +361,30 @@ public class SysController {
                 tbSchoolQueryWrapper.lambda().eq(TBSchool::getCode, "whdx");
                 TBSchool tbSchool = tbSchoolService.getOne(tbSchoolQueryWrapper);
                 Map<String, TEPaper> paperMap = new LinkedHashMap<>();
-                LinkedMultiValueMap<Long, TEQuestion> questionMap = new LinkedMultiValueMap<>();
+                LinkedMultiValueMap<Long, TEPaperStruct> paperStructMap = new LinkedMultiValueMap<>();
 //                Map<String, TEExam> examMap = new LinkedHashMap<>();
                 for (int i = 0; i < finalList.size(); i++) {
                     LinkedMultiValueMap<Integer, Object> finalMap = finalList.get(i);
-                    List<Object> paperQuestionImportDtoList = finalMap.get(i);
+                    List<Object> paperStructImportDtoList = finalMap.get(i);
                     int min = 0;
-                    int max = SystemConstant.MAX_IMPORT_SIZE, size = paperQuestionImportDtoList.size();
+                    int max = SystemConstant.MAX_IMPORT_SIZE, size = paperStructImportDtoList.size();
                     if (max >= size) {
                         max = size;
                     }
                     while (max <= size) {
-                        List subList = paperQuestionImportDtoList.subList(min, max);
+                        List subList = paperStructImportDtoList.subList(min, max);
                         for (int y = 0; y < subList.size(); y++) {
                             line++;
                             if (subList.get(y) instanceof PaperImportDto) {
-                                PaperImportDto paperImportDto = (PaperImportDto) paperQuestionImportDtoList.get(y);
+                                PaperImportDto paperImportDto = (PaperImportDto) paperStructImportDtoList.get(y);
                                 if (!paperMap.containsKey(paperImportDto.getPaperCode() + "_" + paperImportDto.getCourseCode())) {
                                     TEPaper tePaper = new TEPaper(paperImportDto.getCourseName(), paperImportDto.getCourseCode(), paperImportDto.getPaperCode(), paperImportDto.getPaperCode(), new BigDecimal(paperImportDto.getTotalScore()), new BigDecimal(paperImportDto.getPassScore()), Objects.nonNull(paperImportDto.getContribution()) && Objects.equals(paperImportDto.getContribution(), "是") ? 1 : 0, Objects.nonNull(paperImportDto.getContributionScore()) ? new BigDecimal(paperImportDto.getContributionScore()) : new BigDecimal(0));
                                     paperMap.put(paperImportDto.getPaperCode() + "_" + paperImportDto.getCourseCode(), tePaper);
                                 }
-                            } else if (subList.get(y) instanceof QuestionImportDto) {
-                                QuestionImportDto questionImportDto = (QuestionImportDto) paperQuestionImportDtoList.get(y);
-                                TEQuestion teQuestion = new TEQuestion(paperMap.get(questionImportDto.getPaperCode() + "_" + questionImportDto.getCourseCode()).getId(), questionImportDto.getMainNumber().intValue(), questionImportDto.getSubNumber().intValue(), questionImportDto.getType(), new BigDecimal(questionImportDto.getScore()), questionImportDto.getRule(), questionImportDto.getDescription(), questionImportDto.getKnowledge(), questionImportDto.getCapability());
-                                questionMap.add(paperMap.get(questionImportDto.getPaperCode() + "_" + questionImportDto.getCourseCode()).getId(), teQuestion);
+                            } else if (subList.get(y) instanceof PaperStructImportDto) {
+                                PaperStructImportDto paperStructImportDto = (PaperStructImportDto) paperStructImportDtoList.get(y);
+                                TEPaperStruct tePaperStruct = new TEPaperStruct(paperMap.get(paperStructImportDto.getPaperCode() + "_" + paperStructImportDto.getCourseCode()).getId(), paperStructImportDto.getMainNumber().intValue(), paperStructImportDto.getSubNumber().intValue(), paperStructImportDto.getType(), new BigDecimal(paperStructImportDto.getScore()), paperStructImportDto.getRule(), paperStructImportDto.getDescription(), paperStructImportDto.getKnowledge(), paperStructImportDto.getCapability());
+                                paperStructMap.add(paperMap.get(paperStructImportDto.getPaperCode() + "_" + paperStructImportDto.getCourseCode()).getId(), tePaperStruct);
                             }
 //                            QuestionImportDto paperAndQuestionImportDto = (QuestionImportDto) subList.get(y);
 //                            if (!examMap.containsKey(paperAndQuestionImportDto.getExamCode())) {
@@ -451,12 +423,12 @@ public class SysController {
                 });
                 tePaperService.saveOrUpdateBatch(paperList);
 
-                List<TEQuestion> questionList = new ArrayList();
-                questionMap.forEach((k, v) -> {
-                    teQuestionService.deleteAll(k);
-                    questionList.addAll(v);
+                List<TEPaperStruct> paperStructList = new ArrayList();
+                paperStructMap.forEach((k, v) -> {
+                    tePaperStructService.deleteAll(k);
+                    paperStructList.addAll(v);
                 });
-                teQuestionService.saveOrUpdateBatch(questionList);
+                tePaperStructService.saveOrUpdateBatch(paperStructList);
             }
         } catch (Exception e) {
             log.error("请求出错", e);

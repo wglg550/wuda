@@ -14,7 +14,7 @@ import java.util.Objects;
  * @Author: wangliang
  * @Date: 2020/12/2
  */
-public class QuestionImportDto implements Serializable {
+public class PaperStructImportDto implements Serializable {
 
     @ExcelNote(value = "试卷类型")
     @ExcelNotNull

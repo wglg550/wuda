@@ -1,7 +1,7 @@
 package com.qmth.wuda.teaching.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.qmth.wuda.teaching.entity.TEQuestion;
+import com.qmth.wuda.teaching.entity.TEPaperStruct;
 
 import java.util.List;
 
@@ -13,7 +13,7 @@ import java.util.List;
  * @author wangliang
  * @since 2020-12-01
  */
-public interface TEQuestionService extends IService<TEQuestion> {
+public interface TEPaperStructService extends IService<TEPaperStruct> {
 
     /**
      * 根据试卷id删除题目
@@ -28,5 +28,5 @@ public interface TEQuestionService extends IService<TEQuestion> {
      * @param paperId
      * @return
      */
-    List<TEQuestion> findByPaperId(Long paperId);
+    List<TEPaperStruct> findByPaperId(Long paperId);
 }

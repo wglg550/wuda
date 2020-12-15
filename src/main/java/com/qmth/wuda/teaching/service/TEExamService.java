@@ -1,7 +1,7 @@
 package com.qmth.wuda.teaching.service;
 
-import com.qmth.wuda.teaching.entity.TEExam;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.qmth.wuda.teaching.entity.TEExam;
 
 /**
  * <p>
@@ -13,5 +13,22 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface TEExamService extends IService<TEExam> {
 
-    void deleteAll();
+    /**
+     * 根据考试id或考试编码删除考试
+     *
+     * @param examId
+     * @param examCode
+     */
+    void deleteAll(Long examId, String examCode);
+
+    /**
+     * 根据考试id或考试编码创建考试
+     *
+     * @param examId
+     * @param examCode
+     * @param collegeName
+     * @param accessKey
+     * @param accessSecret
+     */
+    void saveExam(Long examId, String examCode, String collegeName, String accessKey, String accessSecret);
 }

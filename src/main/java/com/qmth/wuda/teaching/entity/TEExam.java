@@ -28,6 +28,11 @@ public class TEExam extends BaseEntity implements Serializable {
     @TableField(value = "school_id")
     private Long schoolId;
 
+    @JsonSerialize(using = ToStringSerializer.class)
+    @ApiModelProperty(value = "学院id")
+    @TableField(value = "college_id")
+    private Long collegeId;
+
     @ApiModelProperty(value = "名称")
     @TableField(value = "name")
     private String name;
@@ -56,14 +61,22 @@ public class TEExam extends BaseEntity implements Serializable {
 
     }
 
-    public TEExam(Long schoolId, String name, String code, Long startTime, Long endTime) {
+    public TEExam(Long schoolId, String name, String code) {
         setId(UidUtil.nextId());
         this.schoolId = schoolId;
         this.name = name;
         this.code = code;
-        this.startTime = startTime;
-        this.endTime = endTime;
-        enable = 1;
+        this.startTime = System.currentTimeMillis();
+        this.endTime = System.currentTimeMillis();
+        this.enable = 1;
+    }
+
+    public Long getCollegeId() {
+        return collegeId;
+    }
+
+    public void setCollegeId(Long collegeId) {
+        this.collegeId = collegeId;
     }
 
     public Integer getContribution() {

@@ -4,5 +4,13 @@
 
     <delete id="deleteAll">
         delete t from t_e_exam t
+        <where>
+            <if test="examId != null and examId != ''">
+                and t.id = #{examId}
+            </if>
+            <if test="examCode != null and examCode != ''">
+                and t.code = #{examCode}
+            </if>
+        </where>
     </delete>
 </mapper>

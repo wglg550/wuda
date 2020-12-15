@@ -45,15 +45,15 @@
             </if>
             and exists(
             select
-            teq.id
+            teps.id
             from
-            t_e_question teq
+            t_e_paper_struct teps
             <where> 1 = 1
                 <if test="dimension != null and dimension != ''">
-                    and FIND_IN_SET(#{dimension}, teq.knowledge)
+                    and FIND_IN_SET(#{dimension}, teps.knowledge)
                 </if>
-                and tea.main_number = teq.main_number
-                and tea.sub_number = teq.sub_number)
+                and tea.main_number = teps.main_number
+                and tea.sub_number = teps.sub_number)
             </where>
         </where>
     </select>

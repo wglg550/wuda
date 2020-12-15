@@ -52,7 +52,7 @@ public class CacheServiceImpl implements CacheService {
     TEPaperService tePaperService;
 
     @Resource
-    TEQuestionService teQuestionService;
+    TEPaperStructService tePaperStructService;
 
     @Resource
     TBModuleService tbModuleService;
@@ -91,16 +91,16 @@ public class CacheServiceImpl implements CacheService {
         if (Objects.isNull(tePaper)) {
             throw new BusinessException("试卷信息为空");
         }
-        List<TEQuestion> teQuestionList = teQuestionService.findByPaperId(tePaper.getId());
-        if (Objects.isNull(teQuestionList) || teQuestionList.size() == 0) {
-            throw new BusinessException("题目信息为空");
+        List<TEPaperStruct> tePaperStructList = tePaperStructService.findByPaperId(tePaper.getId());
+        if (Objects.isNull(tePaperStructList) || tePaperStructList.size() == 0) {
+            throw new BusinessException("试卷结构信息为空");
         }
         List<TEAnswer> teAnswerList = teAnswerService.findByExamRecordId(examStudentDto.getExamRecordId());
         if (Objects.isNull(teAnswerList) || teAnswerList.size() == 0) {
             throw new BusinessException("答题信息为空");
         }
         Map<String, TEAnswer> teAnswerMap = teAnswerList.stream().collect(Collectors.toMap(s -> s.getMainNumber() + "-" + s.getSubNumber(), Function.identity(), (dto1, dto2) -> dto1));
-        Map<String, TEQuestion> teQuestionMap = teQuestionList.stream().collect(Collectors.toMap(s -> s.getMainNumber() + "-" + s.getSubNumber(), Function.identity(), (dto1, dto2) -> dto1));
+        Map<String, TEPaperStruct> tePaperStructMap = tePaperStructList.stream().collect(Collectors.toMap(s -> s.getMainNumber() + "-" + s.getSubNumber(), Function.identity(), (dto1, dto2) -> dto1));
 
         Map<String, List<DimensionMasterysBean>> dimensionSecondMasterysBeanMap = new HashMap<>();
         LinkedMultiValueMap<String, DimensionSecondDto> dimensionSecondMap = new LinkedMultiValueMap<>();
@@ -193,7 +193,7 @@ public class CacheServiceImpl implements CacheService {
                 moduleBean.setRemark(v1.getRemark());
                 ModuleDetailBean moduleDetailBean = new ModuleDetailBean();
                 moduleDetailBean.setName(v1.getKnowledgeFirst());
-                teQuestionMap.forEach((k2, v2) -> {
+                tePaperStructMap.forEach((k2, v2) -> {
                     if (Objects.nonNull(v1.getModuleCode()) && Objects.equals(v1.getModuleCode(), ModuleEnum.KNOWLEDGE.name().toLowerCase())) {
                         if (Objects.nonNull(v2.getKnowledge()) && Arrays.asList(v2.getKnowledge().split(",")).contains(v1.getIdentifierFirst())) {
                             v1.setSumScore(v1.getSumScore().add(v2.getScore()));
@@ -220,7 +220,7 @@ public class CacheServiceImpl implements CacheService {
         //二级维度start
         dimensionSecondMap.forEach((k, v) -> {
             v.forEach(s -> {
-                teQuestionMap.forEach((k1, v1) -> {
+                tePaperStructMap.forEach((k1, v1) -> {
                     if (Objects.nonNull(s.getModuleCode()) && Objects.equals(s.getModuleCode(), ModuleEnum.KNOWLEDGE.name().toLowerCase())) {
                         if (Objects.nonNull(v1.getKnowledge()) && Arrays.asList(v1.getKnowledge().split(",")).contains(s.getIdentifierSecond())) {
                             s.setSumScore(s.getSumScore().add(v1.getScore()));

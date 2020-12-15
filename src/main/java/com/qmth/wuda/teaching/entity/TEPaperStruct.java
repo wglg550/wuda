@@ -20,8 +20,8 @@ import java.util.Objects;
  * @author wangliang
  * @since 2020-12-01
  */
-@ApiModel(value = "t_e_question", description = "试卷结构题型说明")
-public class TEQuestion extends BaseEntity implements Serializable {
+@ApiModel(value = "t_e_paper_struct", description = "试卷结构题型说明")
+public class TEPaperStruct extends BaseEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -62,11 +62,11 @@ public class TEQuestion extends BaseEntity implements Serializable {
     @TableField(value = "capability")
     private String capability;
 
-    public TEQuestion() {
+    public TEPaperStruct() {
 
     }
 
-    public TEQuestion(Long paperId, Integer mainNumber, Integer subNumber, String type, BigDecimal score, String rule, String description, String knowledge, String capability) {
+    public TEPaperStruct(Long paperId, Integer mainNumber, Integer subNumber, String type, BigDecimal score, String rule, String description, String knowledge, String capability) {
         setId(UidUtil.nextId());
         this.paperId = paperId;
         this.mainNumber = mainNumber;

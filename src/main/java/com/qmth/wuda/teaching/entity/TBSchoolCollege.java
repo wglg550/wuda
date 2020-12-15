@@ -40,16 +40,42 @@ public class TBSchoolCollege extends BaseEntity implements Serializable {
     @TableField(value = "enable")
     private Integer enable;
 
+    @ApiModelProperty(value = "密钥key")
+    @TableField(value = "access_key")
+    private String accessKey;
+
+    @ApiModelProperty(value = "密钥secret")
+    @TableField(value = "access_secret")
+    private String accessSecret;
+
     public TBSchoolCollege() {
 
     }
 
-    public TBSchoolCollege(Long schoolId, String name, String code) {
+    public TBSchoolCollege(Long schoolId, String name, String code, String accessKey, String accessSecret) {
         setId(UidUtil.nextId());
         this.schoolId = schoolId;
         this.name = name;
         this.code = code;
+        this.accessKey = accessKey;
+        this.accessSecret = accessSecret;
         this.enable = 1;
+    }
+
+    public String getAccessKey() {
+        return accessKey;
+    }
+
+    public void setAccessKey(String accessKey) {
+        this.accessKey = accessKey;
+    }
+
+    public String getAccessSecret() {
+        return accessSecret;
+    }
+
+    public void setAccessSecret(String accessSecret) {
+        this.accessSecret = accessSecret;
     }
 
     public static long getSerialVersionUID() {

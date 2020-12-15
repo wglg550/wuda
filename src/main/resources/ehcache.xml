@@ -84,7 +84,7 @@
             memoryStoreEvictionPolicy="LRU"/>
 
     <cache
-            name="question_cache"
+            name="paper_struct_cache"
             eternal="true"
             maxElementsInMemory="1"
             maxElementsOnDisk="0"
