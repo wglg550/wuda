@@ -1,6 +1,5 @@
 package com.qmth.wuda.teaching.entity;
 
-import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
@@ -44,6 +43,12 @@ public class TECourse extends BaseEntity implements Serializable {
     public TECourse(Long examId, String courseName, String courseCode) {
         setId(UidUtil.nextId());
         this.examId = examId;
+        this.courseName = courseName;
+        this.courseCode = courseCode;
+    }
+
+    public TECourse(String courseName, String courseCode) {
+        setId(UidUtil.nextId());
         this.courseName = courseName;
         this.courseCode = courseCode;
     }

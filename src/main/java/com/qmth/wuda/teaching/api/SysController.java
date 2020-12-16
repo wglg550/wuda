@@ -689,23 +689,34 @@ public class SysController {
                     @ApiJsonProperty(key = "courseNames", description = "科目名称数组"),
             })
             @ApiParam(value = "创建考试科目信息", required = true) @RequestBody Map<String, Object> mapParameter) {
-        if (Objects.isNull(mapParameter.get("examId")) || Objects.equals(mapParameter.get("examId"), "")) {
-            throw new BusinessException("考试id不能为空");
+        Long examId = null;
+        if (Objects.nonNull(mapParameter.get("examId")) && !Objects.equals(mapParameter.get("examId"), "")) {
+            examId = Long.parseLong(String.valueOf(mapParameter.get("examId")));
         }
-        Long examId = Long.parseLong(String.valueOf(mapParameter.get("examId")));
         if (Objects.isNull(mapParameter.get("courseNames")) || Objects.equals(mapParameter.get("courseNames"), "")) {
             throw new BusinessException("科目名称不能为空");
         }
         List<String> courseNameList = (List<String>) mapParameter.get("courseNames");
+        Long finalExamId = examId;
         courseNameList.forEach(s -> {
-            QueryWrapper<TECourse> teCourseQueryWrapper = new QueryWrapper<>();
-            teCourseQueryWrapper.lambda().eq(TECourse::getExamId, examId)
-                    .eq(TECourse::getCourseName, s);
-            int count = teCourseService.count(teCourseQueryWrapper);
-            if (count == 0) {
-                TECourse teCourse = new TECourse(examId, s, String.valueOf(sequenceService.selectNextVal()));
-                teCourseService.saveOrUpdate(teCourse);
+            TECourse teCourse = null;
+            if (Objects.nonNull(finalExamId)) {
+                QueryWrapper<TECourse> teCourseQueryWrapper = new QueryWrapper<>();
+                teCourseQueryWrapper.lambda().eq(TECourse::getExamId, finalExamId)
+                        .eq(TECourse::getCourseName, s);
+                int count = teCourseService.count(teCourseQueryWrapper);
+                if (count == 0) {
+                    teCourse = new TECourse(finalExamId, s, String.valueOf(sequenceService.selectNextVal()));
+                }
+            } else {
+                QueryWrapper<TECourse> teCourseQueryWrapper = new QueryWrapper<>();
+                teCourseQueryWrapper.lambda().eq(TECourse::getCourseName, s);
+                int count = teCourseService.count(teCourseQueryWrapper);
+                if (count == 0) {
+                    teCourse = new TECourse(s, String.valueOf(sequenceService.selectNextVal()));
+                }
             }
+            teCourseService.saveOrUpdate(teCourse);
         });
         return ResultUtil.ok(Collections.singletonMap(SystemConstant.SUCCESS, true));
     }
