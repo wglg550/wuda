@@ -363,7 +363,6 @@ public class SysController {
                     return finalList;
                 }
             });
-            int line = 0;
             //保存到数据库
             if (Objects.nonNull(finalList) && finalList.size() > 0) {
                 Map<String, TEPaper> paperMap = new LinkedHashMap<>();
@@ -379,7 +378,6 @@ public class SysController {
                     while (max <= size) {
                         List subList = paperStructImportDtoList.subList(min, max);
                         for (int y = 0; y < subList.size(); y++) {
-                            line++;
                             if (subList.get(y) instanceof PaperImportDto) {
                                 PaperImportDto paperImportDto = (PaperImportDto) paperStructImportDtoList.get(y);
                                 if (!paperMap.containsKey(paperImportDto.getPaperCode() + "_" + paperImportDto.getCourseCode())) {
@@ -474,7 +472,6 @@ public class SysController {
                     return finalList;
                 }
             });
-            int line = 0;
             //保存到数据库
             if (Objects.nonNull(finalList) && finalList.size() > 0) {
                 QueryWrapper<TBSchool> tbSchoolQueryWrapper = new QueryWrapper<>();
@@ -493,7 +490,6 @@ public class SysController {
                     while (max <= size) {
                         List subList = dimensionImportDtoList.subList(min, max);
                         for (int y = 0; y < subList.size(); y++) {
-                            line++;
                             DimensionImportDto dimensionImportDto = (DimensionImportDto) subList.get(y);
                             if (!moduleMap.containsKey(dimensionImportDto.getModuleName())) {
                                 QueryWrapper<TBModule> tbModuleQueryWrapper = new QueryWrapper<>();
@@ -578,7 +574,6 @@ public class SysController {
                     return finalList;
                 }
             });
-            int line = 0;
             //保存到数据库
             if (Objects.nonNull(finalList) && finalList.size() > 0) {
                 QueryWrapper<TBSchool> tbSchoolQueryWrapper = new QueryWrapper<>();
@@ -597,7 +592,6 @@ public class SysController {
                     while (max <= size) {
                         List subList = moduleImportDtoList.subList(min, max);
                         for (int y = 0; y < subList.size(); y++) {
-                            line++;
                             if (subList.get(y) instanceof ModuleImportDto) {
                                 ModuleImportDto moduleImportDto = (ModuleImportDto) subList.get(y);
                                 if (!moduleMap.containsKey(moduleImportDto.getName())) {
