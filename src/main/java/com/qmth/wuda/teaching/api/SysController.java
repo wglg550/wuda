@@ -677,12 +677,17 @@ public class SysController {
     @Transactional
     public Result createExam(
             @ApiJsonObject(name = "sysCreateExam", value = {
+                    @ApiJsonProperty(key = "examName", description = "考试名称"),
                     @ApiJsonProperty(key = "examId", description = "考试id"),
                     @ApiJsonProperty(key = "examCode", description = "考试编码"),
                     @ApiJsonProperty(key = "accessKey", description = "密钥key"),
                     @ApiJsonProperty(key = "accessSecret", description = "密钥secret"),
             })
             @ApiParam(value = "创建考试信息", required = true) @RequestBody Map<String, Object> mapParameter) {
+        if (Objects.isNull(mapParameter.get("examName")) || Objects.equals(mapParameter.get("examName"), "")) {
+            throw new BusinessException("考试名称不能为空");
+        }
+        String examName = (String) mapParameter.get("examName");
         Long examId = null;
         String examCode = null;
         if (Objects.nonNull(mapParameter.get("examId")) && !Objects.equals(mapParameter.get("examId"), "")) {
@@ -701,7 +706,7 @@ public class SysController {
             throw new BusinessException("密钥secret不能为空");
         }
         String accessSecret = (String) mapParameter.get("accessSecret");
-        teExamService.saveExam(examId, examCode, accessKey, accessSecret);
+        teExamService.saveExam(examName, examId, examCode, accessKey, accessSecret);
         return ResultUtil.ok(Collections.singletonMap(SystemConstant.SUCCESS, true));
     }
 
@@ -723,7 +728,6 @@ public class SysController {
             throw new BusinessException("科目名称不能为空");
         }
         List<String> courseNameList = (List<String>) mapParameter.get("courseNames");
-        List<TECourse> teCourseList = new ArrayList<>();
         courseNameList.forEach(s -> {
             QueryWrapper<TECourse> teCourseQueryWrapper = new QueryWrapper<>();
             teCourseQueryWrapper.lambda().eq(TECourse::getExamId, examId)
@@ -731,11 +735,9 @@ public class SysController {
             int count = teCourseService.count(teCourseQueryWrapper);
             if (count == 0) {
                 TECourse teCourse = new TECourse(examId, s, String.valueOf(sequenceService.selectNextVal()));
-                teCourseList.add(teCourse);
-//            teCourseService.saveOrUpdate(teCourse);
+                teCourseService.saveOrUpdate(teCourse);
             }
         });
-        teCourseService.saveOrUpdateBatch(teCourseList);
         return ResultUtil.ok(Collections.singletonMap(SystemConstant.SUCCESS, true));
     }
 }

@@ -65,7 +65,7 @@ public class OpenApiController {
     @RequestMapping(value = "/examStudent/report", method = RequestMethod.POST)
     @ApiResponses({@ApiResponse(code = 200, message = "{\"success\":true}", response = Result.class)})
     public Result examStudentReport(
-            @ApiJsonObject(name = "openExamStudentCourse", value = {
+            @ApiJsonObject(name = "openExamStudentReport", value = {
                     @ApiJsonProperty(key = "examId", description = "考试id"),
                     @ApiJsonProperty(key = "courseCode", description = "科目编码"),
                     @ApiJsonProperty(key = "examStudentId", description = "考生id")

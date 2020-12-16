@@ -1,6 +1,9 @@
 package com.qmth.wuda.teaching.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.qmth.wuda.teaching.base.BaseEntity;
 import com.qmth.wuda.teaching.util.UidUtil;
 import io.swagger.annotations.ApiModel;
@@ -20,6 +23,11 @@ import java.io.Serializable;
 public class TEExam extends BaseEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
+    @JsonSerialize(using = ToStringSerializer.class)
+    @ApiModelProperty(value = "父id")
+    @TableId(value = "parent_id")
+    private Long parentId;
 
     @ApiModelProperty(value = "名称")
     @TableField(value = "name")
@@ -45,22 +53,39 @@ public class TEExam extends BaseEntity implements Serializable {
 
     }
 
-    public TEExam(Long examId, String name, String code, String accessKey, String accessSecret) {
+    public TEExam(Long examId, String name, String code, String accessKey, String accessSecret, Long parentId) {
         setId(examId);
-        this.name = name;
+        this.name = name + "_" + examId;
         this.code = code;
         this.accessKey = accessKey;
         this.accessSecret = accessSecret;
+        this.parentId = parentId;
         this.enable = 1;
     }
 
-    public TEExam(String name, String code, String accessKey, String accessSecret) {
+    public TEExam(String name, String code, String accessKey, String accessSecret, Long parentId) {
         setId(UidUtil.nextId());
+        this.name = name + "_" + code;
+        this.code = code;
         this.accessKey = accessKey;
         this.accessSecret = accessSecret;
+        this.parentId = parentId;
+        this.enable = 1;
+    }
+
+    public TEExam(String name, String code) {
+        setId(UidUtil.nextId());
         this.name = name;
         this.code = code;
         this.enable = 1;
+    }
+
+    public Long getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(Long parentId) {
+        this.parentId = parentId;
     }
 
     public String getAccessKey() {
