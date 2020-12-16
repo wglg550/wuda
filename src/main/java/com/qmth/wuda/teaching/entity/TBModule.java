@@ -34,9 +34,9 @@ public class TBModule implements Serializable {
     private Long schoolId;
 
     @JsonSerialize(using = ToStringSerializer.class)
-    @ApiModelProperty(value = "学院id")
-    @TableField(value = "college_id")
-    private Long collegeId;
+    @ApiModelProperty(value = "考试id")
+    @TableField(value = "exam_id")
+    private Long examId;
 
     @ApiModelProperty(value = "名称")
     @TableField(value = "name")
@@ -77,6 +77,14 @@ public class TBModule implements Serializable {
         this.degree = degree;
     }
 
+    public Long getExamId() {
+        return examId;
+    }
+
+    public void setExamId(Long examId) {
+        this.examId = examId;
+    }
+
     public String getDegree() {
         return degree;
     }
@@ -99,14 +107,6 @@ public class TBModule implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Long getCollegeId() {
-        return collegeId;
-    }
-
-    public void setCollegeId(Long collegeId) {
-        this.collegeId = collegeId;
     }
 
     public static long getSerialVersionUID() {

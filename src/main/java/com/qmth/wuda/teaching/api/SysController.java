@@ -480,7 +480,6 @@ public class SysController {
                 QueryWrapper<TBSchool> tbSchoolQueryWrapper = new QueryWrapper<>();
                 tbSchoolQueryWrapper.lambda().eq(TBSchool::getCode, "whdx");
                 TBSchool tbSchool = tbSchoolService.getOne(tbSchoolQueryWrapper);
-//                Map<String, TECourse> courseMap = new LinkedHashMap<>();
                 Map<String, TBModule> moduleMap = new LinkedHashMap<>();
                 LinkedMultiValueMap<Long, TBDimension> dimensionMap = new LinkedMultiValueMap<>();
                 for (int i = 0; i < finalList.size(); i++) {
@@ -496,10 +495,6 @@ public class SysController {
                         for (int y = 0; y < subList.size(); y++) {
                             line++;
                             DimensionImportDto dimensionImportDto = (DimensionImportDto) subList.get(y);
-//                            if (!courseMap.containsKey(dimensionImportDto.getCourseCode())) {
-//                                TECourse teCourse = new TECourse(tbSchool.getId(), dimensionImportDto.getCourseName(), dimensionImportDto.getCourseCode());
-//                                courseMap.put(dimensionImportDto.getCourseCode(), teCourse);
-//                            }
                             if (!moduleMap.containsKey(dimensionImportDto.getModuleName())) {
                                 QueryWrapper<TBModule> tbModuleQueryWrapper = new QueryWrapper<>();
                                 tbModuleQueryWrapper.lambda().eq(TBModule::getCode, ModuleEnum.convertToName(dimensionImportDto.getModuleName()).toLowerCase())
@@ -519,15 +514,7 @@ public class SysController {
                         }
                     }
                 }
-//                teCourseService.deleteAll(tbSchool.getId(), new HashSet<>(courseMap.keySet()));
                 tbDimensionService.deleteAll(new HashSet<>(dimensionMap.keySet()));
-
-//                List<TECourse> courseList = new ArrayList();
-//                courseMap.forEach((k, v) -> {
-//                    courseList.add(v);
-//                });
-//                teCourseService.saveOrUpdateBatch(courseList);
-
                 List<TBDimension> tbDimensionList = new ArrayList<>();
                 dimensionMap.forEach((k, v) -> {
                     tbDimensionList.addAll(v);
