@@ -13,6 +13,7 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import javax.annotation.Resource;
@@ -68,7 +69,7 @@ public class ApiControllerAspect {
             if (Objects.nonNull(args) && args.length > 0) {
                 boolean jsonOut = true;
                 for (Object o : args) {
-                    if (o instanceof CommonsMultipartFile) {
+                    if (o instanceof CommonsMultipartFile || o instanceof MultipartFile) {
                         jsonOut = false;
                         break;
                     }

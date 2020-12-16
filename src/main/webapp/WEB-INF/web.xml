@@ -41,7 +41,7 @@
         <init-param>
             <param-name>casServerLoginUrl</param-name>
             <!--这里的server是CAS服务端的登录地址,login为固定值-->
-            <param-value>http://ids6.wisedu.com/authserver/login</param-value>
+            <param-value>http://cas.whu.edu.cn/authserver/login</param-value>
         </init-param>
         <init-param>
             <param-name>serverName</param-name>
@@ -61,7 +61,7 @@
         <init-param>
             <param-name>casServerUrlPrefix</param-name>
             <!--这里的server是CAS服务端的地址,这里不要加login-->
-            <param-value>http://ids6.wisedu.com/authserver</param-value>
+            <param-value>http://cas.whu.edu.cn/authserver</param-value>
         </init-param>
         <init-param>
             <param-name>serverName</param-name>
