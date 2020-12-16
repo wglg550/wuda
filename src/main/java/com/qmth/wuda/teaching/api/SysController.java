@@ -73,6 +73,9 @@ public class SysController {
     @Resource
     TEExamService teExamService;
 
+    @Resource
+    SequenceService sequenceService;
+
     @ApiOperation(value = "更新缓存接口")
     @RequestMapping(value = "/updateCache", method = RequestMethod.POST)
     @ApiResponses({@ApiResponse(code = 200, message = "{\"success\":true}", response = Result.class)})
@@ -671,6 +674,7 @@ public class SysController {
     @ApiOperation(value = "创建考试信息接口")
     @RequestMapping(value = "/create/exam", method = RequestMethod.POST)
     @ApiResponses({@ApiResponse(code = 200, message = "{\"success\":true}", response = Result.class)})
+    @Transactional
     public Result createExam(
             @ApiJsonObject(name = "sysCreateExam", value = {
                     @ApiJsonProperty(key = "examId", description = "考试id"),
@@ -698,6 +702,40 @@ public class SysController {
         }
         String accessSecret = (String) mapParameter.get("accessSecret");
         teExamService.saveExam(examId, examCode, accessKey, accessSecret);
+        return ResultUtil.ok(Collections.singletonMap(SystemConstant.SUCCESS, true));
+    }
+
+    @ApiOperation(value = "创建科目信息接口")
+    @RequestMapping(value = "/create/course", method = RequestMethod.POST)
+    @ApiResponses({@ApiResponse(code = 200, message = "{\"success\":true}", response = Result.class)})
+    @Transactional
+    public Result createCourse(
+            @ApiJsonObject(name = "sysCreateCourse", value = {
+                    @ApiJsonProperty(key = "examId", description = "考试id"),
+                    @ApiJsonProperty(key = "courseNames", description = "科目名称数组"),
+            })
+            @ApiParam(value = "创建考试科目信息", required = true) @RequestBody Map<String, Object> mapParameter) {
+        if (Objects.isNull(mapParameter.get("examId")) || Objects.equals(mapParameter.get("examId"), "")) {
+            throw new BusinessException("考试id不能为空");
+        }
+        Long examId = Long.parseLong(String.valueOf(mapParameter.get("examId")));
+        if (Objects.isNull(mapParameter.get("courseNames")) || Objects.equals(mapParameter.get("courseNames"), "")) {
+            throw new BusinessException("科目名称不能为空");
+        }
+        List<String> courseNameList = (List<String>) mapParameter.get("courseNames");
+        List<TECourse> teCourseList = new ArrayList<>();
+        courseNameList.forEach(s -> {
+            QueryWrapper<TECourse> teCourseQueryWrapper = new QueryWrapper<>();
+            teCourseQueryWrapper.lambda().eq(TECourse::getExamId, examId)
+                    .eq(TECourse::getCourseName, s);
+            int count = teCourseService.count(teCourseQueryWrapper);
+            if (count == 0) {
+                TECourse teCourse = new TECourse(examId, s, String.valueOf(sequenceService.selectNextVal()));
+                teCourseList.add(teCourse);
+//            teCourseService.saveOrUpdate(teCourse);
+            }
+        });
+        teCourseService.saveOrUpdateBatch(teCourseList);
         return ResultUtil.ok(Collections.singletonMap(SystemConstant.SUCCESS, true));
     }
 }
