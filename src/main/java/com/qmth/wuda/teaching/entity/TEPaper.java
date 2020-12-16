@@ -53,18 +53,45 @@ public class TEPaper extends BaseEntity implements Serializable {
     @TableField(value = "contribution")
     private Integer contribution;
 
+    @ApiModelProperty(value = "科目名称")
+    @TableField(value = "course_name")
+    private String courseName;
+
+    @ApiModelProperty(value = "科目编码")
+    @TableField(value = "course_code")
+    private String courseCode;
+
     public TEPaper() {
 
     }
 
-    public TEPaper(String name, String code, BigDecimal totalScore, BigDecimal passScore, Integer contribution, BigDecimal contributionScore) {
+    public TEPaper(Long examId, String name, String code, BigDecimal totalScore, BigDecimal passScore, Integer contribution, BigDecimal contributionScore, String courseName, String courseCode) {
         setId(UidUtil.nextId());
+        this.examId = examId;
         this.name = name;
         this.code = code;
         this.totalScore = totalScore;
         this.passScore = passScore;
         this.contribution = contribution;
         this.contributionScore = contributionScore;
+        this.courseName = courseName;
+        this.courseCode = courseCode;
+    }
+
+    public String getCourseName() {
+        return courseName;
+    }
+
+    public void setCourseName(String courseName) {
+        this.courseName = courseName;
+    }
+
+    public String getCourseCode() {
+        return courseCode;
+    }
+
+    public void setCourseCode(String courseCode) {
+        this.courseCode = courseCode;
     }
 
     public Integer getContribution() {

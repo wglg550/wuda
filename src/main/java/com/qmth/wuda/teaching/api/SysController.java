@@ -320,9 +320,13 @@ public class SysController {
     @RequestMapping(value = "/paperStruct/import", method = RequestMethod.POST)
     @Transactional
     @ApiResponses({@ApiResponse(code = 200, message = "{\"success\":true}", response = Result.class)})
-    public Result paperStructImport(@ApiParam(value = "上传文件", required = true) @RequestParam MultipartFile file) {
+    public Result paperStructImport(@ApiParam(value = "上传文件", required = true) @RequestParam MultipartFile file,
+                                    @ApiParam(value = "考试id", required = true) @RequestParam Long examId) {
         if (Objects.isNull(file) || Objects.equals(file, "")) {
             throw new BusinessException(ExceptionResultEnum.ATTACHMENT_IS_NULL);
+        }
+        if (Objects.isNull(examId) || Objects.equals(examId, "")) {
+            throw new BusinessException("考试id不能为空");
         }
         TBAttachment tbAttachment = null;
         try {
@@ -362,12 +366,8 @@ public class SysController {
             int line = 0;
             //保存到数据库
             if (Objects.nonNull(finalList) && finalList.size() > 0) {
-                QueryWrapper<TBSchool> tbSchoolQueryWrapper = new QueryWrapper<>();
-                tbSchoolQueryWrapper.lambda().eq(TBSchool::getCode, "whdx");
-                TBSchool tbSchool = tbSchoolService.getOne(tbSchoolQueryWrapper);
                 Map<String, TEPaper> paperMap = new LinkedHashMap<>();
                 LinkedMultiValueMap<Long, TEPaperStruct> paperStructMap = new LinkedMultiValueMap<>();
-//                Map<String, TEExam> examMap = new LinkedHashMap<>();
                 for (int i = 0; i < finalList.size(); i++) {
                     LinkedMultiValueMap<Integer, Object> finalMap = finalList.get(i);
                     List<Object> paperStructImportDtoList = finalMap.get(i);
@@ -383,7 +383,7 @@ public class SysController {
                             if (subList.get(y) instanceof PaperImportDto) {
                                 PaperImportDto paperImportDto = (PaperImportDto) paperStructImportDtoList.get(y);
                                 if (!paperMap.containsKey(paperImportDto.getPaperCode() + "_" + paperImportDto.getCourseCode())) {
-                                    TEPaper tePaper = new TEPaper(paperImportDto.getPaperCode(), paperImportDto.getPaperCode(), new BigDecimal(paperImportDto.getTotalScore()), new BigDecimal(paperImportDto.getPassScore()), Objects.nonNull(paperImportDto.getContribution()) && Objects.equals(paperImportDto.getContribution(), "是") ? 1 : 0, Objects.nonNull(paperImportDto.getContributionScore()) ? new BigDecimal(paperImportDto.getContributionScore()) : new BigDecimal(0));
+                                    TEPaper tePaper = new TEPaper(examId, paperImportDto.getPaperCode(), paperImportDto.getPaperCode(), new BigDecimal(paperImportDto.getTotalScore()), new BigDecimal(paperImportDto.getPassScore()), Objects.nonNull(paperImportDto.getContribution()) && Objects.equals(paperImportDto.getContribution(), "是") ? 1 : 0, Objects.nonNull(paperImportDto.getContributionScore()) ? new BigDecimal(paperImportDto.getContributionScore()) : new BigDecimal(0), paperImportDto.getCourseName(), paperImportDto.getCourseCode());
                                     paperMap.put(paperImportDto.getPaperCode() + "_" + paperImportDto.getCourseCode(), tePaper);
                                 }
                             } else if (subList.get(y) instanceof PaperStructImportDto) {
@@ -391,15 +391,6 @@ public class SysController {
                                 TEPaperStruct tePaperStruct = new TEPaperStruct(paperMap.get(paperStructImportDto.getPaperCode() + "_" + paperStructImportDto.getCourseCode()).getId(), paperStructImportDto.getMainNumber().intValue(), paperStructImportDto.getSubNumber().intValue(), paperStructImportDto.getType(), new BigDecimal(paperStructImportDto.getScore()), paperStructImportDto.getRule(), paperStructImportDto.getDescription(), paperStructImportDto.getKnowledge(), paperStructImportDto.getCapability());
                                 paperStructMap.add(paperMap.get(paperStructImportDto.getPaperCode() + "_" + paperStructImportDto.getCourseCode()).getId(), tePaperStruct);
                             }
-//                            QuestionImportDto paperAndQuestionImportDto = (QuestionImportDto) subList.get(y);
-//                            if (!examMap.containsKey(paperAndQuestionImportDto.getExamCode())) {
-//                                TEExam teExam = new TEExam(tbSchool.getId(), paperAndQuestionImportDto.getExamCode(), paperAndQuestionImportDto.getExamCode(), System.currentTimeMillis(), System.currentTimeMillis());
-//                                examMap.put(paperAndQuestionImportDto.getExamCode(), teExam);
-//                            }
-//                            if (!paperMap.containsKey(paperAndQuestionImportDto.getPaperCode())) {
-//                                TEPaper tePaper = new TEPaper(examMap.get(paperAndQuestionImportDto.getExamCode()).getId(), paperAndQuestionImportDto.getCourseName(), paperAndQuestionImportDto.getCourseCode(), paperAndQuestionImportDto.getPaperCode(), paperAndQuestionImportDto.getPaperCode(), new BigDecimal(100), new BigDecimal(60));
-//                                paperMap.put(paperAndQuestionImportDto.getPaperCode(), tePaper);
-//                            }
                         }
                         if (max == size) {
                             break;
@@ -411,26 +402,23 @@ public class SysController {
                         }
                     }
                 }
-//                tePaperService.deleteAll();
-//                teQuestionService.deleteAll();
-//                teExamService.deleteAll();
-
-//                List<TEExam> examList = new ArrayList();
-//                examMap.forEach((k, v) -> {
-//                    examList.add(v);
-//                });
-//                teExamService.saveOrUpdateBatch(examList);
-
                 List<TEPaper> paperList = new ArrayList();
                 paperMap.forEach((k, v) -> {
-                    v.setExamId(1L);
+                    QueryWrapper<TEPaper> tePaperQueryWrapper = new QueryWrapper<>();
+                    tePaperQueryWrapper.lambda().eq(TEPaper::getExamId, examId)
+                            .eq(TEPaper::getCode, v.getCode())
+                            .eq(TEPaper::getCourseCode, v.getCourseCode());
+                    TEPaper tePaper = tePaperService.getOne(tePaperQueryWrapper);
+                    if (Objects.nonNull(tePaper)) {
+                        tePaperStructService.deleteAll(tePaper.getId());
+                    }
+                    tePaperService.remove(tePaperQueryWrapper);
                     paperList.add(v);
                 });
                 tePaperService.saveOrUpdateBatch(paperList);
 
                 List<TEPaperStruct> paperStructList = new ArrayList();
                 paperStructMap.forEach((k, v) -> {
-                    tePaperStructService.deleteAll(k);
                     paperStructList.addAll(v);
                 });
                 tePaperStructService.saveOrUpdateBatch(paperStructList);
@@ -492,7 +480,7 @@ public class SysController {
                 QueryWrapper<TBSchool> tbSchoolQueryWrapper = new QueryWrapper<>();
                 tbSchoolQueryWrapper.lambda().eq(TBSchool::getCode, "whdx");
                 TBSchool tbSchool = tbSchoolService.getOne(tbSchoolQueryWrapper);
-                Map<String, TECourse> courseMap = new LinkedHashMap<>();
+//                Map<String, TECourse> courseMap = new LinkedHashMap<>();
                 Map<String, TBModule> moduleMap = new LinkedHashMap<>();
                 LinkedMultiValueMap<Long, TBDimension> dimensionMap = new LinkedMultiValueMap<>();
                 for (int i = 0; i < finalList.size(); i++) {
@@ -508,10 +496,10 @@ public class SysController {
                         for (int y = 0; y < subList.size(); y++) {
                             line++;
                             DimensionImportDto dimensionImportDto = (DimensionImportDto) subList.get(y);
-                            if (!courseMap.containsKey(dimensionImportDto.getCourseCode())) {
-                                TECourse teCourse = new TECourse(tbSchool.getId(), dimensionImportDto.getCourseName(), dimensionImportDto.getCourseCode());
-                                courseMap.put(dimensionImportDto.getCourseCode(), teCourse);
-                            }
+//                            if (!courseMap.containsKey(dimensionImportDto.getCourseCode())) {
+//                                TECourse teCourse = new TECourse(tbSchool.getId(), dimensionImportDto.getCourseName(), dimensionImportDto.getCourseCode());
+//                                courseMap.put(dimensionImportDto.getCourseCode(), teCourse);
+//                            }
                             if (!moduleMap.containsKey(dimensionImportDto.getModuleName())) {
                                 QueryWrapper<TBModule> tbModuleQueryWrapper = new QueryWrapper<>();
                                 tbModuleQueryWrapper.lambda().eq(TBModule::getCode, ModuleEnum.convertToName(dimensionImportDto.getModuleName()).toLowerCase())
@@ -531,14 +519,14 @@ public class SysController {
                         }
                     }
                 }
-                teCourseService.deleteAll(tbSchool.getId(), new HashSet<>(courseMap.keySet()));
+//                teCourseService.deleteAll(tbSchool.getId(), new HashSet<>(courseMap.keySet()));
                 tbDimensionService.deleteAll(new HashSet<>(dimensionMap.keySet()));
 
-                List<TECourse> courseList = new ArrayList();
-                courseMap.forEach((k, v) -> {
-                    courseList.add(v);
-                });
-                teCourseService.saveOrUpdateBatch(courseList);
+//                List<TECourse> courseList = new ArrayList();
+//                courseMap.forEach((k, v) -> {
+//                    courseList.add(v);
+//                });
+//                teCourseService.saveOrUpdateBatch(courseList);
 
                 List<TBDimension> tbDimensionList = new ArrayList<>();
                 dimensionMap.forEach((k, v) -> {
