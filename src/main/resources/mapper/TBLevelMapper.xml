@@ -5,8 +5,8 @@
     <delete id="deleteAll">
         delete t from t_b_level t
         <where>
-            <if test="schoolId != null and schoolId != ''">
-                and t.school_id = #{schoolId}
+            <if test="moduleId != null and moduleId != ''">
+                and t.module_id = #{moduleId}
             </if>
         </where>
     </delete>

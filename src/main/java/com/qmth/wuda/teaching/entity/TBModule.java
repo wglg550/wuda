@@ -28,16 +28,6 @@ public class TBModule implements Serializable {
     @TableId(value = "id")
     private Long id;
 
-    @JsonSerialize(using = ToStringSerializer.class)
-    @ApiModelProperty(value = "学校id")
-    @TableField(value = "school_id")
-    private Long schoolId;
-
-    @JsonSerialize(using = ToStringSerializer.class)
-    @ApiModelProperty(value = "考试id")
-    @TableField(value = "exam_id")
-    private Long examId;
-
     @ApiModelProperty(value = "名称")
     @TableField(value = "name")
     private String name;
@@ -62,27 +52,57 @@ public class TBModule implements Serializable {
     @TableField(value = "degree")
     private String degree;
 
+    @ApiModelProperty(value = "试卷编码")
+    @TableField(value = "paper_code")
+    private String paperCode;
+
+    @ApiModelProperty(value = "科目名称")
+    @TableField(value = "course_name")
+    private String courseName;
+
+    @ApiModelProperty(value = "科目编码")
+    @TableField(value = "course_code")
+    private String courseCode;
+
     public TBModule() {
 
     }
 
-    public TBModule(Long schoolId, String name, String code, String description, String proficiency, String remark, String degree) {
+    public TBModule(String name, String code, String description, String proficiency, String remark, String degree, String paperCode, String courseName, String courseCode) {
         setId(UidUtil.nextId());
-        this.schoolId = schoolId;
         this.name = name;
         this.code = code;
         this.description = description;
         this.proficiency = proficiency;
         this.remark = remark;
         this.degree = degree;
+        this.paperCode = paperCode;
+        this.courseName = courseName;
+        this.courseCode = courseCode;
     }
 
-    public Long getExamId() {
-        return examId;
+    public String getPaperCode() {
+        return paperCode;
     }
 
-    public void setExamId(Long examId) {
-        this.examId = examId;
+    public void setPaperCode(String paperCode) {
+        this.paperCode = paperCode;
+    }
+
+    public String getCourseName() {
+        return courseName;
+    }
+
+    public void setCourseName(String courseName) {
+        this.courseName = courseName;
+    }
+
+    public String getCourseCode() {
+        return courseCode;
+    }
+
+    public void setCourseCode(String courseCode) {
+        this.courseCode = courseCode;
     }
 
     public String getDegree() {
@@ -111,14 +131,6 @@ public class TBModule implements Serializable {
 
     public static long getSerialVersionUID() {
         return serialVersionUID;
-    }
-
-    public Long getSchoolId() {
-        return schoolId;
-    }
-
-    public void setSchoolId(Long schoolId) {
-        this.schoolId = schoolId;
     }
 
     public String getName() {

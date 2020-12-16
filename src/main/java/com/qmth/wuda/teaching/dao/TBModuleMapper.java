@@ -20,18 +20,20 @@ import java.util.Set;
 public interface TBModuleMapper extends BaseMapper<TBModule> {
 
     /**
-     * 根据学校id和模块名称删除
+     * 根据试卷类型和科目编码删除
      *
-     * @param schoolId
+     * @param paperCode
+     * @param courseCode
      * @param moduleNames
      */
-    void deleteAll(@Param("schoolId") Long schoolId, @Param("moduleNames") Set<String> moduleNames);
+    void deleteAll(@Param("paperCode") String paperCode, @Param("courseCode") String courseCode, @Param("moduleNames") Set<String> moduleNames);
 
     /**
-     * 根据学校id获取模块
+     * 根据试卷类型和科目编码获取模块
      *
-     * @param schoolId
+     * @param paperCode
+     * @param courseCode
      * @return
      */
-    List<TBModule> findBySchoolId(@Param("schoolId") Long schoolId);
+    List<TBModule> findByPaperCodeAndCourseCode(@Param("paperCode") String paperCode, @Param("courseCode") String courseCode);
 }

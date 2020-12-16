@@ -28,48 +28,52 @@ public class TBModuleServiceImpl extends ServiceImpl<TBModuleMapper, TBModule> i
     TBModuleMapper tbModuleMapper;
 
     /**
-     * 根据学校id和模块名称删除
+     * 根据试卷类型和科目编码删除
      *
-     * @param schoolId
+     * @param paperCode
+     * @param courseCode
      * @param moduleNames
      */
     @Override
-    public void deleteAll(Long schoolId, Set<String> moduleNames) {
-        tbModuleMapper.deleteAll(schoolId, moduleNames);
+    public void deleteAll(String paperCode, String courseCode, Set<String> moduleNames) {
+        tbModuleMapper.deleteAll(paperCode, courseCode, moduleNames);
     }
 
     /**
-     * 根据学校id获取模块
+     * 根据试卷类型和科目编码获取模块
      *
-     * @param schoolId
+     * @param paperCode
+     * @param courseCode
      * @return
      */
     @Override
-    @Cacheable(value = "module_cache", key = "#schoolId", unless = "#result == null")
-    public List<TBModule> findBySchoolId(Long schoolId) {
-        return tbModuleMapper.findBySchoolId(schoolId);
+    @Cacheable(value = "module_cache", key = "#paperCode + '-' + #courseCode", unless = "#result == null")
+    public List<TBModule> findByPaperCodeAndCourseCode(String paperCode, String courseCode) {
+        return tbModuleMapper.findByPaperCodeAndCourseCode(paperCode, courseCode);
     }
 
     /**
-     * 根据学校id更新模块
+     * 根据试卷类型和科目编码更新模块
      *
-     * @param schoolId
+     * @param paperCode
+     * @param courseCode
      * @return
      */
     @Override
-    @CachePut(value = "module_cache", key = "#schoolId", condition = "#result != null")
-    public List<TBModule> updateBySchoolId(Long schoolId) {
-        return tbModuleMapper.findBySchoolId(schoolId);
+    @CachePut(value = "module_cache", key = "#paperCode + '-' + #courseCode", condition = "#result != null")
+    public List<TBModule> updateByPaperCodeAndCourseCode(String paperCode, String courseCode) {
+        return tbModuleMapper.findByPaperCodeAndCourseCode(paperCode, courseCode);
     }
 
     /**
-     * 根据学校id删除模块
+     * 根据试卷类型和科目编码删除模块
      *
-     * @param schoolId
+     * @param paperCode
+     * @param courseCode
      */
     @Override
-    @CacheEvict(value = "module_cache", key = "#schoolId")
-    public void deleteBySchoolId(Long schoolId) {
+    @CacheEvict(value = "module_cache", key = "#paperCode + '-' + #courseCode")
+    public void deleteByPaperCodeAndCourseCode(String paperCode, String courseCode) {
 
     }
 }

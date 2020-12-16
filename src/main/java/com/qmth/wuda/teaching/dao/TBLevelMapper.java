@@ -17,9 +17,9 @@ import org.apache.ibatis.annotations.Param;
 public interface TBLevelMapper extends BaseMapper<TBLevel> {
 
     /**
-     * 根据学校id删除等级
+     * 根据模块id删除等级
      *
-     * @param schoolId
+     * @param moduleId
      */
-    void deleteAll(@Param("schoolId") Long schoolId);
+    void deleteAll(@Param("moduleId") Long moduleId);
 }

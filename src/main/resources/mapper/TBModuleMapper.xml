@@ -5,8 +5,11 @@
     <delete id="deleteAll">
         delete t from t_b_module t
         <where>
-            <if test="schoolId != null and schoolId != ''">
-                and t.school_id = #{schoolId}
+            <if test="paperCode != null and paperCode != ''">
+                and t.paper_code = #{paperCode}
+            </if>
+            <if test="courseCode != null and courseCode != ''">
+                and t.course_code = #{courseCode}
             </if>
             <if test="moduleNames != null">
                 and t.name in
@@ -17,11 +20,14 @@
         </where>
     </delete>
 
-    <select id="findBySchoolId" resultType="com.qmth.wuda.teaching.entity.TBModule">
+    <select id="findByPaperCodeAndCourseCode" resultType="com.qmth.wuda.teaching.entity.TBModule">
         select * from t_b_module tbm
         <where>
-            <if test="schoolId != null and schoolId != ''">
-                and tbm.school_id = #{schoolId}
+            <if test="paperCode != null and paperCode != ''">
+                and tbm.paper_code = #{paperCode}
+            </if>
+            <if test="courseCode != null and courseCode != ''">
+                and tbm.course_code = #{courseCode}
             </if>
         </where>
     </select>

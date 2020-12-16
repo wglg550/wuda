@@ -75,14 +75,16 @@ public class CacheServiceImpl implements CacheService {
     @Cacheable(value = "personal_report_cache", key = "#schoolId + '-' + #collegeId + '-' + #studentNo")
     public PersonalReportBean addPersonalReport(Long schoolId, Long collegeId, String studentNo) {
         //报告第一页start
-        List<TBModule> tbModuleList = tbModuleService.findBySchoolId(schoolId);
-        if (Objects.isNull(tbModuleList) || tbModuleList.size() == 0) {
-            throw new BusinessException("模块为空");
-        }
-        List<TBLevel> tbLevelList = tbLevelService.findBySchoolId(schoolId);
-        if (Objects.isNull(tbLevelList) || tbLevelList.size() == 0) {
-            throw new BusinessException("等级为空");
-        }
+        List<TBModule> tbModuleList = null;
+//        List<TBModule> tbModuleList = tbModuleService.findBySchoolId(schoolId);
+//        if (Objects.isNull(tbModuleList) || tbModuleList.size() == 0) {
+//            throw new BusinessException("模块为空");
+//        }
+//        List<TBLevel> tbLevelList = tbLevelService.findBySchoolId(schoolId);
+//        if (Objects.isNull(tbLevelList) || tbLevelList.size() == 0) {
+//            throw new BusinessException("等级为空");
+//        }
+        List<TBModule> tbLevelList = null;
         ExamStudentDto examStudentDto = teExamStudentService.findByStudentNo(studentNo);
         if (Objects.isNull(examStudentDto)) {
             throw new BusinessException("考生信息为空");

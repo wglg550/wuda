@@ -474,9 +474,6 @@ public class SysController {
             });
             //保存到数据库
             if (Objects.nonNull(finalList) && finalList.size() > 0) {
-                QueryWrapper<TBSchool> tbSchoolQueryWrapper = new QueryWrapper<>();
-                tbSchoolQueryWrapper.lambda().eq(TBSchool::getCode, "whdx");
-                TBSchool tbSchool = tbSchoolService.getOne(tbSchoolQueryWrapper);
                 Map<String, TBModule> moduleMap = new LinkedHashMap<>();
                 LinkedMultiValueMap<Long, TBDimension> dimensionMap = new LinkedMultiValueMap<>();
                 for (int i = 0; i < finalList.size(); i++) {
@@ -494,7 +491,7 @@ public class SysController {
                             if (!moduleMap.containsKey(dimensionImportDto.getModuleName())) {
                                 QueryWrapper<TBModule> tbModuleQueryWrapper = new QueryWrapper<>();
                                 tbModuleQueryWrapper.lambda().eq(TBModule::getCode, ModuleEnum.convertToName(dimensionImportDto.getModuleName()).toLowerCase())
-                                        .eq(TBModule::getSchoolId, tbSchool.getId());
+                                        .eq(TBModule::getCourseCode, dimensionImportDto.getCourseCode());
                                 moduleMap.put(dimensionImportDto.getModuleName(), tbModuleService.getOne(tbModuleQueryWrapper));
                             }
                             TBDimension tbDimension = new TBDimension(moduleMap.get(dimensionImportDto.getModuleName()).getId(), dimensionImportDto.getCourseName(), dimensionImportDto.getCourseCode(), dimensionImportDto.getKnowledgeFirst(), dimensionImportDto.getIdentifierFirst(), dimensionImportDto.getKnowledgeSecond(), dimensionImportDto.getIdentifierSecond(), dimensionImportDto.getDescription());
@@ -576,9 +573,6 @@ public class SysController {
             });
             //保存到数据库
             if (Objects.nonNull(finalList) && finalList.size() > 0) {
-                QueryWrapper<TBSchool> tbSchoolQueryWrapper = new QueryWrapper<>();
-                tbSchoolQueryWrapper.lambda().eq(TBSchool::getCode, "whdx");
-                TBSchool tbSchool = tbSchoolService.getOne(tbSchoolQueryWrapper);
                 Map<String, TBModule> moduleMap = new LinkedHashMap<>();
                 LinkedMultiValueMap<String, TBLevel> levelMap = new LinkedMultiValueMap<>();
                 for (int i = 0; i < finalList.size(); i++) {
@@ -595,12 +589,12 @@ public class SysController {
                             if (subList.get(y) instanceof ModuleImportDto) {
                                 ModuleImportDto moduleImportDto = (ModuleImportDto) subList.get(y);
                                 if (!moduleMap.containsKey(moduleImportDto.getName())) {
-                                    TBModule tbModule = new TBModule(tbSchool.getId(), moduleImportDto.getName(), ModuleEnum.convertToName(moduleImportDto.getName()), moduleImportDto.getDescription(), moduleImportDto.getProficiency(), moduleImportDto.getRemark(), moduleImportDto.getProficiencyDegree());
+                                    TBModule tbModule = new TBModule(moduleImportDto.getName(), ModuleEnum.convertToName(moduleImportDto.getName()), moduleImportDto.getDescription(), moduleImportDto.getProficiency(), moduleImportDto.getRemark(), moduleImportDto.getProficiencyDegree(), moduleImportDto.getPaperCode(), moduleImportDto.getCourseName(), moduleImportDto.getCourseCode());
                                     moduleMap.put(moduleImportDto.getName(), tbModule);
                                 }
                             } else if (subList.get(y) instanceof LevelImportDto) {
                                 LevelImportDto levelImportDto = (LevelImportDto) subList.get(y);
-                                TBLevel tbLevel = new TBLevel(tbSchool.getId(), moduleMap.get(levelImportDto.getModuleName()).getId(), levelImportDto.getCode(), levelImportDto.getLevel(), levelImportDto.getLevelDegree(), levelImportDto.getDiagnoseResult(), levelImportDto.getLearnAdvice(), levelImportDto.getFormula());
+                                TBLevel tbLevel = new TBLevel(moduleMap.get(levelImportDto.getModuleName()).getId(), levelImportDto.getCode(), levelImportDto.getLevel(), levelImportDto.getLevelDegree(), levelImportDto.getDiagnoseResult(), levelImportDto.getLearnAdvice(), levelImportDto.getFormula());
                                 levelMap.add(levelImportDto.getModuleName(), tbLevel);
                             }
                         }
@@ -614,12 +608,18 @@ public class SysController {
                         }
                     }
                 }
-                tbModuleService.deleteAll(tbSchool.getId(), new HashSet<>(moduleMap.keySet()));
-                tbLevelService.deleteAll(tbSchool.getId());
-
                 List<TBModule> moduleList = new ArrayList<>();
                 List<TBLevel> tbLevelList = new ArrayList<>();
                 moduleMap.forEach((k, v) -> {
+                    QueryWrapper<TBModule> tbModuleQueryWrapper = new QueryWrapper<>();
+                    tbModuleQueryWrapper.lambda().eq(TBModule::getPaperCode, v.getPaperCode())
+                            .eq(TBModule::getCourseCode, v.getCourseCode())
+                            .eq(TBModule::getCode, v.getCode().toLowerCase());
+                    TBModule tbModule = tbModuleService.getOne(tbModuleQueryWrapper);
+                    if (Objects.nonNull(tbModule)) {
+                        tbLevelService.deleteAll(tbModule.getId());
+                        tbModuleService.remove(tbModuleQueryWrapper);
+                    }
                     moduleList.add(v);
                     tbLevelList.addAll(levelMap.get(k));
                 });

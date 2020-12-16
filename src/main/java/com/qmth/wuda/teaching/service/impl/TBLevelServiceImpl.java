@@ -29,25 +29,25 @@ public class TBLevelServiceImpl extends ServiceImpl<TBLevelMapper, TBLevel> impl
     /**
      * 根据模块id删除等级
      *
-     * @param schoolId
+     * @param moduleId
      */
     @Override
-    @CacheEvict(value = "level_cache", key = "#schoolId")
-    public void deleteAll(Long schoolId) {
-        tbLevelMapper.deleteAll(schoolId);
+    @CacheEvict(value = "level_cache", key = "#moduleId")
+    public void deleteAll(Long moduleId) {
+        tbLevelMapper.deleteAll(moduleId);
     }
 
     /**
      * 根据模块id查询所有等级
      *
-     * @param schoolId
+     * @param moduleId
      * @return
      */
     @Override
-    @Cacheable(value = "level_cache", key = "#schoolId", condition = "#result != null")
-    public List<TBLevel> findBySchoolId(Long schoolId) {
+    @Cacheable(value = "level_cache", key = "#moduleId", condition = "#result != null")
+    public List<TBLevel> findByModuleId(Long moduleId) {
         QueryWrapper<TBLevel> tbLevelQueryWrapper = new QueryWrapper<>();
-        tbLevelQueryWrapper.lambda().eq(TBLevel::getSchoolId, schoolId);
+        tbLevelQueryWrapper.lambda().eq(TBLevel::getModuleId, moduleId);
         return this.list(tbLevelQueryWrapper);
     }
 }

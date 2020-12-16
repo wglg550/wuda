@@ -29,11 +29,6 @@ public class TBLevel implements Serializable {
     private Long id;
 
     @JsonSerialize(using = ToStringSerializer.class)
-    @ApiModelProperty(value = "学校id")
-    @TableField(value = "school_id")
-    private Long schoolId;
-
-    @JsonSerialize(using = ToStringSerializer.class)
     @ApiModelProperty(value = "模块id")
     @TableId(value = "module_id")
     private Long moduleId;
@@ -70,9 +65,8 @@ public class TBLevel implements Serializable {
 
     }
 
-    public TBLevel(Long schoolId, Long moduleId, String code, String level, String degree, String diagnoseResult, String learnAdvice, String formula) {
+    public TBLevel(Long moduleId, String code, String level, String degree, String diagnoseResult, String learnAdvice, String formula) {
         setId(UidUtil.nextId());
-        this.schoolId = schoolId;
         this.moduleId = moduleId;
         this.code = code;
         this.level = level;
@@ -80,14 +74,6 @@ public class TBLevel implements Serializable {
         this.diagnoseResult = diagnoseResult;
         this.learnAdvice = learnAdvice;
         this.formula = formula;
-    }
-
-    public Long getSchoolId() {
-        return schoolId;
-    }
-
-    public void setSchoolId(Long schoolId) {
-        this.schoolId = schoolId;
     }
 
     public String getFormula() {

@@ -16,17 +16,17 @@ import java.util.List;
 public interface TBLevelService extends IService<TBLevel> {
 
     /**
-     * 根据学校id删除等级
+     * 根据模块id删除等级
      *
-     * @param schoolId
+     * @param moduleId
      */
-    void deleteAll(Long schoolId);
+    void deleteAll(Long moduleId);
 
     /**
-     * 根据学校id查询所有等级
+     * 根据模块id查询所有等级
      *
-     * @param schoolId
+     * @param moduleId
      * @return
      */
-    List<TBLevel> findBySchoolId(Long schoolId);
+    List<TBLevel> findByModuleId(Long moduleId);
 }
