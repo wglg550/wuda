@@ -26,7 +26,7 @@ public class TEExam extends BaseEntity implements Serializable {
 
     @JsonSerialize(using = ToStringSerializer.class)
     @ApiModelProperty(value = "父id")
-    @TableId(value = "parent_id")
+    @TableField(value = "parent_id")
     private Long parentId;
 
     @ApiModelProperty(value = "名称")

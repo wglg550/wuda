@@ -16,6 +16,8 @@ public class SysDomain implements Serializable {
 
     private boolean oss;
 
+    private boolean open;
+
     private List<String> attachmentType;
 
     private String serverUpload;
@@ -23,6 +25,18 @@ public class SysDomain implements Serializable {
     private String fileHost;
 
     private String serverHost;
+
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
+    }
+
+    public boolean isOpen() {
+        return open;
+    }
+
+    public void setOpen(boolean open) {
+        this.open = open;
+    }
 
     public String getFileHost() {
         return fileHost;

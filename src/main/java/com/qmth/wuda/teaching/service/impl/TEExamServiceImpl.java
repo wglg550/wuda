@@ -55,9 +55,7 @@ public class TEExamServiceImpl extends ServiceImpl<TEExamMapper, TEExam> impleme
     public TEExam saveExam(String examName, Long examId, String examCode, String accessKey, String accessSecret) {
         TEExam teExam = null;
         if (Objects.nonNull(examId)) {
-            QueryWrapper<TEExam> teExamQueryWrapper = new QueryWrapper<>();
-            teExamQueryWrapper.lambda().eq(TEExam::getId, examId);
-            teExam = this.getOne(teExamQueryWrapper);
+            teExam = this.getById(examId);
         } else {
             QueryWrapper<TEExam> teExamQueryWrapper = new QueryWrapper<>();
             teExamQueryWrapper.lambda().eq(TEExam::getAccessKey, accessKey)
