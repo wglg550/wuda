@@ -22,7 +22,7 @@ public class ExamCourseDto implements Serializable {
     @ApiModelProperty(value = "科目编码")
     private String courseCode;
 
-    @ApiModelProperty(value = "是否缺考，0：否，1：是")
+    @ApiModelProperty(value = "1-正常，2-缺考(包含未上传)，3-违纪")
     private Integer miss;
 
     @JsonSerialize(using = ToStringSerializer.class)

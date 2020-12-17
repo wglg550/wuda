@@ -37,8 +37,9 @@ public enum ExceptionResultEnum {
 
     ATTACHMENT_IS_NULL(400, 400003, "请上传附件"),
 
+    AUTHORIZATION_INVALID(401, 401001, "authorization无效"),
 
-    AUTHORIZATION_INVALID(401, 401001, "authorization无效");
+    YUN_API_INVALID(401, 401002, "云阅卷鉴权失败");
 
     private int statusCode;
     private int code;

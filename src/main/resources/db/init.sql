@@ -328,7 +328,7 @@ CREATE TABLE `t_e_exam_student` (
   `exam_number` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '准考证号',
   `grade` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '年级',
   `major_id` bigint DEFAULT NULL COMMENT '专业id',
-  `miss` tinyint DEFAULT '0' COMMENT '是否缺考，0：否，1：是',
+  `miss` tinyint DEFAULT '0' COMMENT '1-正常，2-缺考(包含未上传)，3-违纪',
   `enable` tinyint DEFAULT '1' COMMENT '是否启用，0：停用，1：启用',
   `class_no` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '班级',
   `college_id` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '学院id',

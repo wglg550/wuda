@@ -34,7 +34,7 @@ public class HttpUtil {
      * @param timestamp
      * @return
      */
-    public static String post(String url, Map<String, String> params, String secret, Long timestamp) {
+    public static String post(String url, Map<String, Object> params, String secret, Long timestamp) {
         // 构建post请求
         HttpPost post = new HttpPost(url);
         post.setHeader(Constants.HEADER_AUTHORIZATION, secret);
@@ -43,7 +43,7 @@ public class HttpUtil {
         List<BasicNameValuePair> pairs = new ArrayList<BasicNameValuePair>();
         if (params != null) {
             for (String key : params.keySet()) {
-                pairs.add(new BasicNameValuePair(key, params.get(key)));
+                pairs.add(new BasicNameValuePair(key, String.valueOf(params.get(key))));
             }
         }
         HttpEntity entity = null;

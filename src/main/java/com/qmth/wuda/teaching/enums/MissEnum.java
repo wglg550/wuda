@@ -9,9 +9,20 @@ package com.qmth.wuda.teaching.enums;
  */
 public enum MissEnum {
 
-    TRUE(1),
+    /**
+     * 正常
+     */
+    NORMAL(1),
 
-    FALSE(0);
+    /**
+     * 缺考
+     */
+    MISS(2),
+
+    /**
+     * 违纪
+     */
+    BREACH(3);
 
     Integer value;
 

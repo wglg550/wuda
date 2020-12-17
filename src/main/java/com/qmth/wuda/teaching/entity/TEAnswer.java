@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
-import com.qmth.wuda.teaching.base.BaseEntity;
 import com.qmth.wuda.teaching.util.UidUtil;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -65,7 +64,7 @@ public class TEAnswer implements Serializable {
 
     @ApiModelProperty(value = "版本号")
     @TableField(value = "version")
-    private Integer version = 0;
+    private Integer version = 1;
 
     public TEAnswer() {
 
@@ -79,24 +78,23 @@ public class TEAnswer implements Serializable {
         this.examRecordId = examRecordId;
     }
 
-    public TEAnswer(Integer mainNumber, Integer subNumber, String type, Long examRecordId, String answer, Integer version) {
+    public TEAnswer(Integer mainNumber, Integer subNumber, String type, Long examRecordId, String answer, BigDecimal score) {
         setId(UidUtil.nextId());
         this.mainNumber = mainNumber;
         this.subNumber = subNumber;
         this.type = type;
         this.examRecordId = examRecordId;
         this.answer = answer;
-        this.version = version;
+        this.score = score;
     }
 
-    public TEAnswer(Integer mainNumber, Integer subNumber, String type, Long examRecordId, BigDecimal score, Integer version) {
+    public TEAnswer(Integer mainNumber, Integer subNumber, String type, Long examRecordId, BigDecimal score) {
         setId(UidUtil.nextId());
         this.mainNumber = mainNumber;
         this.subNumber = subNumber;
         this.type = type;
         this.examRecordId = examRecordId;
         this.score = score;
-        this.version = version;
     }
 
     public Long getId() {
