@@ -22,4 +22,12 @@ public interface TECourseService extends IService<TECourse> {
      * @param courseCodes
      */
     void deleteAll(Long schoolId, Set<String> courseCodes);
+
+    /**
+     * 根据科目编码count
+     *
+     * @param courseCode
+     * @return
+     */
+    int countByCourseCode(String courseCode);
 }

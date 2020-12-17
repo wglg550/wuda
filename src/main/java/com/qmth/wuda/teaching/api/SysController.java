@@ -367,6 +367,7 @@ public class SysController {
             if (Objects.nonNull(finalList) && finalList.size() > 0) {
                 Map<String, TEPaper> paperMap = new LinkedHashMap<>();
                 LinkedMultiValueMap<Long, TEPaperStruct> paperStructMap = new LinkedMultiValueMap<>();
+                Map<String, String> courseMap = new LinkedHashMap<>();
                 for (int i = 0; i < finalList.size(); i++) {
                     LinkedMultiValueMap<Integer, Object> finalMap = finalList.get(i);
                     List<Object> paperStructImportDtoList = finalMap.get(i);
@@ -388,6 +389,9 @@ public class SysController {
                                 PaperStructImportDto paperStructImportDto = (PaperStructImportDto) paperStructImportDtoList.get(y);
                                 TEPaperStruct tePaperStruct = new TEPaperStruct(paperMap.get(paperStructImportDto.getPaperCode() + "_" + paperStructImportDto.getCourseCode()).getId(), paperStructImportDto.getMainNumber().intValue(), paperStructImportDto.getSubNumber().intValue(), paperStructImportDto.getType(), new BigDecimal(paperStructImportDto.getScore()), paperStructImportDto.getRule(), paperStructImportDto.getDescription(), paperStructImportDto.getKnowledge(), paperStructImportDto.getCapability());
                                 paperStructMap.add(paperMap.get(paperStructImportDto.getPaperCode() + "_" + paperStructImportDto.getCourseCode()).getId(), tePaperStruct);
+                                if (!courseMap.containsKey(paperStructImportDto.getCourseCode())) {
+                                    courseMap.put(paperStructImportDto.getCourseCode(), paperStructImportDto.getCourseName());
+                                }
                             }
                         }
                         if (max == size) {
@@ -400,6 +404,13 @@ public class SysController {
                         }
                     }
                 }
+                courseMap.forEach((k, v) -> {
+                    int count = teCourseService.countByCourseCode(k);
+                    if (count == 0) {
+                        throw new BusinessException("科目编码" + k + "不存在");
+                    }
+                });
+
                 List<TEPaper> paperList = new ArrayList();
                 paperMap.forEach((k, v) -> {
                     QueryWrapper<TEPaper> tePaperQueryWrapper = new QueryWrapper<>();
@@ -476,6 +487,7 @@ public class SysController {
             if (Objects.nonNull(finalList) && finalList.size() > 0) {
                 Map<String, TBModule> moduleMap = new LinkedHashMap<>();
                 LinkedMultiValueMap<Long, TBDimension> dimensionMap = new LinkedMultiValueMap<>();
+                Map<String, String> courseMap = new LinkedHashMap<>();
                 for (int i = 0; i < finalList.size(); i++) {
                     LinkedMultiValueMap<Integer, Object> finalMap = finalList.get(i);
                     List<Object> dimensionImportDtoList = finalMap.get(i);
@@ -494,6 +506,9 @@ public class SysController {
                                         .eq(TBModule::getCourseCode, dimensionImportDto.getCourseCode());
                                 moduleMap.put(dimensionImportDto.getModuleName(), tbModuleService.getOne(tbModuleQueryWrapper));
                             }
+                            if (!courseMap.containsKey(dimensionImportDto.getCourseCode())) {
+                                courseMap.put(dimensionImportDto.getCourseCode(), dimensionImportDto.getCourseName());
+                            }
                             TBDimension tbDimension = new TBDimension(moduleMap.get(dimensionImportDto.getModuleName()).getId(), dimensionImportDto.getCourseName(), dimensionImportDto.getCourseCode(), dimensionImportDto.getKnowledgeFirst(), dimensionImportDto.getIdentifierFirst(), dimensionImportDto.getKnowledgeSecond(), dimensionImportDto.getIdentifierSecond(), dimensionImportDto.getDescription());
                             dimensionMap.add(moduleMap.get(dimensionImportDto.getModuleName()).getId(), tbDimension);
                         }
@@ -507,6 +522,13 @@ public class SysController {
                         }
                     }
                 }
+                courseMap.forEach((k, v) -> {
+                    int count = teCourseService.countByCourseCode(k);
+                    if (count == 0) {
+                        throw new BusinessException("科目编码" + k + "不存在");
+                    }
+                });
+
                 tbDimensionService.deleteAll(new HashSet<>(dimensionMap.keySet()));
                 List<TBDimension> tbDimensionList = new ArrayList<>();
                 dimensionMap.forEach((k, v) -> {
@@ -575,6 +597,7 @@ public class SysController {
             if (Objects.nonNull(finalList) && finalList.size() > 0) {
                 Map<String, TBModule> moduleMap = new LinkedHashMap<>();
                 LinkedMultiValueMap<String, TBLevel> levelMap = new LinkedMultiValueMap<>();
+                Map<String, String> courseMap = new LinkedHashMap<>();
                 for (int i = 0; i < finalList.size(); i++) {
                     LinkedMultiValueMap<Integer, Object> finalMap = finalList.get(i);
                     List<Object> moduleImportDtoList = finalMap.get(i);
@@ -589,8 +612,11 @@ public class SysController {
                             if (subList.get(y) instanceof ModuleImportDto) {
                                 ModuleImportDto moduleImportDto = (ModuleImportDto) subList.get(y);
                                 if (!moduleMap.containsKey(moduleImportDto.getName())) {
-                                    TBModule tbModule = new TBModule(moduleImportDto.getName(), ModuleEnum.convertToName(moduleImportDto.getName()), moduleImportDto.getDescription(), moduleImportDto.getProficiency(), moduleImportDto.getRemark(), moduleImportDto.getProficiencyDegree(), moduleImportDto.getPaperCode(), moduleImportDto.getCourseName(), moduleImportDto.getCourseCode());
+                                    TBModule tbModule = new TBModule(moduleImportDto.getName(), ModuleEnum.convertToName(moduleImportDto.getName()), moduleImportDto.getDescription(), moduleImportDto.getProficiency(), moduleImportDto.getRemark(), moduleImportDto.getProficiencyDegree(), moduleImportDto.getCourseName(), moduleImportDto.getCourseCode());
                                     moduleMap.put(moduleImportDto.getName(), tbModule);
+                                }
+                                if (!courseMap.containsKey(moduleImportDto.getCourseCode())) {
+                                    courseMap.put(moduleImportDto.getCourseCode(), moduleImportDto.getCourseName());
                                 }
                             } else if (subList.get(y) instanceof LevelImportDto) {
                                 LevelImportDto levelImportDto = (LevelImportDto) subList.get(y);
@@ -608,12 +634,18 @@ public class SysController {
                         }
                     }
                 }
+                courseMap.forEach((k, v) -> {
+                    int count = teCourseService.countByCourseCode(k);
+                    if (count == 0) {
+                        throw new BusinessException("科目编码" + k + "不存在");
+                    }
+                });
+
                 List<TBModule> moduleList = new ArrayList<>();
                 List<TBLevel> tbLevelList = new ArrayList<>();
                 moduleMap.forEach((k, v) -> {
                     QueryWrapper<TBModule> tbModuleQueryWrapper = new QueryWrapper<>();
-                    tbModuleQueryWrapper.lambda().eq(TBModule::getPaperCode, v.getPaperCode())
-                            .eq(TBModule::getCourseCode, v.getCourseCode())
+                    tbModuleQueryWrapper.lambda().eq(TBModule::getCourseCode, v.getCourseCode())
                             .eq(TBModule::getCode, v.getCode().toLowerCase());
                     TBModule tbModule = tbModuleService.getOne(tbModuleQueryWrapper);
                     if (Objects.nonNull(tbModule)) {

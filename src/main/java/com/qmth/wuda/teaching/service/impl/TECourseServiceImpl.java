@@ -1,5 +1,6 @@
 package com.qmth.wuda.teaching.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.qmth.wuda.teaching.dao.TECourseMapper;
 import com.qmth.wuda.teaching.entity.TECourse;
@@ -32,5 +33,18 @@ public class TECourseServiceImpl extends ServiceImpl<TECourseMapper, TECourse> i
     @Override
     public void deleteAll(Long schoolId, Set<String> courseCodes) {
         teCourseMapper.deleteAll(schoolId, courseCodes);
+    }
+
+    /**
+     * 根据科目编码count
+     *
+     * @param courseCode
+     * @return
+     */
+    @Override
+    public int countByCourseCode(String courseCode) {
+        QueryWrapper<TECourse> teCourseQueryWrapper = new QueryWrapper<>();
+        teCourseQueryWrapper.lambda().eq(TECourse::getCourseCode, courseCode);
+        return this.count(teCourseQueryWrapper);
     }
 }
