@@ -6,8 +6,6 @@ import com.google.common.collect.Lists;
 import com.qmth.wuda.teaching.annotation.ApiJsonObject;
 import com.qmth.wuda.teaching.annotation.ApiJsonProperty;
 import com.qmth.wuda.teaching.bean.Result;
-import com.qmth.wuda.teaching.bean.excel.ExcelCallback;
-import com.qmth.wuda.teaching.bean.excel.ExcelError;
 import com.qmth.wuda.teaching.constant.SystemConstant;
 import com.qmth.wuda.teaching.dto.excel.*;
 import com.qmth.wuda.teaching.entity.*;
@@ -336,14 +334,11 @@ public class SysController {
             if (Objects.isNull(tbAttachment)) {
                 throw new BusinessException(ExceptionResultEnum.ATTACHMENT_ERROR);
             }
-            List<LinkedMultiValueMap<Integer, Object>> finalList = ExcelUtil.excelReader(file.getInputStream(), Lists.newArrayList(PaperImportDto.class, PaperStructImportDto.class), new ExcelCallback() {
-                @Override
-                public List<LinkedMultiValueMap<Integer, Object>> callback(List<LinkedMultiValueMap<Integer, Object>> finalList, List<LinkedMultiValueMap<Integer, String>> finalColumnNameList, List<LinkedMultiValueMap<Integer, ExcelError>> finalExcelErrorList) throws IllegalAccessException {
-                    if (finalExcelErrorList.size() > 0) {
-                        throw new BusinessException(JSONObject.toJSONString(finalExcelErrorList));
-                    }
-                    return finalList;
+            List<LinkedMultiValueMap<Integer, Object>> finalList = ExcelUtil.excelReader(file.getInputStream(), Lists.newArrayList(PaperImportDto.class, PaperStructImportDto.class), (finalExcelList, finalColumnNameList, finalExcelErrorList) -> {
+                if (finalExcelErrorList.size() > 0) {
+                    throw new BusinessException(JSONObject.toJSONString(finalExcelErrorList));
                 }
+                return finalExcelList;
             });
             //保存到数据库
             if (Objects.nonNull(finalList) && finalList.size() > 0) {
@@ -444,14 +439,11 @@ public class SysController {
             if (Objects.isNull(tbAttachment)) {
                 throw new BusinessException(ExceptionResultEnum.ATTACHMENT_ERROR);
             }
-            List<LinkedMultiValueMap<Integer, Object>> finalList = ExcelUtil.excelReader(file.getInputStream(), Lists.newArrayList(DimensionImportDto.class), new ExcelCallback() {
-                @Override
-                public List<LinkedMultiValueMap<Integer, Object>> callback(List<LinkedMultiValueMap<Integer, Object>> finalList, List<LinkedMultiValueMap<Integer, String>> finalColumnNameList, List<LinkedMultiValueMap<Integer, ExcelError>> finalExcelErrorList) throws IllegalAccessException {
-                    if (finalExcelErrorList.size() > 0) {
-                        throw new BusinessException(JSONObject.toJSONString(finalExcelErrorList));
-                    }
-                    return finalList;
+            List<LinkedMultiValueMap<Integer, Object>> finalList = ExcelUtil.excelReader(file.getInputStream(), Lists.newArrayList(DimensionImportDto.class), (finalExcelList, finalColumnNameList, finalExcelErrorList) -> {
+                if (finalExcelErrorList.size() > 0) {
+                    throw new BusinessException(JSONObject.toJSONString(finalExcelErrorList));
                 }
+                return finalExcelList;
             });
             //保存到数据库
             if (Objects.nonNull(finalList) && finalList.size() > 0) {
@@ -536,14 +528,11 @@ public class SysController {
             if (Objects.isNull(tbAttachment)) {
                 throw new BusinessException(ExceptionResultEnum.ATTACHMENT_ERROR);
             }
-            List<LinkedMultiValueMap<Integer, Object>> finalList = ExcelUtil.excelReader(file.getInputStream(), Lists.newArrayList(ModuleImportDto.class, LevelImportDto.class), new ExcelCallback() {
-                @Override
-                public List<LinkedMultiValueMap<Integer, Object>> callback(List<LinkedMultiValueMap<Integer, Object>> finalList, List<LinkedMultiValueMap<Integer, String>> finalColumnNameList, List<LinkedMultiValueMap<Integer, ExcelError>> finalExcelErrorList) throws IllegalAccessException {
-                    if (finalExcelErrorList.size() > 0) {
-                        throw new BusinessException(JSONObject.toJSONString(finalExcelErrorList));
-                    }
-                    return finalList;
+            List<LinkedMultiValueMap<Integer, Object>> finalList = ExcelUtil.excelReader(file.getInputStream(), Lists.newArrayList(ModuleImportDto.class, LevelImportDto.class), (finalExcelList, finalColumnNameList, finalExcelErrorList) -> {
+                if (finalExcelErrorList.size() > 0) {
+                    throw new BusinessException(JSONObject.toJSONString(finalExcelErrorList));
                 }
+                return finalExcelList;
             });
             //保存到数据库
             if (Objects.nonNull(finalList) && finalList.size() > 0) {
