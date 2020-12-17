@@ -338,27 +338,9 @@ public class SysController {
             }
             List<LinkedMultiValueMap<Integer, Object>> finalList = ExcelUtil.excelReader(file.getInputStream(), Lists.newArrayList(PaperImportDto.class, PaperStructImportDto.class), new ExcelCallback() {
                 @Override
-                public List<LinkedMultiValueMap<Integer, Object>> callback(List<LinkedMultiValueMap<Integer, Object>> finalList, List<LinkedMultiValueMap<Integer, String>> finalColumnNameList) throws IllegalAccessException {
-                    List<ExcelError> excelErrorList = new ArrayList<>();
-                    for (int i = 0; i < finalList.size(); i++) {
-                        LinkedMultiValueMap<Integer, Object> map = finalList.get(i);
-                        List<Object> paperStructImportDtoList = map.get(i);
-                        for (int y = 0; y < paperStructImportDtoList.size(); y++) {
-                            List<ExcelError> excelErrorTemp = null;
-                            if (paperStructImportDtoList.get(y) instanceof PaperImportDto) {
-                                PaperImportDto paperImportDto = (PaperImportDto) paperStructImportDtoList.get(y);
-                                excelErrorTemp = ExcelUtil.checkExcelField(paperImportDto, y, i);
-                            } else if (paperStructImportDtoList.get(y) instanceof PaperStructImportDto) {
-                                PaperStructImportDto paperStructImportDto = (PaperStructImportDto) paperStructImportDtoList.get(y);
-                                excelErrorTemp = ExcelUtil.checkExcelField(paperStructImportDto, y, i);
-                            }
-                            if (excelErrorTemp.size() > 0) {
-                                excelErrorList.addAll(excelErrorTemp);
-                            }
-                        }
-                    }
-                    if (excelErrorList.size() > 0) {
-                        throw new BusinessException(JSONObject.toJSONString(excelErrorList));
+                public List<LinkedMultiValueMap<Integer, Object>> callback(List<LinkedMultiValueMap<Integer, Object>> finalList, List<LinkedMultiValueMap<Integer, String>> finalColumnNameList, List<LinkedMultiValueMap<Integer, ExcelError>> finalExcelErrorList) throws IllegalAccessException {
+                    if (finalExcelErrorList.size() > 0) {
+                        throw new BusinessException(JSONObject.toJSONString(finalExcelErrorList));
                     }
                     return finalList;
                 }
@@ -464,21 +446,9 @@ public class SysController {
             }
             List<LinkedMultiValueMap<Integer, Object>> finalList = ExcelUtil.excelReader(file.getInputStream(), Lists.newArrayList(DimensionImportDto.class), new ExcelCallback() {
                 @Override
-                public List<LinkedMultiValueMap<Integer, Object>> callback(List<LinkedMultiValueMap<Integer, Object>> finalList, List<LinkedMultiValueMap<Integer, String>> finalColumnNameList) throws IllegalAccessException {
-                    List<ExcelError> excelErrorList = new ArrayList<>();
-                    for (int i = 0; i < finalList.size(); i++) {
-                        LinkedMultiValueMap<Integer, Object> map = finalList.get(i);
-                        List<Object> dimensionImportList = map.get(i);
-                        for (int y = 0; y < dimensionImportList.size(); y++) {
-                            DimensionImportDto dimensionImportDto = (DimensionImportDto) dimensionImportList.get(y);
-                            List<ExcelError> excelErrorTemp = ExcelUtil.checkExcelField(dimensionImportDto, y, i);
-                            if (excelErrorTemp.size() > 0) {
-                                excelErrorList.addAll(excelErrorTemp);
-                            }
-                        }
-                    }
-                    if (excelErrorList.size() > 0) {
-                        throw new BusinessException(JSONObject.toJSONString(excelErrorList));
+                public List<LinkedMultiValueMap<Integer, Object>> callback(List<LinkedMultiValueMap<Integer, Object>> finalList, List<LinkedMultiValueMap<Integer, String>> finalColumnNameList, List<LinkedMultiValueMap<Integer, ExcelError>> finalExcelErrorList) throws IllegalAccessException {
+                    if (finalExcelErrorList.size() > 0) {
+                        throw new BusinessException(JSONObject.toJSONString(finalExcelErrorList));
                     }
                     return finalList;
                 }
@@ -568,27 +538,9 @@ public class SysController {
             }
             List<LinkedMultiValueMap<Integer, Object>> finalList = ExcelUtil.excelReader(file.getInputStream(), Lists.newArrayList(ModuleImportDto.class, LevelImportDto.class), new ExcelCallback() {
                 @Override
-                public List<LinkedMultiValueMap<Integer, Object>> callback(List<LinkedMultiValueMap<Integer, Object>> finalList, List<LinkedMultiValueMap<Integer, String>> finalColumnNameList) throws IllegalAccessException {
-                    List<ExcelError> excelErrorList = new ArrayList<>();
-                    for (int i = 0; i < finalList.size(); i++) {
-                        LinkedMultiValueMap<Integer, Object> map = finalList.get(i);
-                        List<Object> moduleLevelImportList = map.get(i);
-                        for (int y = 0; y < moduleLevelImportList.size(); y++) {
-                            List<ExcelError> excelErrorTemp = null;
-                            if (moduleLevelImportList.get(y) instanceof ModuleImportDto) {
-                                ModuleImportDto moduleImportDto = (ModuleImportDto) moduleLevelImportList.get(y);
-                                excelErrorTemp = ExcelUtil.checkExcelField(moduleImportDto, y, i);
-                            } else if (moduleLevelImportList.get(y) instanceof LevelImportDto) {
-                                LevelImportDto levelImportDto = (LevelImportDto) moduleLevelImportList.get(y);
-                                excelErrorTemp = ExcelUtil.checkExcelField(levelImportDto, y, i);
-                            }
-                            if (excelErrorTemp.size() > 0) {
-                                excelErrorList.addAll(excelErrorTemp);
-                            }
-                        }
-                    }
-                    if (excelErrorList.size() > 0) {
-                        throw new BusinessException(JSONObject.toJSONString(excelErrorList));
+                public List<LinkedMultiValueMap<Integer, Object>> callback(List<LinkedMultiValueMap<Integer, Object>> finalList, List<LinkedMultiValueMap<Integer, String>> finalColumnNameList, List<LinkedMultiValueMap<Integer, ExcelError>> finalExcelErrorList) throws IllegalAccessException {
+                    if (finalExcelErrorList.size() > 0) {
+                        throw new BusinessException(JSONObject.toJSONString(finalExcelErrorList));
                     }
                     return finalList;
                 }

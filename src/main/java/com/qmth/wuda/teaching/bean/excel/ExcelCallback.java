@@ -18,8 +18,9 @@ public interface ExcelCallback {
      *
      * @param finalList
      * @param finalColumnNameList
+     * @param finalExcelErrorList
      * @return
      * @throws IllegalAccessException
      */
-    public List<LinkedMultiValueMap<Integer, Object>> callback(List<LinkedMultiValueMap<Integer, Object>> finalList, List<LinkedMultiValueMap<Integer, String>> finalColumnNameList) throws IllegalAccessException;
+    public List<LinkedMultiValueMap<Integer, Object>> callback(List<LinkedMultiValueMap<Integer, Object>> finalList, List<LinkedMultiValueMap<Integer, String>> finalColumnNameList, List<LinkedMultiValueMap<Integer, ExcelError>> finalExcelErrorList) throws IllegalAccessException;
 }

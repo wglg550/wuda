@@ -52,6 +52,7 @@ public class ExcelUtil {
             int sheets = xb.getNumberOfSheets();
             List<LinkedMultiValueMap<Integer, Object>> finalOList = new ArrayList<>();
             List<LinkedMultiValueMap<Integer, String>> finalColumnNameList = new ArrayList<>();
+            List<LinkedMultiValueMap<Integer, ExcelError>> finalExcelErrorList = new ArrayList<>();
             for (int y = 0; y < sheets; y++) {
                 //获取第一个表单sheet
                 XSSFSheet sheet = xb.getSheetAt(y);
@@ -60,6 +61,7 @@ public class ExcelUtil {
                 //循环行数依次获取列数
                 LinkedMultiValueMap<Integer, Object> oList = new LinkedMultiValueMap<>();
                 LinkedMultiValueMap<Integer, String> columnNameList = new LinkedMultiValueMap<>();
+                LinkedMultiValueMap<Integer, ExcelError> excelErrorList = new LinkedMultiValueMap<>();
                 for (int i = 0; i < lastrow + 1; i++) {
                     //获取哪一行i
                     Row row = sheet.getRow(i);
@@ -83,6 +85,11 @@ public class ExcelUtil {
                                         if (j < fields.length - 1) {
                                             fields[j].setAccessible(true);
                                             fields[j].set(o, obj);
+                                            Annotation annotation = fields[j].getAnnotation(ExcelNotNull.class);
+                                            ExcelNote note = fields[j].getAnnotation(ExcelNote.class);
+                                            if (Objects.isNull(obj) && Objects.nonNull(annotation)) {
+                                                excelErrorList.add(y, new ExcelError(j + 1, "excel第" + (y + 1) + "个sheet第" + (j + 1) + "行[" + note.value() + "]为空"));
+                                            }
                                         } else {
                                             Field field = null;
                                             if (j == fields.length - 1) {
@@ -101,6 +108,11 @@ public class ExcelUtil {
                                     } else {
                                         fields[j].setAccessible(true);
                                         fields[j].set(o, obj);
+                                        Annotation annotation = fields[j].getAnnotation(ExcelNotNull.class);
+                                        ExcelNote note = fields[j].getAnnotation(ExcelNote.class);
+                                        if (Objects.isNull(obj) && Objects.nonNull(annotation)) {
+                                            excelErrorList.add(y, new ExcelError(i + 1, "excel第" + (y + 1) + "个sheet第" + (i + 1) + "行[" + note.value() + "]为空"));
+                                        }
                                     }
                                 }
                             }
@@ -116,12 +128,15 @@ public class ExcelUtil {
                 if (oList.size() > 0) {
                     finalOList.add(oList);
                     finalColumnNameList.add(columnNameList);
+                    if (excelErrorList.size() > 0) {
+                        finalExcelErrorList.add(excelErrorList);
+                    }
                 }
                 log.info("读取了{}条数据", oList.get(y).size());
             }
             long end = System.currentTimeMillis();
             log.info("读取excel里的数据结束,============耗时============:{}秒", (end - start) / 1000);
-            return callback.callback(finalOList, finalColumnNameList);
+            return callback.callback(finalOList, finalColumnNameList, finalExcelErrorList);
         } catch (Exception e) {
             log.error("excel读取报错", e);
             if (e instanceof IllegalArgumentException) {
