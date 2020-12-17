@@ -4,6 +4,11 @@
 
     <delete id="deleteAll">
         delete t from t_e_answer t
+        <where>
+            <if test="examRecordId != null and examRecordId != ''">
+                and t.exam_record_id = #{examRecordId}
+            </if>
+        </where>
     </delete>
 
     <select id="findByExamRecordId" resultType="com.qmth.wuda.teaching.entity.TEAnswer">

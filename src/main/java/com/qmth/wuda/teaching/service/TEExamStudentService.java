@@ -17,7 +17,15 @@ import java.util.List;
  */
 public interface TEExamStudentService extends IService<TEExamStudent> {
 
-    void deleteAll();
+    /**
+     * 根据考试id和学号和准考证号和科目编码删除考生
+     *
+     * @param examId
+     * @param studentCode
+     * @param examNumber
+     * @param courseCode
+     */
+    void deleteAll(Long examId, String studentCode, String examNumber, String courseCode);
 
     /**
      * 根据考生考号查询

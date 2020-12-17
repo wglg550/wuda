@@ -4,6 +4,17 @@
 
     <delete id="deleteAll">
         delete t from t_e_exam_record t
+        <where>
+            <if test="examId != null and examId != ''">
+                and t.exam_id = #{examId}
+            </if>
+            <if test="examStudentId != null and examStudentId != ''">
+                and t.examStudent_id = #{examStudentId}
+            </if>
+            <if test="paperId != null and paperId != ''">
+                and t.paper_id = #{paperId}
+            </if>
+        </where>
     </delete>
 
     <sql id="scoreCommonMidden">

@@ -25,9 +25,14 @@ public class TEAnswerServiceImpl extends ServiceImpl<TEAnswerMapper, TEAnswer> i
     @Resource
     TEAnswerMapper teAnswerMapper;
 
+    /**
+     * 根据考试记录id删除答案
+     *
+     * @param examRecordId
+     */
     @Override
-    public void deleteAll() {
-        teAnswerMapper.deleteAll();
+    public void deleteAll(Long examRecordId) {
+        teAnswerMapper.deleteAll(examRecordId);
     }
 
     /**

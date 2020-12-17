@@ -1,8 +1,11 @@
 package com.qmth.wuda.teaching.dao;
 
-import com.qmth.wuda.teaching.entity.TEStudent;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.qmth.wuda.teaching.entity.TEStudent;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.Set;
 
 /**
  * <p>
@@ -15,5 +18,11 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface TEStudentMapper extends BaseMapper<TEStudent> {
 
-    void deleteAll();
+    /**
+     * 根据学校id和学号删除学生
+     *
+     * @param schoolId
+     * @param studentCodes
+     */
+    void deleteAll(@Param("schoolId") Long schoolId, @Param("studentCodes") Set<String> studentCodes);
 }

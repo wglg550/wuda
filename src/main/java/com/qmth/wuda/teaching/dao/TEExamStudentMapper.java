@@ -20,7 +20,15 @@ import java.util.List;
 @Mapper
 public interface TEExamStudentMapper extends BaseMapper<TEExamStudent> {
 
-    void deleteAll();
+    /**
+     * 根据考试id和学生id和科目编码删除考生
+     *
+     * @param examId
+     * @param studentCode
+     * @param examNumber
+     * @param courseCode
+     */
+    void deleteAll(@Param("examId") Long examId, @Param("studentCode") String studentCode, @Param("examNumber") String examNumber, @Param("courseCode") String courseCode);
 
     /**
      * 根据考生考号查询

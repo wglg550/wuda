@@ -26,9 +26,17 @@ public class TEExamStudentServiceImpl extends ServiceImpl<TEExamStudentMapper, T
     @Resource
     TEExamStudentMapper teExamStudentMapper;
 
+    /**
+     * 根据考试id和学生id和科目编码删除考生
+     *
+     * @param examId
+     * @param studentCode
+     * @param examNumber
+     * @param courseCode
+     */
     @Override
-    public void deleteAll() {
-        teExamStudentMapper.deleteAll();
+    public void deleteAll(Long examId, String studentCode, String examNumber, String courseCode) {
+        teExamStudentMapper.deleteAll(examId, studentCode, examNumber, courseCode);
     }
 
     /**

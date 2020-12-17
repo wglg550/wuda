@@ -4,6 +4,20 @@
 
     <delete id="deleteAll">
         delete t from t_e_exam_student t
+        <where>
+            <if test="examId != null and examId != ''">
+                and t.exam_id = #{examId}
+            </if>
+            <if test="studentCode != null and studentCode != ''">
+                and t.student_code = #{studentCode}
+            </if>
+            <if test="examNumber != null and examNumber != ''">
+                and t.exam_number = #{examNumber}
+            </if>
+            <if test="courseCode != null and courseCode != ''">
+                and t.course_code = #{courseCode}
+            </if>
+        </where>
     </delete>
 
     <select id="findByStudentNo" resultType="com.qmth.wuda.teaching.dto.ExamStudentDto">

@@ -16,7 +16,12 @@ import java.util.List;
  */
 public interface TEAnswerService extends IService<TEAnswer> {
 
-    void deleteAll();
+    /**
+     * 根据考试记录id删除答案
+     *
+     * @param examRecordId
+     */
+    void deleteAll(Long examRecordId);
 
     /**
      * 根据考试记录id查找答题记录

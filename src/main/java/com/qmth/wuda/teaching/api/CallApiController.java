@@ -62,6 +62,9 @@ public class CallApiController {
     @Resource
     TEAnswerService teAnswerService;
 
+    @Resource
+    TBSchoolCollegeService tbSchoolCollegeService;
+
     @ApiOperation(value = "获取考生成绩接口")
     @RequestMapping(value = "/student/score", method = RequestMethod.POST)
     @ApiResponses({@ApiResponse(code = 200, message = "{\"success\":true}", response = Result.class)})
@@ -225,7 +228,6 @@ public class CallApiController {
                     teAnswerMap.put(examRecordMap.get(examStudentMap.get(studentCode + "_" + examNumber).getId()).getId(), teAnswerList);
                 }
             }
-            System.out.println(111);
             courseMap.forEach((k, v) -> {
                 int count = teCourseService.countByCourseCode(k);
                 if (count == 0) {
@@ -233,12 +235,80 @@ public class CallApiController {
                 }
             });
 
-            teStudentService.deleteAll();
-            teExamStudentService.deleteAll();
-            tbTeacherService.deleteAll();
-            tbTeacherExamStudentService.deleteAll();
-            teExamRecordService.deleteAll();
-            teAnswerService.deleteAll();
+            tbSchoolCollegeService.deleteAll(tbSchool.getId());
+            teStudentService.deleteAll(tbSchool.getId(), new HashSet<>(studentMap.keySet()));
+            tbTeacherService.deleteAll(tbSchool.getId());
+
+            List<TBSchoolCollege> tbSchoolCollegeList = new ArrayList();
+            collegeMap.forEach((k, v) -> {
+                tbSchoolCollegeList.add(v);
+            });
+            tbSchoolCollegeService.saveOrUpdateBatch(tbSchoolCollegeList);
+
+            List<TEStudent> teStudentList = new ArrayList();
+            studentMap.forEach((k, v) -> {
+                teStudentList.add(v);
+            });
+            teStudentService.saveOrUpdateBatch(teStudentList);
+
+            List<TEExamStudent> teExamStudentList = new ArrayList();
+            Long finalExamId = examId;
+            examStudentMap.forEach((k, v) -> {
+                QueryWrapper<TEExamStudent> teExamStudentQueryWrapper = new QueryWrapper<>();
+                teExamStudentQueryWrapper.lambda().eq(TEExamStudent::getExamId, finalExamId)
+                        .eq(TEExamStudent::getStudentCode, v.getStudentCode())
+                        .eq(TEExamStudent::getExamNumber, v.getExamNumber())
+                        .eq(TEExamStudent::getCourseCode, v.getCourseCode());
+                TEExamStudent teExamStudent = teExamStudentService.getOne(teExamStudentQueryWrapper);
+                if (Objects.nonNull(teExamStudent)) {
+                    QueryWrapper<TEExamRecord> teExamRecordQueryWrapper = new QueryWrapper<>();
+                    teExamRecordQueryWrapper.lambda().eq(TEExamRecord::getExamId, finalExamId)
+                            .eq(TEExamRecord::getExamStudentId, teExamStudent.getId())
+                            .eq(TEExamRecord::getPaperId, tePaperMap.get(teExamStudent.getCourseCode()).getId());
+                    TEExamRecord teExamRecord = teExamRecordService.getOne(teExamRecordQueryWrapper);
+                    if (Objects.nonNull(teExamRecord)) {
+                        teAnswerService.deleteAll(teExamRecord.getId());
+                        teExamRecordService.remove(teExamRecordQueryWrapper);
+                    }
+                    teExamStudentService.remove(teExamStudentQueryWrapper);
+                }
+                teExamStudentList.add(v);
+            });
+            teExamStudentService.saveOrUpdateBatch(teExamStudentList);
+
+            List<TBTeacher> tbTeacherList = new ArrayList();
+            teacherMap.forEach((k, v) -> {
+                QueryWrapper<TBTeacher> tbTeacherQueryWrapper = new QueryWrapper<>();
+                tbTeacherQueryWrapper.lambda().eq(TBTeacher::getSchoolId, tbSchool.getId())
+                        .eq(TBTeacher::getName, v.getName());
+                TBTeacher tbTeacher = tbTeacherService.getOne(tbTeacherQueryWrapper);
+
+                if (Objects.nonNull(tbTeacher)) {
+                    QueryWrapper<TBTeacherExamStudent> tbTeacherExamStudentQueryWrapper = new QueryWrapper<>();
+                    tbTeacherExamStudentQueryWrapper.lambda().eq(TBTeacherExamStudent::getTeacherId, tbTeacher.getId());
+                    tbTeacherExamStudentService.remove(tbTeacherExamStudentQueryWrapper);
+                }
+                tbTeacherList.add(v);
+            });
+            tbTeacherService.saveOrUpdateBatch(tbTeacherList);
+
+            List<TBTeacherExamStudent> tbTeacherExamStudentList = new ArrayList();
+            teacherExamStudentMap.forEach((k, v) -> {
+                tbTeacherExamStudentList.addAll(v);
+            });
+            tbTeacherExamStudentService.saveOrUpdateBatch(tbTeacherExamStudentList);
+
+            List<TEExamRecord> teExamRecordList = new ArrayList();
+            examRecordMap.forEach((k, v) -> {
+                teExamRecordList.add(v);
+            });
+            teExamRecordService.saveOrUpdateBatch(teExamRecordList);
+
+            List<TEAnswer> teAnswerList = new ArrayList();
+            teAnswerMap.forEach((k, v) -> {
+                teAnswerList.addAll(v);
+            });
+            teAnswerService.saveOrUpdateBatch(teAnswerList);
         }
         return ResultUtil.ok(studentsMark);
     }

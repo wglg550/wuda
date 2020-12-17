@@ -4,5 +4,16 @@
 
     <delete id="deleteAll">
         delete t from t_e_student t
+        <where>
+            <if test="schoolId != null and schoolId != ''">
+                and t.school_id = #{schoolId}
+            </if>
+            <if test="studentCodes != null">
+                and t.student_code in
+                <foreach collection="studentCodes" item="studentCode" index="index" open="(" close=")" separator=",">
+                    #{studentCode}
+                </foreach>
+            </if>
+        </where>
     </delete>
 </mapper>

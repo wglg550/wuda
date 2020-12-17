@@ -3,6 +3,7 @@ package com.qmth.wuda.teaching.dao;
 import com.qmth.wuda.teaching.entity.TBTeacherExamStudent;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * <p>
@@ -15,5 +16,10 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface TBTeacherExamStudentMapper extends BaseMapper<TBTeacherExamStudent> {
 
-    void deleteAll();
+    /**
+     * 根据老师id删除老师学生数据
+     *
+     * @param teacherId
+     */
+    void deleteAll(@Param("teacherId") Long teacherId);
 }

@@ -1,7 +1,7 @@
 package com.qmth.wuda.teaching.service;
 
-import com.qmth.wuda.teaching.entity.TBTeacher;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.qmth.wuda.teaching.entity.TBTeacher;
 
 /**
  * <p>
@@ -13,5 +13,10 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface TBTeacherService extends IService<TBTeacher> {
 
-    void deleteAll();
+    /**
+     * 根据学校id删除老师
+     *
+     * @param schoolId
+     */
+    void deleteAll(Long schoolId);
 }

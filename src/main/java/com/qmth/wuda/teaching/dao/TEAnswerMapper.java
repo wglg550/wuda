@@ -19,7 +19,12 @@ import java.util.List;
 @Mapper
 public interface TEAnswerMapper extends BaseMapper<TEAnswer> {
 
-    void deleteAll();
+    /**
+     * 根据考试记录id删除答案
+     *
+     * @param examRecordId
+     */
+    void deleteAll(@Param("examRecordId") Long examRecordId);
 
     /**
      * 根据考试记录id查找答题记录

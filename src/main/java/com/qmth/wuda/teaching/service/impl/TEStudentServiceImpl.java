@@ -8,6 +8,7 @@ import com.qmth.wuda.teaching.service.TEStudentService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Set;
 
 /**
  * <p>
@@ -23,9 +24,15 @@ public class TEStudentServiceImpl extends ServiceImpl<TEStudentMapper, TEStudent
     @Resource
     TEStudentMapper teStudentMapper;
 
+    /**
+     * 根据学校id和学号删除学生
+     *
+     * @param schoolId
+     * @param studentCodes
+     */
     @Override
-    public void deleteAll() {
-        teStudentMapper.deleteAll();
+    public void deleteAll(Long schoolId, Set<String> studentCodes) {
+        teStudentMapper.deleteAll(schoolId, studentCodes);
     }
 
     /**

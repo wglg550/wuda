@@ -14,7 +14,14 @@ import com.qmth.wuda.teaching.entity.TEExamRecord;
  */
 public interface TEExamRecordService extends IService<TEExamRecord> {
 
-    void deleteAll();
+    /**
+     * 根据考试id和考生id和试卷id删除考试记录
+     *
+     * @param examId
+     * @param examStudentId
+     * @param paperId
+     */
+    void deleteAll(Long examId, Long examStudentId, Long paperId);
 
     /**
      * 获取学院分数

@@ -17,7 +17,14 @@ import org.apache.ibatis.annotations.Param;
 @Mapper
 public interface TEExamRecordMapper extends BaseMapper<TEExamRecord> {
 
-    void deleteAll();
+    /**
+     * 根据考试id和考生id和试卷id删除考试记录
+     *
+     * @param examId
+     * @param examStudentId
+     * @param paperId
+     */
+    void deleteAll(@Param("examId") Long examId, @Param("examStudentId") Long examStudentId, @Param("paperId") Long paperId);
 
     /**
      * 获取学院分数

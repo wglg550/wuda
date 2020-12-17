@@ -24,9 +24,16 @@ public class TEExamRecordServiceImpl extends ServiceImpl<TEExamRecordMapper, TEE
     @Resource
     TEExamRecordMapper teExamRecordMapper;
 
+    /**
+     * 根据考试id和考生id和试卷id删除考试记录
+     *
+     * @param examId
+     * @param examStudentId
+     * @param paperId
+     */
     @Override
-    public void deleteAll() {
-        teExamRecordMapper.deleteAll();
+    public void deleteAll(Long examId, Long examStudentId, Long paperId) {
+        teExamRecordMapper.deleteAll(examId, examStudentId, paperId);
     }
 
     /**

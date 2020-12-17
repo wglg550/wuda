@@ -1,9 +1,9 @@
 package com.qmth.wuda.teaching.service.impl;
 
-import com.qmth.wuda.teaching.entity.TBTeacher;
-import com.qmth.wuda.teaching.dao.TBTeacherMapper;
-import com.qmth.wuda.teaching.service.TBTeacherService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.qmth.wuda.teaching.dao.TBTeacherMapper;
+import com.qmth.wuda.teaching.entity.TBTeacher;
+import com.qmth.wuda.teaching.service.TBTeacherService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -22,8 +22,13 @@ public class TBTeacherServiceImpl extends ServiceImpl<TBTeacherMapper, TBTeacher
     @Resource
     TBTeacherMapper tbTeacherMapper;
 
+    /**
+     * 根据学校id删除老师
+     *
+     * @param schoolId
+     */
     @Override
-    public void deleteAll() {
-        tbTeacherMapper.deleteAll();
+    public void deleteAll(Long schoolId) {
+        tbTeacherMapper.deleteAll(schoolId);
     }
 }

@@ -4,5 +4,10 @@
 
     <delete id="deleteAll">
         delete t from t_b_teacher_exam_student t
+        <where>
+            <if test="teacherId != null and teacherId != ''">
+                and t.teacher_id = #{teacherId}
+            </if>
+        </where>
     </delete>
 </mapper>
