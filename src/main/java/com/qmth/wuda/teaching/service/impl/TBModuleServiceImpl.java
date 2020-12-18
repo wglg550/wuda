@@ -28,52 +28,48 @@ public class TBModuleServiceImpl extends ServiceImpl<TBModuleMapper, TBModule> i
     TBModuleMapper tbModuleMapper;
 
     /**
-     * 根据试卷类型和科目编码删除
+     * 根据科目编码删除
      *
-     * @param paperCode
      * @param courseCode
      * @param moduleNames
      */
     @Override
-    public void deleteAll(String paperCode, String courseCode, Set<String> moduleNames) {
-        tbModuleMapper.deleteAll(paperCode, courseCode, moduleNames);
+    public void deleteAll(String courseCode, Set<String> moduleNames) {
+        tbModuleMapper.deleteAll(courseCode, moduleNames);
     }
 
     /**
-     * 根据试卷类型和科目编码获取模块
+     * 根据科目编码获取模块
      *
-     * @param paperCode
      * @param courseCode
      * @return
      */
     @Override
-    @Cacheable(value = "module_cache", key = "#paperCode + '-' + #courseCode", unless = "#result == null")
-    public List<TBModule> findByPaperCodeAndCourseCode(String paperCode, String courseCode) {
-        return tbModuleMapper.findByPaperCodeAndCourseCode(paperCode, courseCode);
+//    @Cacheable(value = "module_cache", key = "#courseCode", unless = "#result == null")
+    public List<TBModule> findByCourseCode(String courseCode) {
+        return tbModuleMapper.findByCourseCode(courseCode);
     }
 
     /**
-     * 根据试卷类型和科目编码更新模块
+     * 根据科目编码更新模块
      *
-     * @param paperCode
      * @param courseCode
      * @return
      */
     @Override
-    @CachePut(value = "module_cache", key = "#paperCode + '-' + #courseCode", condition = "#result != null")
-    public List<TBModule> updateByPaperCodeAndCourseCode(String paperCode, String courseCode) {
-        return tbModuleMapper.findByPaperCodeAndCourseCode(paperCode, courseCode);
+//    @CachePut(value = "module_cache", key = "#courseCode", condition = "#result != null")
+    public List<TBModule> updateByCourseCode(String courseCode) {
+        return tbModuleMapper.findByCourseCode(courseCode);
     }
 
     /**
-     * 根据试卷类型和科目编码删除模块
+     * 根据科目编码删除模块
      *
-     * @param paperCode
      * @param courseCode
      */
     @Override
-    @CacheEvict(value = "module_cache", key = "#paperCode + '-' + #courseCode")
-    public void deleteByPaperCodeAndCourseCode(String paperCode, String courseCode) {
+//    @CacheEvict(value = "module_cache", key = "#courseCode")
+    public void deleteByCourseCode(String courseCode) {
 
     }
 }

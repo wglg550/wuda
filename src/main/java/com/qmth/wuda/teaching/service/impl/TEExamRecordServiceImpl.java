@@ -39,22 +39,20 @@ public class TEExamRecordServiceImpl extends ServiceImpl<TEExamRecordMapper, TEE
     /**
      * 获取学院分数
      *
-     * @param schoolId
      * @param examId
      * @param collegeId
      * @param courseCode
      * @return
      */
     @Override
-    @Cacheable(value = "college_score_cache", key = "#schoolId + '-' + #examId + '-' + #collegeId + '-' + #courseCode", unless = "#result == null")
-    public SynthesisBean findByCollegeScore(Long schoolId, Long examId, Long collegeId, String courseCode) {
-        return teExamRecordMapper.findByCollegeScore(schoolId, examId, collegeId, courseCode);
+//    @Cacheable(value = "college_score_cache", key = "#examId + '-' + #collegeId + '-' + #courseCode", unless = "#result == null")
+    public SynthesisBean findByCollegeScore(Long examId, Long collegeId, String courseCode) {
+        return teExamRecordMapper.findByCollegeScore(examId, collegeId, courseCode);
     }
 
     /**
      * 获取班级分数
      *
-     * @param schoolId
      * @param examId
      * @param collegeId
      * @param classNo
@@ -62,15 +60,14 @@ public class TEExamRecordServiceImpl extends ServiceImpl<TEExamRecordMapper, TEE
      * @return
      */
     @Override
-    @Cacheable(value = "class_score_cache", key = "#schoolId + '-' + #examId + '-' + #collegeId + '-' + #classNo + '-' + #courseCode", unless = "#result == null")
-    public SynthesisBean findByClassScore(Long schoolId, Long examId, Long collegeId, String classNo, String courseCode) {
-        return teExamRecordMapper.findByClassScore(schoolId, examId, collegeId, classNo, courseCode);
+//    @Cacheable(value = "class_score_cache", key = "#examId + '-' + #collegeId + '-' + #classNo + '-' + #courseCode", unless = "#result == null")
+    public SynthesisBean findByClassScore(Long examId, Long collegeId, String classNo, String courseCode) {
+        return teExamRecordMapper.findByClassScore(examId, collegeId, classNo, courseCode);
     }
 
     /**
      * 获取分数比自己低的人数
      *
-     * @param schoolId
      * @param examId
      * @param collegeId
      * @param examRecordId
@@ -78,8 +75,8 @@ public class TEExamRecordServiceImpl extends ServiceImpl<TEExamRecordMapper, TEE
      * @return
      */
     @Override
-    @Cacheable(value = "low_score_cache", key = "#schoolId + '-' + #examId + '-' + #collegeId + '-' + #examRecordId + '-' + #courseCode", unless = "#result == null")
-    public Integer getLowScoreByMe(Long schoolId, Long examId, Long collegeId, Long examRecordId, String courseCode) {
-        return teExamRecordMapper.getLowScoreByMe(schoolId, examId, collegeId, examRecordId, courseCode);
+//    @Cacheable(value = "low_score_cache", key = "#examId + '-' + #collegeId + '-' + #examRecordId + '-' + #courseCode", unless = "#result == null")
+    public Integer getLowScoreByMe(Long examId, Long collegeId, Long examRecordId, String courseCode) {
+        return teExamRecordMapper.getLowScoreByMe(examId, collegeId, examRecordId, courseCode);
     }
 }

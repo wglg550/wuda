@@ -20,12 +20,9 @@
         </where>
     </delete>
 
-    <select id="findByPaperCodeAndCourseCode" resultType="com.qmth.wuda.teaching.entity.TBModule">
+    <select id="findByCourseCode" resultType="com.qmth.wuda.teaching.entity.TBModule">
         select * from t_b_module tbm
         <where>
-            <if test="paperCode != null and paperCode != ''">
-                and tbm.paper_code = #{paperCode}
-            </if>
             <if test="courseCode != null and courseCode != ''">
                 and tbm.course_code = #{courseCode}
             </if>

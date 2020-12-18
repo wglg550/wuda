@@ -17,37 +17,33 @@ import java.util.Set;
 public interface TBModuleService extends IService<TBModule> {
 
     /**
-     * 根据试卷类型和科目编码删除
+     * 根据科目编码删除
      *
-     * @param paperCode
      * @param courseCode
      * @param moduleNames
      */
-    void deleteAll(String paperCode, String courseCode, Set<String> moduleNames);
+    void deleteAll(String courseCode, Set<String> moduleNames);
 
     /**
-     * 根据试卷类型和科目编码获取模块
+     * 根据科目编码获取模块
      *
-     * @param paperCode
      * @param courseCode
      * @return
      */
-    List<TBModule> findByPaperCodeAndCourseCode(String paperCode, String courseCode);
+    List<TBModule> findByCourseCode(String courseCode);
 
     /**
-     * 根据试卷类型和科目编码更新模块
+     * 根据科目编码更新模块
      *
-     * @param paperCode
      * @param courseCode
      * @return
      */
-    List<TBModule> updateByPaperCodeAndCourseCode(String paperCode, String courseCode);
+    List<TBModule> updateByCourseCode(String courseCode);
 
     /**
-     * 根据试卷类型和科目编码删除模块
+     * 根据科目编码删除模块
      *
-     * @param paperCode
      * @param courseCode
      */
-    void deleteByPaperCodeAndCourseCode(String paperCode, String courseCode);
+    void deleteByCourseCode(String courseCode);
 }

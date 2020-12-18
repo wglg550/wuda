@@ -28,23 +28,22 @@ public interface TEExamStudentService extends IService<TEExamStudent> {
     void deleteAll(Long examId, String studentCode, String examNumber, String courseCode);
 
     /**
-     * 根据考生考号查询
+     * 根据考生id查询
      *
-     * @param studentCode
+     * @param id
      * @return
      */
-    ExamStudentDto findByStudentNo(String studentCode);
+    ExamStudentDto findById(Long id);
 
     /**
      * 获取实考人数
      *
-     * @param schoolId
      * @param examId
      * @param collegeId
      * @param miss
      * @return
      */
-    Integer findByActualCount(Long schoolId, Long examId, Long collegeId, Integer miss);
+    Integer findByActualCount(Long examId, Long collegeId, Integer miss);
 
     /**
      * 根据学生id获取考试科目

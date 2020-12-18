@@ -32,7 +32,7 @@ public class TBLevelServiceImpl extends ServiceImpl<TBLevelMapper, TBLevel> impl
      * @param moduleId
      */
     @Override
-    @CacheEvict(value = "level_cache", key = "#moduleId")
+//    @CacheEvict(value = "level_cache", key = "#moduleId")
     public void deleteAll(Long moduleId) {
         tbLevelMapper.deleteAll(moduleId);
     }
@@ -44,7 +44,7 @@ public class TBLevelServiceImpl extends ServiceImpl<TBLevelMapper, TBLevel> impl
      * @return
      */
     @Override
-    @Cacheable(value = "level_cache", key = "#moduleId", condition = "#result != null")
+//    @Cacheable(value = "level_cache", key = "#moduleId", condition = "#result != null")
     public List<TBLevel> findByModuleId(Long moduleId) {
         QueryWrapper<TBLevel> tbLevelQueryWrapper = new QueryWrapper<>();
         tbLevelQueryWrapper.lambda().eq(TBLevel::getModuleId, moduleId);

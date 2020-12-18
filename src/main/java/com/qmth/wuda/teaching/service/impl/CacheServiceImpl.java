@@ -1,7 +1,6 @@
 package com.qmth.wuda.teaching.service.impl;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
+import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.qmth.wuda.teaching.bean.report.*;
 import com.qmth.wuda.teaching.dto.DimensionFirstDto;
@@ -13,11 +12,8 @@ import com.qmth.wuda.teaching.enums.ModuleEnum;
 import com.qmth.wuda.teaching.enums.PaperDifficultEnum;
 import com.qmth.wuda.teaching.exception.BusinessException;
 import com.qmth.wuda.teaching.service.*;
-import org.apache.commons.beanutils.ConvertUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 
@@ -66,30 +62,31 @@ public class CacheServiceImpl implements CacheService {
     /**
      * 生成个人报告
      *
-     * @param schoolId
-     * @param collegeId
-     * @param studentNo
+     * @param examId
+     * @param examStudentId
+     * @param courseCode
      * @return
      */
     @Override
-    @Cacheable(value = "personal_report_cache", key = "#schoolId + '-' + #collegeId + '-' + #studentNo")
-    public PersonalReportBean addPersonalReport(Long schoolId, Long collegeId, String studentNo) {
+//    @Cacheable(value = "personal_report_cache", key = "#examId + '-' + #examStudentId + '-' + #courseCode")
+    public PersonalReportBean addPersonalReport(Long examId, Long examStudentId, String courseCode) {
         //报告第一页start
-        List<TBModule> tbModuleList = null;
-//        List<TBModule> tbModuleList = tbModuleService.findBySchoolId(schoolId);
-//        if (Objects.isNull(tbModuleList) || tbModuleList.size() == 0) {
-//            throw new BusinessException("模块为空");
-//        }
-//        List<TBLevel> tbLevelList = tbLevelService.findBySchoolId(schoolId);
-//        if (Objects.isNull(tbLevelList) || tbLevelList.size() == 0) {
-//            throw new BusinessException("等级为空");
-//        }
-        List<TBModule> tbLevelList = null;
-        ExamStudentDto examStudentDto = teExamStudentService.findByStudentNo(studentNo);
+        ExamStudentDto examStudentDto = teExamStudentService.findById(examStudentId);
         if (Objects.isNull(examStudentDto)) {
             throw new BusinessException("考生信息为空");
         }
-        TEPaper tePaper = tePaperService.findByExamIdAndCodeAndCourseCode(examStudentDto.getExamId(), examStudentDto.getPaperCode(), examStudentDto.getCourseCode());
+        List<TBModule> tbModuleList = tbModuleService.findByCourseCode(courseCode);
+        if (Objects.isNull(tbModuleList) || tbModuleList.size() == 0) {
+            throw new BusinessException("模块为空");
+        }
+        List<TBLevel> tbLevelList = new ArrayList<>();
+        tbModuleList.forEach(s -> {
+            tbLevelList.addAll(tbLevelService.findByModuleId(s.getId()));
+        });
+        if (Objects.isNull(tbLevelList) || tbLevelList.size() == 0) {
+            throw new BusinessException("等级为空");
+        }
+        TEPaper tePaper = tePaperService.findByExamIdAndCodeAndCourseCode(examId, examStudentDto.getPaperCode(), courseCode);
         if (Objects.isNull(tePaper)) {
             throw new BusinessException("试卷信息为空");
         }
@@ -109,17 +106,21 @@ public class CacheServiceImpl implements CacheService {
         Map<String, Map<String, DimensionFirstDto>> dimensionFirstMap = new LinkedHashMap<>();
         Gson gson = new Gson();
         tbModuleList.forEach(s -> {
-            JSONObject jsonObject = JSONObject.parseObject(s.getDegree());
-            if (Objects.nonNull(jsonObject)) {
-                JSONArray jsonArray = jsonObject.getJSONArray("dimensionSecondMastery");
-                if (Objects.nonNull(jsonArray) && jsonArray.size() > 0) {
-                    List<DimensionMasterysBean> dimensionMasterysBeanList = new ArrayList<>();
-                    for (int i = 0; i < jsonArray.size(); i++) {
-                        JSONObject object = jsonArray.getJSONObject(i);
-                        String[] strs = String.valueOf(object.get("degree")).split(",");
-                        dimensionMasterysBeanList.add(new DimensionMasterysBean((String) object.get("level"), Arrays.asList((Integer[]) ConvertUtils.convert(strs, Integer.class))));
-                        dimensionSecondMasterysBeanMap.put(s.getName(), dimensionMasterysBeanList);
-                    }
+            if (Objects.nonNull(s.getDegree()) && !s.getDegree().contains("无")) {
+                String[] strDegrees = s.getDegree().split(";");
+                List<DimensionMasterysBean> dimensionMasterysBeanList = new ArrayList<>();
+                for (int i = 0; i < strDegrees.length; i++) {
+                    String str = strDegrees[i];
+                    String[] strs = str.split(":");
+                    String[] grades = strs[1].split(",");
+                    grades[0] = grades[0].replaceAll("\\(", "").replaceAll("\\)", "").replaceAll("\\[", "").replaceAll("]", "");
+                    grades[1] = grades[1].replaceAll("\\(", "").replaceAll("\\)", "").replaceAll("\\[", "").replaceAll("]", "");
+                    List<Integer> gradeInteger = new ArrayList<>();
+                    gradeInteger.add(Integer.parseInt(grades[0]));
+                    gradeInteger.add(Integer.parseInt(grades[1]));
+//                    dimensionMasterysBeanList.add(new DimensionMasterysBean(strs[0], Arrays.asList((Integer[]) ConvertUtils.convert(strs, Integer.class))));
+                    dimensionMasterysBeanList.add(new DimensionMasterysBean(strs[0], gradeInteger));
+                    dimensionSecondMasterysBeanMap.put(s.getName(), dimensionMasterysBeanList);
                 }
             }
             List<TBDimension> tbDimensionList = tbDimensionService.findByModuleIdAndCourseCode(s.getId(), examStudentDto.getCourseCode());
@@ -141,28 +142,46 @@ public class CacheServiceImpl implements CacheService {
         ExamStudentBean examStudentBean = gson.fromJson(gson.toJson(examStudentDto), ExamStudentBean.class);
         List<LevelBean> levelBeanList = new ArrayList();
         examStudentBean.setLevels(levelBeanList);
-        if (Objects.nonNull(tbLevelList) && tbLevelList.size() > 0) {
-            tbLevelList.forEach(s -> {
-                String[] strs = s.getDegree().split(",");
-                levelBeanList.add(new LevelBean(s.getCode(), Arrays.asList((Integer[]) ConvertUtils.convert(strs, Integer.class))));
-                if (examStudentDto.getMyScore().doubleValue() >= Double.parseDouble(strs[0]) && examStudentDto.getMyScore().doubleValue() <= Double.parseDouble(strs[1])) {
-                    examStudentBean.setLevel(s.getCode());
-                }
-            });
-        }
+        Map<String, List<Integer>> levelMap = new HashMap<>();
+        levelMap.put("A", Lists.newArrayList(80, 100));
+        levelMap.put("B", Lists.newArrayList(60, 80));
+        levelMap.put("C", Lists.newArrayList(40, 60));
+        levelMap.put("D", Lists.newArrayList(20, 40));
+        levelMap.put("E", Lists.newArrayList(0, 20));
+
+        levelMap.forEach((k, v) -> {
+            levelBeanList.add(new LevelBean(k, v));
+            if (examStudentDto.getMyScore().doubleValue() >= Double.parseDouble(String.valueOf(v.get(0))) && examStudentDto.getMyScore().doubleValue() <= Double.parseDouble(String.valueOf(v.get(1)))) {
+                examStudentBean.setLevel(k);
+            }
+        });
+
+//        if (Objects.nonNull(tbLevelList) && tbLevelList.size() > 0) {
+//            tbLevelList.forEach(s -> {
+//                String[] strs = s.getDegree().split(",");
+//                strs[0] = strs[0].replaceAll("\\(", "").replaceAll("\\)", "").replaceAll("\\[", "").replaceAll("]", "");
+//                strs[1] = strs[1].replaceAll("\\(", "").replaceAll("\\)", "").replaceAll("\\[", "").replaceAll("]", "");
+//                strs[0] = String.valueOf(Double.parseDouble(strs[0]) * 100);
+//                strs[1] = String.valueOf(Double.parseDouble(strs[1]) * 100);
+//                levelBeanList.add(new LevelBean(s.getCode(), Arrays.asList((Integer[]) ConvertUtils.convert(strs, Integer.class))));
+//                if (examStudentDto.getMyScore().doubleValue() >= Double.parseDouble(strs[0]) && examStudentDto.getMyScore().doubleValue() <= Double.parseDouble(strs[1])) {
+//                    examStudentBean.setLevel(s.getCode());
+//                }
+//            });
+//        }
         personalReportBean.setStudent(examStudentBean);
         //报告第一页end
 
         //报告第二页start
         //学院分数
-        SynthesisBean collegeScore = teExamRecordService.findByCollegeScore(examStudentDto.getSchoolId(), examStudentDto.getExamId(), examStudentDto.getCollegeId(), examStudentDto.getCourseCode());
+        SynthesisBean collegeScore = teExamRecordService.findByCollegeScore(examStudentDto.getExamId(), examStudentDto.getCollegeId(), examStudentDto.getCourseCode());
         //班级分数
-        SynthesisBean calssScore = teExamRecordService.findByClassScore(examStudentDto.getSchoolId(), examStudentDto.getExamId(), examStudentDto.getCollegeId(), examStudentDto.getClazz(), examStudentDto.getCourseCode());
+        SynthesisBean calssScore = teExamRecordService.findByClassScore(examStudentDto.getExamId(), examStudentDto.getCollegeId(), examStudentDto.getClazz(), examStudentDto.getCourseCode());
         //获取实考人数
-        Integer actualCount = teExamStudentService.findByActualCount(examStudentDto.getSchoolId(), examStudentDto.getExamId(), examStudentDto.getCollegeId(), MissEnum.NORMAL.getValue());
+        Integer actualCount = teExamStudentService.findByActualCount(examStudentDto.getExamId(), examStudentDto.getCollegeId(), MissEnum.NORMAL.getValue());
         BigDecimal bigActualCount = new BigDecimal(actualCount);
         SynthesisBean finalSynthesis = new SynthesisBean(examStudentDto.getMyScore(), actualCount, examStudentDto.getFullScore());
-        Integer lowScoreCount = teExamRecordService.getLowScoreByMe(examStudentDto.getSchoolId(), examStudentDto.getExamId(), examStudentDto.getCollegeId(), examStudentDto.getExamRecordId(), examStudentDto.getCourseCode());
+        Integer lowScoreCount = teExamRecordService.getLowScoreByMe(examStudentDto.getExamId(), examStudentDto.getCollegeId(), examStudentDto.getExamRecordId(), examStudentDto.getCourseCode());
         BigDecimal fullRate = new BigDecimal(100);
         BigDecimal bigZero = new BigDecimal(0);
         BigDecimal bigDecimal = actualCount > 0 ? new BigDecimal(lowScoreCount).divide(bigActualCount, 2, BigDecimal.ROUND_HALF_UP).multiply(fullRate) : bigZero;
@@ -199,17 +218,21 @@ public class CacheServiceImpl implements CacheService {
                     if (Objects.nonNull(v1.getModuleCode()) && Objects.equals(v1.getModuleCode(), ModuleEnum.KNOWLEDGE.name().toLowerCase())) {
                         if (Objects.nonNull(v2.getKnowledge()) && Arrays.asList(v2.getKnowledge().split(",")).contains(v1.getIdentifierFirst())) {
                             v1.setSumScore(v1.getSumScore().add(v2.getScore()));
-                            v1.setMyScore(v1.getMyScore().add(teAnswerMap.get(k2).getScore()));
+                            if (Objects.nonNull(teAnswerMap.get(k2))) {
+                                v1.setMyScore(v1.getMyScore().add(teAnswerMap.get(k2).getScore()));
+                            }
                         }
                     } else if (Objects.nonNull(v1.getModuleCode()) && Objects.equals(v1.getModuleCode(), ModuleEnum.CAPABILITY.name().toLowerCase())) {
                         if (Objects.nonNull(v2.getCapability()) && Arrays.asList(v2.getCapability().split(",")).contains(v1.getIdentifierFirst())) {
                             v1.setSumScore(v1.getSumScore().add(v2.getScore()));
-                            v1.setMyScore(v1.getMyScore().add(teAnswerMap.get(k2).getScore()));
+                            if (Objects.nonNull(teAnswerMap.get(k2))) {
+                                v1.setMyScore(v1.getMyScore().add(teAnswerMap.get(k2).getScore()));
+                            }
                         }
                     }
                 });
                 moduleDetailBean.setRate(Objects.nonNull(v1.getSumScore()) && v1.getSumScore().doubleValue() > 0 ? v1.getMyScore().divide(v1.getSumScore(), 2, BigDecimal.ROUND_HALF_UP).multiply(fullRate) : bigZero);
-                BigDecimal collegeAvgScoreByDimension = teAnswerService.calculateCollegeAvgScoreByDimension(examStudentDto.getSchoolId(), examStudentDto.getExamId(), examStudentDto.getCollegeId(), examStudentDto.getCourseCode(), v1.getIdentifierFirst());
+                BigDecimal collegeAvgScoreByDimension = teAnswerService.calculateCollegeAvgScoreByDimension(examStudentDto.getExamId(), examStudentDto.getCollegeId(), examStudentDto.getCourseCode(), v1.getIdentifierFirst());
                 moduleDetailBean.setCollegeRate(Objects.nonNull(collegeAvgScoreByDimension) ? collegeAvgScoreByDimension.divide(bigActualCount, 2, BigDecimal.ROUND_HALF_UP) : bigZero);
                 dios.add(moduleDetailBean);
             });
@@ -226,12 +249,16 @@ public class CacheServiceImpl implements CacheService {
                     if (Objects.nonNull(s.getModuleCode()) && Objects.equals(s.getModuleCode(), ModuleEnum.KNOWLEDGE.name().toLowerCase())) {
                         if (Objects.nonNull(v1.getKnowledge()) && Arrays.asList(v1.getKnowledge().split(",")).contains(s.getIdentifierSecond())) {
                             s.setSumScore(s.getSumScore().add(v1.getScore()));
-                            s.setMyScore(s.getMyScore().add(teAnswerMap.get(k1).getScore()));
+                            if (Objects.nonNull(teAnswerMap.get(k1))) {
+                                s.setMyScore(s.getMyScore().add(teAnswerMap.get(k1).getScore()));
+                            }
                         }
                     } else if (Objects.nonNull(s.getModuleCode()) && Objects.equals(s.getModuleCode(), ModuleEnum.CAPABILITY.name().toLowerCase())) {
                         if (Objects.nonNull(v1.getCapability()) && Arrays.asList(v1.getCapability().split(",")).contains(s.getIdentifierSecond())) {
                             s.setSumScore(s.getSumScore().add(v1.getScore()));
-                            s.setMyScore(s.getMyScore().add(teAnswerMap.get(k1).getScore()));
+                            if (Objects.nonNull(teAnswerMap.get(k1))) {
+                                s.setMyScore(s.getMyScore().add(teAnswerMap.get(k1).getScore()));
+                            }
                         }
                     }
                 });
@@ -254,7 +281,7 @@ public class CacheServiceImpl implements CacheService {
                     dimensionDetailBean.setCode(s.getIdentifierSecond());
                     dimensionDetailBean.setName(s.getKnowledgeSecond());
                     dimensionDetailBean.setScoreRate(Objects.nonNull(s.getSumScore()) && s.getSumScore().doubleValue() > 0 ? s.getMyScore().divide(s.getSumScore(), 2, BigDecimal.ROUND_HALF_UP).multiply(fullRate) : bigZero);
-                    BigDecimal collegeAvgScoreByDimension = teAnswerService.calculateCollegeAvgScoreByDimension(examStudentDto.getSchoolId(), examStudentDto.getExamId(), examStudentDto.getCollegeId(), examStudentDto.getCourseCode(), s.getIdentifierSecond());
+                    BigDecimal collegeAvgScoreByDimension = teAnswerService.calculateCollegeAvgScoreByDimension(examStudentDto.getExamId(), examStudentDto.getCollegeId(), examStudentDto.getCourseCode(), s.getIdentifierSecond());
                     dimensionDetailBean.setCollegeAvgScore(Objects.nonNull(collegeAvgScoreByDimension) ? collegeAvgScoreByDimension.divide(bigActualCount, 2, BigDecimal.ROUND_HALF_UP) : bigZero);
 
                     if (Objects.nonNull(dimensionMasterysBeanList) && dimensionMasterysBeanList.size() > 0) {
@@ -285,13 +312,13 @@ public class CacheServiceImpl implements CacheService {
     /**
      * 删除个人报告
      *
-     * @param schoolId
-     * @param collegeId
-     * @param studentNo
+     * @param examId
+     * @param examStudentId
+     * @param courseCode
      */
     @Override
-    @CacheEvict(value = "personal_report_cache", key = "#schoolId + '-' + #collegeId + '-' + #studentNo")
-    public void removePersonalReport(Long schoolId, Long collegeId, String studentNo) {
+//    @CacheEvict(value = "personal_report_cache", key = "#examId + '-' + #examStudentId + '-' + #courseCode")
+    public void removePersonalReport(Long examId, Long examStudentId, String courseCode) {
 
     }
 }

@@ -36,9 +36,6 @@
         tep.id = teer.paper_id
         and tep.exam_id = teer.exam_id
         <where> 1 = 1
-            <if test="schoolId != null and schoolId != ''">
-                and tee.school_id = #{schoolId}
-            </if>
             <if test="examId != null and examId != ''">
                 and tees.exam_id = #{examId}
             </if>

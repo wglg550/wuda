@@ -43,7 +43,7 @@ public class TEPaperStructServiceImpl extends ServiceImpl<TEPaperStructMapper, T
      * @return
      */
     @Override
-    @Cacheable(value = "paper_struct_cache", key = "#paperId", unless = "#result == null")
+//    @Cacheable(value = "paper_struct_cache", key = "#paperId", unless = "#result == null")
     public List<TEPaperStruct> findByPaperId(Long paperId) {
         return tePaperStructMapper.findByPaperId(paperId);
     }

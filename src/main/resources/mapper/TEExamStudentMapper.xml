@@ -20,47 +20,41 @@
         </where>
     </delete>
 
-    <select id="findByStudentNo" resultType="com.qmth.wuda.teaching.dto.ExamStudentDto">
+    <select id="findById" resultType="com.qmth.wuda.teaching.dto.ExamStudentDto">
         select
         tees.name,
-        tees.`identity` as studentNo,
+        tees.student_code as studentNo,
         tbsc.name as college,
         tees.class_no as clazz,
         tee.name as examName,
         tees.course_name as subject,
         tees.course_code as courseCode,
-        from_unixtime(tee.start_time / 1000, '%Y年%m月%d日') as time,
+        from_unixtime(tee.create_time / 1000, '%Y年%m月%d日') as time,
         teer.objective_score as objectiveScore,
         teer.subjective_score as subjectiveScore,
         teer.sum_score as myScore,
         tees.college_id as collegeId,
         tee.id as examId,
-        tee.school_id as schoolId,
         tep.total_score as fullScore,
         tep.pass_score as passScore,
         tep.contribution_score as contributionScore,
-        tee.contribution,
+        tep.contribution,
         teer.id as examRecordId,
-        tep.code as paperCode
+        tees.paper_code as paperCode
         from
         t_e_exam_record teer
         left join t_e_exam_student tees on
         tees.id = teer.exam_student_id
         left join t_e_exam tee on
         tee.id = teer.exam_id
-        left join t_b_school tbs on
-        tbs.id = tee.school_id
         left join t_b_school_college tbsc on
         tbsc.id = tees.college_id
         left join t_e_paper tep on
-        tep.exam_id = tee.id
+        tep.exam_id = tees.exam_id and tep.code = tees.paper_code and tep.course_code = tees.course_code
         <where>1 = 1
-            <if test="studentCode != null and studentCode != ''">
-                and tees.student_code = #{studentCode}
+            <if test="id != null and id != ''">
+                and tees.id = #{id}
             </if>
-            and tbs.id = 1
-            and tees.enable = 1
-            and tbs.enable = 1
             and tbsc.enable = 1
         </where>
     </select>
@@ -72,9 +66,6 @@
         t_e_exam_student tees
         left join t_e_exam tee on tee.id = tees.exam_id
         <where>
-            <if test="schoolId != null and schoolId != ''">
-                and tee.school_id = #{schoolId}
-            </if>
             <if test="examId != null and examId != ''">
                 and tees.exam_id = #{examId}
             </if>
@@ -96,10 +87,11 @@
         tees.exam_id as examId
         from
         t_e_exam_student tees
-        <where>
+        <where>1 = 1
             <if test="studentId != null and studentId != ''">
                 and tees.student_id = #{studentId}
             </if>
+            and tees.enable = 1
         </where>
     </select>
 </mapper>

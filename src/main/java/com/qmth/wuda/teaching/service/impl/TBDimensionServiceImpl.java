@@ -43,7 +43,7 @@ public class TBDimensionServiceImpl extends ServiceImpl<TBDimensionMapper, TBDim
      * @return
      */
     @Override
-    @Cacheable(value = "dimension_cache", key = "#mouduleId + '-' + #courseCode", unless = "#result == null")
+//    @Cacheable(value = "dimension_cache", key = "#mouduleId + '-' + #courseCode", unless = "#result == null")
     public List<TBDimension> findByModuleIdAndCourseCode(Long mouduleId, String courseCode) {
         return tbDimensionMapper.findByModuleIdAndCourseCode(mouduleId, courseCode);
     }

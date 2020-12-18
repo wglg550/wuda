@@ -44,7 +44,7 @@ public class TEPaperServiceImpl extends ServiceImpl<TEPaperMapper, TEPaper> impl
      * @return
      */
     @Override
-    @Cacheable(value = "paper_cache", key = "#examId + '-' + #code + '-' + #courseCode", unless = "#result == null")
+//    @Cacheable(value = "paper_cache", key = "#examId + '-' + #code + '-' + #courseCode", unless = "#result == null")
     public TEPaper findByExamIdAndCodeAndCourseCode(Long examId, String code, String courseCode) {
         return tePaperMapper.findByExamIdAndCodeAndCourseCode(examId, code, courseCode);
     }

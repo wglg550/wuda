@@ -26,34 +26,31 @@ public interface TEExamRecordService extends IService<TEExamRecord> {
     /**
      * 获取学院分数
      *
-     * @param schoolId
      * @param examId
      * @param collegeId
      * @param courseCode
      * @return
      */
-    SynthesisBean findByCollegeScore(Long schoolId, Long examId, Long collegeId, String courseCode);
+    SynthesisBean findByCollegeScore(Long examId, Long collegeId, String courseCode);
 
     /**
      * 获取班级分数
      *
-     * @param schoolId
      * @param examId
      * @param collegeId
      * @param courseCode
      * @return
      */
-    SynthesisBean findByClassScore(Long schoolId, Long examId, Long collegeId, String classNo, String courseCode);
+    SynthesisBean findByClassScore(Long examId, Long collegeId, String classNo, String courseCode);
 
     /**
      * 获取分数比自己低的人数
      *
-     * @param schoolId
      * @param examId
      * @param collegeId
      * @param examRecordId
      * @param courseCode
      * @return
      */
-    Integer getLowScoreByMe(Long schoolId, Long examId, Long collegeId, Long examRecordId, String courseCode);
+    Integer getLowScoreByMe(Long examId, Long collegeId, Long examRecordId, String courseCode);
 }

@@ -26,9 +26,6 @@
     </sql>
 
     <sql id="scoreCommonFoot">
-        <if test="schoolId != null and schoolId != ''">
-            and tee.school_id = #{schoolId}
-        </if>
         <if test="examId != null and examId != ''">
             and tees.exam_id = #{examId}
         </if>

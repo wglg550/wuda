@@ -6,9 +6,9 @@ import com.qmth.wuda.teaching.bean.Result;
 import com.qmth.wuda.teaching.config.DictionaryConfig;
 import com.qmth.wuda.teaching.dto.ExamCourseDto;
 import com.qmth.wuda.teaching.dto.ExamDto;
-import com.qmth.wuda.teaching.entity.TEExam;
 import com.qmth.wuda.teaching.entity.TEStudent;
 import com.qmth.wuda.teaching.exception.BusinessException;
+import com.qmth.wuda.teaching.service.CacheService;
 import com.qmth.wuda.teaching.service.TEExamService;
 import com.qmth.wuda.teaching.service.TEExamStudentService;
 import com.qmth.wuda.teaching.service.TEStudentService;
@@ -41,6 +41,9 @@ public class OpenApiController {
     @Resource
     DictionaryConfig dictionaryConfig;
 
+    @Resource
+    CacheService cacheService;
+
     @ApiOperation(value = "获取考生科目接口")
     @RequestMapping(value = "/examStudent/course", method = RequestMethod.POST)
     @ApiResponses({@ApiResponse(code = 200, message = "{\"success\":true}", response = Result.class)})
@@ -55,8 +58,7 @@ public class OpenApiController {
         String studentCode = (String) mapParameter.get("studentCode");
         TEStudent teStudent = teStudentService.findByStudentCode(studentCode);
         List<ExamCourseDto> examCourseDtoList = teExamStudentService.findByStudentId(teStudent.getId());
-        ExamDto examDto = new ExamDto(dictionaryConfig.sysDomain().getExamName(), teStudent.getId(), teStudent.getName(), examCourseDtoList);
-        return ResultUtil.ok(examDto);
+        return ResultUtil.ok(new ExamDto(dictionaryConfig.sysDomain().getExamName(), teStudent.getId(), teStudent.getName(), examCourseDtoList));
     }
 
     @ApiOperation(value = "根据科目获取报告接口")
@@ -77,7 +79,10 @@ public class OpenApiController {
             throw new BusinessException("科目编码不能为空");
         }
         String courseCode = (String) mapParameter.get("courseCode");
-        TEExam teExam = teExamService.getById(examId);
-        return ResultUtil.ok(true);
+        if (Objects.isNull(mapParameter.get("examStudentId")) || Objects.equals(mapParameter.get("examStudentId"), "")) {
+            throw new BusinessException("考生id不能为空");
+        }
+        Long examStudentId = Long.parseLong(String.valueOf(mapParameter.get("examStudentId")));
+        return ResultUtil.ok(cacheService.addPersonalReport(examId, examStudentId, courseCode));
     }
 }

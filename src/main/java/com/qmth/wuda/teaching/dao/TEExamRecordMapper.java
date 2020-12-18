@@ -29,34 +29,31 @@ public interface TEExamRecordMapper extends BaseMapper<TEExamRecord> {
     /**
      * 获取学院分数
      *
-     * @param schoolId
      * @param examId
      * @param collegeId
      * @param courseCode
      * @return
      */
-    SynthesisBean findByCollegeScore(@Param("schoolId") Long schoolId, @Param("examId") Long examId, @Param("collegeId") Long collegeId, @Param("courseCode") String courseCode);
+    SynthesisBean findByCollegeScore(@Param("examId") Long examId, @Param("collegeId") Long collegeId, @Param("courseCode") String courseCode);
 
     /**
      * 获取班级分数
      *
-     * @param schoolId
      * @param examId
      * @param collegeId
      * @param courseCode
      * @return
      */
-    SynthesisBean findByClassScore(@Param("schoolId") Long schoolId, @Param("examId") Long examId, @Param("collegeId") Long collegeId, @Param("classNo") String classNo, @Param("courseCode") String courseCode);
+    SynthesisBean findByClassScore(@Param("examId") Long examId, @Param("collegeId") Long collegeId, @Param("classNo") String classNo, @Param("courseCode") String courseCode);
 
     /**
      * 获取分数比自己低的人数
      *
-     * @param schoolId
      * @param examId
      * @param collegeId
      * @param examRecordId
      * @param courseCode
      * @return
      */
-    Integer getLowScoreByMe(@Param("schoolId") Long schoolId, @Param("examId") Long examId, @Param("collegeId") Long collegeId, @Param("examRecordId") Long examRecordId, @Param("courseCode") String courseCode);
+    Integer getLowScoreByMe(@Param("examId") Long examId, @Param("collegeId") Long collegeId, @Param("examRecordId") Long examRecordId, @Param("courseCode") String courseCode);
 }

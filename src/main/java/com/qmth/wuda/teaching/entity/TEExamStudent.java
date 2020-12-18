@@ -79,11 +79,15 @@ public class TEExamStudent extends BaseEntity implements Serializable {
     @TableField(value = "class_no")
     private String classNo;
 
+    @ApiModelProperty(value = "试卷类型")
+    @TableField(value = "paper_code")
+    private String paperCode;
+
     public TEExamStudent() {
 
     }
 
-    public TEExamStudent(Long examId, Long studentId, Long collegeId, Long majorId, String courseName, String courseCode, String name, String studentCode, String examNumber, Integer miss, String classNo) {
+    public TEExamStudent(Long examId, Long studentId, Long collegeId, Long majorId, String courseName, String courseCode, String name, String studentCode, String examNumber, Integer miss, String classNo,String paperCode) {
         setId(UidUtil.nextId());
         this.examId = examId;
         this.studentId = studentId;
@@ -96,7 +100,16 @@ public class TEExamStudent extends BaseEntity implements Serializable {
         this.examNumber = examNumber;
         this.miss = miss;
         this.classNo = classNo;
+        this.paperCode = paperCode;
         this.enable = 1;
+    }
+
+    public String getPaperCode() {
+        return paperCode;
+    }
+
+    public void setPaperCode(String paperCode) {
+        this.paperCode = paperCode;
     }
 
     public Long getCollegeId() {

@@ -182,7 +182,7 @@ public class CallApiController {
                     studentMap.put(studentCode, teStudent);
                 }
                 if (!examStudentMap.containsKey(studentCode + "_" + examNumber)) {
-                    TEExamStudent teExamStudent = new TEExamStudent(examIdMap, studentMap.get(studentCode).getId(), collegeMap.get(college).getId(), null, subjectName, subjectCode, name, studentCode, examNumber, status, className);
+                    TEExamStudent teExamStudent = new TEExamStudent(examIdMap, studentMap.get(studentCode).getId(), collegeMap.get(college).getId(), null, subjectName, subjectCode, name, studentCode, examNumber, status, className, paperType);
                     examStudentMap.put(studentCode + "_" + examNumber, teExamStudent);
                 }
                 if (!teacherMap.containsKey(teacher)) {

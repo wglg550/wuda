@@ -5,9 +5,6 @@
     <delete id="deleteAll">
         delete t from t_e_course t
         <where>
-            <if test="schoolId != null and schoolId != ''">
-                and t.school_id = #{schoolId}
-            </if>
             <if test="courseCodes != null">
                 and t.course_code in
                 <foreach collection="courseCodes" item="courseCode" index="index" open="(" close=")" separator=",">

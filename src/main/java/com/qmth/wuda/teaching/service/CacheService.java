@@ -14,19 +14,19 @@ public interface CacheService {
     /**
      * 生成个人报告
      *
-     * @param schoolId
-     * @param collegeId
-     * @param studentNo
+     * @param examId
+     * @param examStudentId
+     * @param courseCode
      * @return
      */
-    PersonalReportBean addPersonalReport(Long schoolId, Long collegeId, String studentNo);
+    PersonalReportBean addPersonalReport(Long examId, Long examStudentId, String courseCode);
 
     /**
      * 删除个人报告
      *
-     * @param schoolId
-     * @param collegeId
-     * @param studentNo
+     * @param examId
+     * @param examStudentId
+     * @param courseCode
      */
-    void removePersonalReport(Long schoolId, Long collegeId, String studentNo);
+    void removePersonalReport(Long examId, Long examStudentId, String courseCode);
 }

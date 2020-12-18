@@ -42,28 +42,27 @@ public class TEExamStudentServiceImpl extends ServiceImpl<TEExamStudentMapper, T
     /**
      * 根据考生考号查询
      *
-     * @param studentCode
+     * @param id
      * @return
      */
     @Override
-    @Cacheable(value = "exam_student_cache", key = "#studentCode", unless = "#result == null")
-    public ExamStudentDto findByStudentNo(String studentCode) {
-        return teExamStudentMapper.findByStudentNo(studentCode);
+//    @Cacheable(value = "exam_student_cache", key = "#studentCode", unless = "#result == null")
+    public ExamStudentDto findById(Long id) {
+        return teExamStudentMapper.findById(id);
     }
 
     /**
      * 获取实考人数
      *
-     * @param schoolId
      * @param examId
      * @param collegeId
      * @param miss
      * @return
      */
     @Override
-    @Cacheable(value = "exam_param_cache", key = "#schoolId + '-' + #examId + '-' + #collegeId + '-' + #miss", unless = "#result == null")
-    public Integer findByActualCount(Long schoolId, Long examId, Long collegeId, Integer miss) {
-        return teExamStudentMapper.findByActualCount(schoolId, examId, collegeId, miss);
+//    @Cacheable(value = "exam_param_cache", key = "#examId + '-' + #collegeId + '-' + #miss", unless = "#result == null")
+    public Integer findByActualCount(Long examId, Long collegeId, Integer miss) {
+        return teExamStudentMapper.findByActualCount(examId, collegeId, miss);
     }
 
     /**

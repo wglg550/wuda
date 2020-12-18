@@ -34,12 +34,11 @@ public interface TEAnswerService extends IService<TEAnswer> {
     /**
      * 根据维度求学院该维度的平均值
      *
-     * @param schoolId
      * @param examId
      * @param collegeId
      * @param courseCode
      * @param dimension
      * @return
      */
-    BigDecimal calculateCollegeAvgScoreByDimension(Long schoolId, Long examId, Long collegeId, String courseCode, String dimension);
+    BigDecimal calculateCollegeAvgScoreByDimension(Long examId, Long collegeId, String courseCode, String dimension);
 }
