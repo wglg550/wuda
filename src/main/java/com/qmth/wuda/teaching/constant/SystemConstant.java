@@ -1,10 +1,10 @@
 package com.qmth.wuda.teaching.constant;
 
+import com.google.common.collect.Lists;
 import org.apache.commons.lang3.RandomStringUtils;
 
 import java.io.File;
-import java.util.StringJoiner;
-import java.util.UUID;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -32,13 +32,17 @@ public class SystemConstant {
     public static final String METHOD = "post";
     public static final int MAX_IMPORT_SIZE = 500;
     public static final int BYTE_LEN = 102400; // 100KB
+    public static Map<String, List<Integer>> levelMap = new HashMap<>();
 
     public static String TEMP_FILES_DIR;
 
-    /**
-     * ehcache配置
-     */
-    public static final String roleCache = "role_cache";
+    static{
+        levelMap.put("A", Lists.newArrayList(80, 100));
+        levelMap.put("B", Lists.newArrayList(60, 80));
+        levelMap.put("C", Lists.newArrayList(40, 60));
+        levelMap.put("D", Lists.newArrayList(20, 40));
+        levelMap.put("E", Lists.newArrayList(0, 20));
+    }
 
     /**
      * 初始化附件文件路径

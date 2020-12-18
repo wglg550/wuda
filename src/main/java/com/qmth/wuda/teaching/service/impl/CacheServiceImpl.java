@@ -3,6 +3,7 @@ package com.qmth.wuda.teaching.service.impl;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.qmth.wuda.teaching.bean.report.*;
+import com.qmth.wuda.teaching.constant.SystemConstant;
 import com.qmth.wuda.teaching.dto.DimensionFirstDto;
 import com.qmth.wuda.teaching.dto.DimensionSecondDto;
 import com.qmth.wuda.teaching.dto.ExamStudentDto;
@@ -142,33 +143,14 @@ public class CacheServiceImpl implements CacheService {
         ExamStudentBean examStudentBean = gson.fromJson(gson.toJson(examStudentDto), ExamStudentBean.class);
         List<LevelBean> levelBeanList = new ArrayList();
         examStudentBean.setLevels(levelBeanList);
-        Map<String, List<Integer>> levelMap = new HashMap<>();
-        levelMap.put("A", Lists.newArrayList(80, 100));
-        levelMap.put("B", Lists.newArrayList(60, 80));
-        levelMap.put("C", Lists.newArrayList(40, 60));
-        levelMap.put("D", Lists.newArrayList(20, 40));
-        levelMap.put("E", Lists.newArrayList(0, 20));
 
-        levelMap.forEach((k, v) -> {
+        SystemConstant.levelMap.forEach((k, v) -> {
             levelBeanList.add(new LevelBean(k, v));
             if (examStudentDto.getMyScore().doubleValue() >= Double.parseDouble(String.valueOf(v.get(0))) && examStudentDto.getMyScore().doubleValue() <= Double.parseDouble(String.valueOf(v.get(1)))) {
                 examStudentBean.setLevel(k);
             }
         });
 
-//        if (Objects.nonNull(tbLevelList) && tbLevelList.size() > 0) {
-//            tbLevelList.forEach(s -> {
-//                String[] strs = s.getDegree().split(",");
-//                strs[0] = strs[0].replaceAll("\\(", "").replaceAll("\\)", "").replaceAll("\\[", "").replaceAll("]", "");
-//                strs[1] = strs[1].replaceAll("\\(", "").replaceAll("\\)", "").replaceAll("\\[", "").replaceAll("]", "");
-//                strs[0] = String.valueOf(Double.parseDouble(strs[0]) * 100);
-//                strs[1] = String.valueOf(Double.parseDouble(strs[1]) * 100);
-//                levelBeanList.add(new LevelBean(s.getCode(), Arrays.asList((Integer[]) ConvertUtils.convert(strs, Integer.class))));
-//                if (examStudentDto.getMyScore().doubleValue() >= Double.parseDouble(strs[0]) && examStudentDto.getMyScore().doubleValue() <= Double.parseDouble(strs[1])) {
-//                    examStudentBean.setLevel(s.getCode());
-//                }
-//            });
-//        }
         personalReportBean.setStudent(examStudentBean);
         //报告第一页end
 
