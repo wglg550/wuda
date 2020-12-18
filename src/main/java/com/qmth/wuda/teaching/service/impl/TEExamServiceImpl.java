@@ -2,6 +2,7 @@ package com.qmth.wuda.teaching.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.qmth.wuda.teaching.config.DictionaryConfig;
 import com.qmth.wuda.teaching.constant.SystemConstant;
 import com.qmth.wuda.teaching.dao.TEExamMapper;
 import com.qmth.wuda.teaching.entity.TEExam;
@@ -29,6 +30,9 @@ public class TEExamServiceImpl extends ServiceImpl<TEExamMapper, TEExam> impleme
     @Resource
     TEExamMapper teExamMapper;
 
+    @Resource
+    DictionaryConfig dictionaryConfig;
+
     /**
      * 根据考试id或考试编码删除考试
      *
@@ -43,7 +47,6 @@ public class TEExamServiceImpl extends ServiceImpl<TEExamMapper, TEExam> impleme
     /**
      * 根据考试id或考试编码创建考试
      *
-     * @param examName
      * @param examId
      * @param examCode
      * @param accessKey
@@ -52,7 +55,7 @@ public class TEExamServiceImpl extends ServiceImpl<TEExamMapper, TEExam> impleme
      */
     @Override
     @Transactional
-    public TEExam saveExam(String examName, Long examId, String examCode, String accessKey, String accessSecret) {
+    public TEExam saveExam(Long examId, String examCode, String accessKey, String accessSecret) {
         TEExam teExam = null;
         if (Objects.nonNull(examId)) {
             teExam = this.getById(examId);
@@ -63,18 +66,11 @@ public class TEExamServiceImpl extends ServiceImpl<TEExamMapper, TEExam> impleme
                     .eq(TEExam::getCode, examCode);
             teExam = this.getOne(teExamQueryWrapper);
         }
-        QueryWrapper<TEExam> teExamQueryWrapper = new QueryWrapper<>();
-        teExamQueryWrapper.lambda().eq(TEExam::getName, examName);
-        TEExam parentExam = this.getOne(teExamQueryWrapper);
-        if (Objects.isNull(parentExam)) {
-            parentExam = new TEExam(examName, SystemConstant.uuidString());
-            this.saveOrUpdate(parentExam);
-        }
         if (Objects.isNull(teExam)) {
             if (Objects.nonNull(examId)) {
-                teExam = new TEExam(examId, examName, Objects.isNull(examCode) ? SystemConstant.uuidString() : examCode, accessKey, accessSecret, parentExam.getId());
+                teExam = new TEExam(examId, dictionaryConfig.sysDomain().getExamName(), Objects.isNull(examCode) ? SystemConstant.uuidString() : examCode, accessKey, accessSecret);
             } else {
-                teExam = new TEExam(examName, Objects.isNull(examCode) ? SystemConstant.uuidString() : examCode, accessKey, accessSecret, parentExam.getId());
+                teExam = new TEExam(dictionaryConfig.sysDomain().getExamName(), Objects.isNull(examCode) ? SystemConstant.uuidString() : examCode, accessKey, accessSecret);
             }
         } else {
             if (Objects.nonNull(examCode)) {

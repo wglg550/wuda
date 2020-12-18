@@ -55,8 +55,8 @@
         left join t_e_paper tep on
         tep.exam_id = tee.id
         <where>1 = 1
-            <if test="identity != null and identity != ''">
-                and tees.`identity` = #{identity}
+            <if test="studentCode != null and studentCode != ''">
+                and tees.student_code = #{studentCode}
             </if>
             and tbs.id = 1
             and tees.enable = 1
@@ -87,20 +87,18 @@
         </where>
     </select>
 
-    <select id="findByStudentIdAndExamId" resultType="com.qmth.wuda.teaching.dto.ExamCourseDto">
+    <select id="findByStudentId" resultType="com.qmth.wuda.teaching.dto.ExamCourseDto">
         select
         DISTINCT tees.course_name as courseName,
         tees.course_code as courseCode,
         tees.miss,
-        tees.id as examStudentId
+        tees.id as examStudentId,
+        tees.exam_id as examId
         from
         t_e_exam_student tees
         <where>
             <if test="studentId != null and studentId != ''">
                 and tees.student_id = #{studentId}
-            </if>
-            <if test="examId != null and examId != ''">
-                and tees.exam_id = #{examId}
             </if>
         </where>
     </select>

@@ -33,10 +33,10 @@ public interface TEExamStudentMapper extends BaseMapper<TEExamStudent> {
     /**
      * 根据考生考号查询
      *
-     * @param identity
+     * @param studentCode
      * @return
      */
-    ExamStudentDto findByStudentNo(@Param("identity") String identity);
+    ExamStudentDto findByStudentNo(@Param("studentCode") String studentCode);
 
     /**
      * 获取实考人数
@@ -50,11 +50,10 @@ public interface TEExamStudentMapper extends BaseMapper<TEExamStudent> {
     Integer findByActualCount(@Param("schoolId") Long schoolId, @Param("examId") Long examId, @Param("collegeId") Long collegeId, @Param("miss") Integer miss);
 
     /**
-     * 根据学生id和考试id获取考试科目
+     * 根据学生id获取考试科目
      *
      * @param studentId
-     * @param examId
      * @return
      */
-    List<ExamCourseDto> findByStudentIdAndExamId(@Param("studentId") Long studentId, @Param("examId") Long examId);
+    List<ExamCourseDto> findByStudentId(@Param("studentId") Long studentId);
 }

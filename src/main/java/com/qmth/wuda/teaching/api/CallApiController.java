@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Api(tags = "调用层apiController")
 @RestController
@@ -160,14 +162,10 @@ public class CallApiController {
                     if (Objects.isNull(tePaperStructList) || tePaperStructList.size() == 0) {
                         throw new BusinessException("试卷结构为空");
                     }
-                    tePaperStructMap = new LinkedHashMap<>();
                     if (Objects.nonNull(tePaperStructList) && tePaperStructList.size() > 0) {
-                        Map<String, TEPaperStruct> finalTePaperStructMap = tePaperStructMap;
-                        tePaperStructList.forEach(s -> {
-                            finalTePaperStructMap.put(s.getMainNumber() + "-" + s.getSubNumber(), s);
-                        });
+                        tePaperStructMap = tePaperStructList.stream().collect(Collectors.toMap(s -> s.getMainNumber() + "-" + s.getSubNumber(), Function.identity(), (dto1, dto2) -> dto1));
+                        tePaperStructTranMap.put(tePaper.getId(), tePaperStructMap);
                     }
-                    tePaperStructTranMap.put(tePaper.getId(), tePaperStructMap);
                 } else {
                     tePaperStructMap = tePaperStructTranMap.get(tePaper.getId());
                 }

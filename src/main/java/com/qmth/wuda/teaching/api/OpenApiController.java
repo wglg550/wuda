@@ -3,6 +3,7 @@ package com.qmth.wuda.teaching.api;
 import com.qmth.wuda.teaching.annotation.ApiJsonObject;
 import com.qmth.wuda.teaching.annotation.ApiJsonProperty;
 import com.qmth.wuda.teaching.bean.Result;
+import com.qmth.wuda.teaching.config.DictionaryConfig;
 import com.qmth.wuda.teaching.dto.ExamCourseDto;
 import com.qmth.wuda.teaching.dto.ExamDto;
 import com.qmth.wuda.teaching.entity.TEExam;
@@ -37,27 +38,24 @@ public class OpenApiController {
     @Resource
     TEExamService teExamService;
 
+    @Resource
+    DictionaryConfig dictionaryConfig;
+
     @ApiOperation(value = "获取考生科目接口")
     @RequestMapping(value = "/examStudent/course", method = RequestMethod.POST)
     @ApiResponses({@ApiResponse(code = 200, message = "{\"success\":true}", response = Result.class)})
     public Result examStudentCourse(
             @ApiJsonObject(name = "openExamStudentCourse", value = {
-                    @ApiJsonProperty(key = "examId", description = "考试id"),
                     @ApiJsonProperty(key = "studentCode", description = "学号")
             })
             @ApiParam(value = "获取考生科目信息", required = true) @RequestBody Map<String, Object> mapParameter) {
-        if (Objects.isNull(mapParameter.get("examId")) || Objects.equals(mapParameter.get("examId"), "")) {
-            throw new BusinessException("考试id不能为空");
-        }
-        Long examId = Long.parseLong(String.valueOf(mapParameter.get("examId")));
         if (Objects.isNull(mapParameter.get("studentCode")) || Objects.equals(mapParameter.get("studentCode"), "")) {
             throw new BusinessException("学号不能为空");
         }
         String studentCode = (String) mapParameter.get("studentCode");
-        TEExam teExam = teExamService.getById(examId);
         TEStudent teStudent = teStudentService.findByStudentCode(studentCode);
-        List<ExamCourseDto> examCourseDtoList = teExamStudentService.findByStudentIdAndExamId(teStudent.getId(), examId);
-        ExamDto examDto = new ExamDto(teExam.getId(), teExam.getName(), teStudent.getId(), teStudent.getName(), examCourseDtoList);
+        List<ExamCourseDto> examCourseDtoList = teExamStudentService.findByStudentId(teStudent.getId());
+        ExamDto examDto = new ExamDto(dictionaryConfig.sysDomain().getExamName(), teStudent.getId(), teStudent.getName(), examCourseDtoList);
         return ResultUtil.ok(examDto);
     }
 

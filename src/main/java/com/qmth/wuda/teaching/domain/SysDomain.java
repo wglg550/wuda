@@ -18,6 +18,8 @@ public class SysDomain implements Serializable {
 
     private boolean open;
 
+    private String examName;
+
     private List<String> attachmentType;
 
     private String serverUpload;
@@ -25,6 +27,14 @@ public class SysDomain implements Serializable {
     private String fileHost;
 
     private String serverHost;
+
+    public String getExamName() {
+        return examName;
+    }
+
+    public void setExamName(String examName) {
+        this.examName = examName;
+    }
 
     public static long getSerialVersionUID() {
         return serialVersionUID;

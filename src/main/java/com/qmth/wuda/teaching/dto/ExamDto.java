@@ -17,10 +17,6 @@ import java.util.List;
 
 public class ExamDto implements Serializable {
 
-    @JsonSerialize(using = ToStringSerializer.class)
-    @ApiModelProperty(value = "考试id")
-    private Long examId;
-
     @ApiModelProperty(value = "考试名称")
     private String examName;
 
@@ -38,20 +34,11 @@ public class ExamDto implements Serializable {
 
     }
 
-    public ExamDto(Long examId, String examName, Long studentId, String studentName, List<ExamCourseDto> courseList) {
-        this.examId = examId;
+    public ExamDto(String examName, Long studentId, String studentName, List<ExamCourseDto> courseList) {
         this.examName = examName;
         this.studentId = studentId;
         this.studentName = studentName;
         this.courseList = courseList;
-    }
-
-    public Long getExamId() {
-        return examId;
-    }
-
-    public void setExamId(Long examId) {
-        this.examId = examId;
     }
 
     public Long getStudentId() {

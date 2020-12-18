@@ -30,10 +30,10 @@ public interface TEExamStudentService extends IService<TEExamStudent> {
     /**
      * 根据考生考号查询
      *
-     * @param identity
+     * @param studentCode
      * @return
      */
-    ExamStudentDto findByStudentNo(String identity);
+    ExamStudentDto findByStudentNo(String studentCode);
 
     /**
      * 获取实考人数
@@ -47,11 +47,10 @@ public interface TEExamStudentService extends IService<TEExamStudent> {
     Integer findByActualCount(Long schoolId, Long examId, Long collegeId, Integer miss);
 
     /**
-     * 根据学生id和考试id获取考试科目
+     * 根据学生id获取考试科目
      *
      * @param studentId
-     * @param examId
      * @return
      */
-    List<ExamCourseDto> findByStudentIdAndExamId(Long studentId, Long examId);
+    List<ExamCourseDto> findByStudentId(Long studentId);
 }

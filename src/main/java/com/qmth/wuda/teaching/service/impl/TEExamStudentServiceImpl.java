@@ -42,13 +42,13 @@ public class TEExamStudentServiceImpl extends ServiceImpl<TEExamStudentMapper, T
     /**
      * 根据考生考号查询
      *
-     * @param identity
+     * @param studentCode
      * @return
      */
     @Override
-    @Cacheable(value = "exam_student_cache", key = "#identity", unless = "#result == null")
-    public ExamStudentDto findByStudentNo(String identity) {
-        return teExamStudentMapper.findByStudentNo(identity);
+    @Cacheable(value = "exam_student_cache", key = "#studentCode", unless = "#result == null")
+    public ExamStudentDto findByStudentNo(String studentCode) {
+        return teExamStudentMapper.findByStudentNo(studentCode);
     }
 
     /**
@@ -67,14 +67,13 @@ public class TEExamStudentServiceImpl extends ServiceImpl<TEExamStudentMapper, T
     }
 
     /**
-     * 根据学生id和考试id获取考试科目
+     * 根据学生id获取考试科目
      *
      * @param studentId
-     * @param examId
      * @return
      */
     @Override
-    public List<ExamCourseDto> findByStudentIdAndExamId(Long studentId, Long examId) {
-        return teExamStudentMapper.findByStudentIdAndExamId(studentId, examId);
+    public List<ExamCourseDto> findByStudentId(Long studentId) {
+        return teExamStudentMapper.findByStudentId(studentId);
     }
 }
