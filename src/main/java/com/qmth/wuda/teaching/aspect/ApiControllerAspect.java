@@ -67,7 +67,7 @@ public class ApiControllerAspect {
             log.info("============类=============:{}", className);
             log.info("============方法===========:{}", methodName);
             if (Objects.nonNull(args) && args.length > 0) {
-                boolean jsonOut = true;
+                boolean jsonOut = false;
                 for (Object o : args) {
                     if (o instanceof CommonsMultipartFile || o instanceof MultipartFile) {
                         jsonOut = false;
