@@ -2,7 +2,6 @@ package com.qmth.wuda.teaching.api;
 
 import com.qmth.wuda.teaching.bean.Result;
 import com.qmth.wuda.teaching.config.DictionaryConfig;
-import com.qmth.wuda.teaching.exception.BusinessException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -19,7 +18,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Objects;
 
 @Api(tags = "cas api Controller")
 @RestController
