@@ -37,11 +37,10 @@ public interface TEExamRecordService extends IService<TEExamRecord> {
      * 获取班级分数
      *
      * @param examId
-     * @param collegeId
      * @param courseCode
      * @return
      */
-    SynthesisBean findByClassScore(Long examId, Long collegeId, String classNo, String courseCode);
+    SynthesisBean findByClassScore(Long examId, String classNo, String courseCode);
 
     /**
      * 获取分数比自己低的人数

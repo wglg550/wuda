@@ -15,9 +15,9 @@ import java.util.Map;
  */
 public class ExamStudentImportDto implements Serializable {
 
-    @ExcelNote(value = "学院")
+    @ExcelNote(value = "学习中心")
     @ExcelNotNull
-    private String collegeName;
+    private String majorName;
 
     @ExcelNote(value = "科目代码")
     @ExcelNotNull
@@ -70,9 +70,9 @@ public class ExamStudentImportDto implements Serializable {
     @ExcelNotNull
     private String classNo;
 
-    @ExcelNote(value = "专业")
+    @ExcelNote(value = "学院")
     @ExcelNotNull
-    private String majorName;
+    private String collegeName;
 
     @ExcelNote(value = "任课老师")
     @ExcelNotNull

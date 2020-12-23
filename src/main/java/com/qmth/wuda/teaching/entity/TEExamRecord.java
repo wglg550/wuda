@@ -122,7 +122,7 @@ public class TEExamRecord extends BaseEntity implements Serializable {
 
     public BigDecimal getObjectiveScore() {
         if (Objects.nonNull(objectiveScore)) {
-            return objectiveScore.setScale(2, BigDecimal.ROUND_HALF_UP);
+            return objectiveScore.setScale(1, BigDecimal.ROUND_HALF_UP);
         } else {
             return new BigDecimal(0);
         }
@@ -134,7 +134,7 @@ public class TEExamRecord extends BaseEntity implements Serializable {
 
     public BigDecimal getSubjectiveScore() {
         if (Objects.nonNull(subjectiveScore)) {
-            return subjectiveScore.setScale(2, BigDecimal.ROUND_HALF_UP);
+            return subjectiveScore.setScale(1, BigDecimal.ROUND_HALF_UP);
         } else {
             return new BigDecimal(0);
         }
@@ -146,7 +146,7 @@ public class TEExamRecord extends BaseEntity implements Serializable {
 
     public BigDecimal getSumScore() {
         if (Objects.nonNull(sumScore)) {
-            return sumScore.setScale(2, BigDecimal.ROUND_HALF_UP);
+            return sumScore.setScale(1, BigDecimal.ROUND_HALF_UP);
         } else {
             return new BigDecimal(0);
         }

@@ -56,7 +56,7 @@ public class DimensionDetailBean implements Serializable {
 
     public BigDecimal getScoreRate() {
         if (Objects.nonNull(scoreRate)) {
-            return scoreRate.setScale(2, BigDecimal.ROUND_HALF_UP);
+            return scoreRate.setScale(1, BigDecimal.ROUND_HALF_UP);
         } else {
             return new BigDecimal(0);
         }
@@ -68,7 +68,7 @@ public class DimensionDetailBean implements Serializable {
 
     public BigDecimal getCollegeAvgScore() {
         if (Objects.nonNull(collegeAvgScore)) {
-            return collegeAvgScore.setScale(2, BigDecimal.ROUND_HALF_UP);
+            return collegeAvgScore.setScale(1, BigDecimal.ROUND_HALF_UP);
         } else {
             return new BigDecimal(0);
         }

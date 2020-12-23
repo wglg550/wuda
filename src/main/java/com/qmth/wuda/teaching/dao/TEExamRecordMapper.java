@@ -40,11 +40,10 @@ public interface TEExamRecordMapper extends BaseMapper<TEExamRecord> {
      * 获取班级分数
      *
      * @param examId
-     * @param collegeId
      * @param courseCode
      * @return
      */
-    SynthesisBean findByClassScore(@Param("examId") Long examId, @Param("collegeId") Long collegeId, @Param("classNo") String classNo, @Param("courseCode") String courseCode);
+    SynthesisBean findByClassScore(@Param("examId") Long examId, @Param("classNo") String classNo, @Param("courseCode") String courseCode);
 
     /**
      * 获取分数比自己低的人数

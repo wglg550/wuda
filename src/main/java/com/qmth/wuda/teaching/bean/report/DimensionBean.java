@@ -33,7 +33,7 @@ public class DimensionBean implements Serializable {
 
     public BigDecimal getMyScore() {
         if (Objects.nonNull(myScore)) {
-            return myScore.setScale(2, BigDecimal.ROUND_HALF_UP);
+            return myScore.setScale(1, BigDecimal.ROUND_HALF_UP);
         } else {
             return new BigDecimal(0);
         }
@@ -45,7 +45,7 @@ public class DimensionBean implements Serializable {
 
     public BigDecimal getMasteryRate() {
         if (Objects.nonNull(masteryRate)) {
-            return masteryRate.setScale(2, BigDecimal.ROUND_HALF_UP);
+            return masteryRate.setScale(1, BigDecimal.ROUND_HALF_UP);
         } else {
             return new BigDecimal(0);
         }
@@ -57,7 +57,7 @@ public class DimensionBean implements Serializable {
 
     public BigDecimal getDioFullScore() {
         if (Objects.nonNull(dioFullScore)) {
-            return dioFullScore.setScale(2, BigDecimal.ROUND_HALF_UP);
+            return dioFullScore.setScale(1, BigDecimal.ROUND_HALF_UP);
         } else {
             return new BigDecimal(0);
         }

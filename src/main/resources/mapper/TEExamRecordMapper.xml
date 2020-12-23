@@ -29,12 +29,10 @@
         <if test="examId != null and examId != ''">
             and tees.exam_id = #{examId}
         </if>
-        <if test="collegeId != null and collegeId != ''">
-            and tees.college_id = #{collegeId}
-        </if>
         <if test="courseCode != null and courseCode != ''">
             and tees.course_code = #{courseCode}
         </if>
+        and tees.miss = 1
     </sql>
 
     <select id="findByCollegeScore" resultType="com.qmth.wuda.teaching.bean.report.SynthesisBean">
@@ -45,6 +43,9 @@
         <include refid="scoreCommonMidden"/>
         <where>
             <include refid="scoreCommonFoot"/>
+            <if test="collegeId != null and collegeId != ''">
+                and tees.college_id = #{collegeId}
+            </if>
         </where>
     </select>
 
@@ -75,6 +76,9 @@
         and t.exam_student_id = tees.id
         <where>
             <include refid="scoreCommonFoot"/>
+            <if test="collegeId != null and collegeId != ''">
+                and tees.college_id = #{collegeId}
+            </if>
             and t.sum_score <![CDATA[ < ]]> (
             select
             teer.sum_score

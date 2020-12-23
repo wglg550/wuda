@@ -75,7 +75,7 @@ public class SynthesisBean implements Serializable {
 
     public BigDecimal getMyScore() {
         if (Objects.nonNull(myScore)) {
-            return myScore.setScale(2, BigDecimal.ROUND_HALF_UP);
+            return myScore.setScale(1, BigDecimal.ROUND_HALF_UP);
         } else {
             return new BigDecimal(0);
         }
@@ -87,7 +87,7 @@ public class SynthesisBean implements Serializable {
 
     public BigDecimal getOverRate() {
         if (Objects.nonNull(overRate)) {
-            return overRate.setScale(2, BigDecimal.ROUND_HALF_UP);
+            return overRate.setScale(1, BigDecimal.ROUND_HALF_UP);
         } else {
             return new BigDecimal(0);
         }
@@ -99,7 +99,7 @@ public class SynthesisBean implements Serializable {
 
     public BigDecimal getCollegeMinScore() {
         if (Objects.nonNull(collegeMinScore)) {
-            return collegeMinScore.setScale(2, BigDecimal.ROUND_HALF_UP);
+            return collegeMinScore.setScale(1, BigDecimal.ROUND_HALF_UP);
         } else {
             return new BigDecimal(0);
         }
@@ -111,7 +111,7 @@ public class SynthesisBean implements Serializable {
 
     public BigDecimal getCollegeAvgScore() {
         if (Objects.nonNull(collegeAvgScore)) {
-            return collegeAvgScore.setScale(2, BigDecimal.ROUND_HALF_UP);
+            return collegeAvgScore.setScale(1, BigDecimal.ROUND_HALF_UP);
         } else {
             return new BigDecimal(0);
         }
@@ -123,7 +123,7 @@ public class SynthesisBean implements Serializable {
 
     public BigDecimal getCollegeMaxScore() {
         if (Objects.nonNull(collegeMaxScore)) {
-            return collegeMaxScore.setScale(2, BigDecimal.ROUND_HALF_UP);
+            return collegeMaxScore.setScale(1, BigDecimal.ROUND_HALF_UP);
         } else {
             return new BigDecimal(0);
         }
@@ -135,7 +135,7 @@ public class SynthesisBean implements Serializable {
 
     public BigDecimal getClazzMinScore() {
         if (Objects.nonNull(clazzMinScore)) {
-            return clazzMinScore.setScale(2, BigDecimal.ROUND_HALF_UP);
+            return clazzMinScore.setScale(1, BigDecimal.ROUND_HALF_UP);
         } else {
             return new BigDecimal(0);
         }
@@ -147,7 +147,7 @@ public class SynthesisBean implements Serializable {
 
     public BigDecimal getClazzAvgScore() {
         if (Objects.nonNull(clazzAvgScore)) {
-            return clazzAvgScore.setScale(2, BigDecimal.ROUND_HALF_UP);
+            return clazzAvgScore.setScale(1, BigDecimal.ROUND_HALF_UP);
         } else {
             return new BigDecimal(0);
         }
@@ -159,7 +159,7 @@ public class SynthesisBean implements Serializable {
 
     public BigDecimal getClazzMaxScore() {
         if (Objects.nonNull(clazzMaxScore)) {
-            return clazzMaxScore.setScale(2, BigDecimal.ROUND_HALF_UP);
+            return clazzMaxScore.setScale(1, BigDecimal.ROUND_HALF_UP);
         } else {
             return new BigDecimal(0);
         }
@@ -171,7 +171,7 @@ public class SynthesisBean implements Serializable {
 
     public BigDecimal getFullScore() {
         if (Objects.nonNull(fullScore)) {
-            return fullScore.setScale(2, BigDecimal.ROUND_HALF_UP);
+            return fullScore.setScale(1, BigDecimal.ROUND_HALF_UP);
         } else {
             return new BigDecimal(0);
         }

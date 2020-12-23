@@ -1,6 +1,5 @@
 package com.qmth.wuda.teaching.service.impl;
 
-import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.qmth.wuda.teaching.bean.report.*;
 import com.qmth.wuda.teaching.constant.SystemConstant;
@@ -158,7 +157,7 @@ public class CacheServiceImpl implements CacheService {
         //学院分数
         SynthesisBean collegeScore = teExamRecordService.findByCollegeScore(examStudentDto.getExamId(), examStudentDto.getCollegeId(), examStudentDto.getCourseCode());
         //班级分数
-        SynthesisBean calssScore = teExamRecordService.findByClassScore(examStudentDto.getExamId(), examStudentDto.getCollegeId(), examStudentDto.getClazz(), examStudentDto.getCourseCode());
+        SynthesisBean calssScore = teExamRecordService.findByClassScore(examStudentDto.getExamId(), examStudentDto.getClazz(), examStudentDto.getCourseCode());
         //获取实考人数
         Integer actualCount = teExamStudentService.findByActualCount(examStudentDto.getExamId(), examStudentDto.getCollegeId(), MissEnum.NORMAL.getValue());
         BigDecimal bigActualCount = new BigDecimal(actualCount);

@@ -87,6 +87,9 @@ public class CallApiController {
             throw new BusinessException("考试id或考试code必须传一个");
         }
         List<Map> studentsMark = callApiService.callStudentScore(examId, examCode);
+        if (true) {
+            return ResultUtil.ok(studentsMark);
+        }
         if (Objects.nonNull(studentsMark) && studentsMark.size() > 0) {
             QueryWrapper<TBSchool> tbSchoolQueryWrapper = new QueryWrapper<>();
             tbSchoolQueryWrapper.lambda().eq(TBSchool::getCode, "whdx");

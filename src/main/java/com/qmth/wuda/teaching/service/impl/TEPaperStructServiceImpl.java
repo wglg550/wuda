@@ -31,7 +31,7 @@ public class TEPaperStructServiceImpl extends ServiceImpl<TEPaperStructMapper, T
      * @param paperId
      */
     @Override
-    @CacheEvict(value = "paper_struct_cache", key = "#paperId")
+//    @CacheEvict(value = "paper_struct_cache", key = "#paperId")
     public void deleteAll(Long paperId) {
         tePaperStructMapper.deleteAll(paperId);
     }

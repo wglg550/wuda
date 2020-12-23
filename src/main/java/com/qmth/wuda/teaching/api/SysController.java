@@ -10,12 +10,12 @@ import com.qmth.wuda.teaching.constant.SystemConstant;
 import com.qmth.wuda.teaching.dto.excel.*;
 import com.qmth.wuda.teaching.entity.*;
 import com.qmth.wuda.teaching.enums.ExceptionResultEnum;
+import com.qmth.wuda.teaching.enums.MissEnum;
 import com.qmth.wuda.teaching.enums.ModuleEnum;
 import com.qmth.wuda.teaching.enums.UploadFileEnum;
 import com.qmth.wuda.teaching.exception.BusinessException;
 import com.qmth.wuda.teaching.service.*;
 import com.qmth.wuda.teaching.util.ExcelUtil;
-import com.qmth.wuda.teaching.util.JacksonUtil;
 import com.qmth.wuda.teaching.util.ResultUtil;
 import com.qmth.wuda.teaching.util.ServletUtil;
 import io.swagger.annotations.*;
@@ -189,14 +189,14 @@ public class SysController {
                             }
 
                             TEPaper tePaper = null;
-                            if (!tePaperMap.containsKey(teExam.getId() + "_" + examStudentImportDto.getCourseCode())) {
+                            if (!tePaperMap.containsKey(examStudentImportDto.getCourseCode())) {
                                 QueryWrapper<TEPaper> tePaperQueryWrapper = new QueryWrapper<>();
                                 tePaperQueryWrapper.lambda().eq(TEPaper::getExamId, teExam.getId())
                                         .eq(TEPaper::getCourseCode, examStudentImportDto.getCourseCode());
                                 tePaper = tePaperService.getOne(tePaperQueryWrapper);
-                                tePaperMap.put(teExam.getId() + "_" + examStudentImportDto.getCourseCode(), tePaper);
+                                tePaperMap.put(examStudentImportDto.getCourseCode(), tePaper);
                             } else {
-                                tePaper = tePaperMap.get(teExam.getId() + "_" + examStudentImportDto.getCourseCode());
+                                tePaper = tePaperMap.get(examStudentImportDto.getCourseCode());
                             }
                             if (Objects.isNull(tePaper)) {
                                 throw new BusinessException("试卷为空");
@@ -232,7 +232,7 @@ public class SysController {
                                 studentMap.put(examStudentImportDto.getIdentity(), teStudent);
                             }
                             if (!examStudentMap.containsKey(examStudentImportDto.getIdcardNumber() + "_" + examStudentImportDto.getIdentity())) {
-                                TEExamStudent teExamStudent = new TEExamStudent(teExam.getId(), studentMap.get(examStudentImportDto.getIdentity()).getId(), collegeMap.get(examStudentImportDto.getCollegeName()).getId(), null, teCourse.getCourseName(), teCourse.getCourseCode(), examStudentImportDto.getExamStudentName(), examStudentImportDto.getIdentity(), examStudentImportDto.getIdcardNumber(), Objects.isNull(extendColumnMap) || extendColumnMap.size() == 0 ? 1 : 0, examStudentImportDto.getClassNo(), null);
+                                TEExamStudent teExamStudent = new TEExamStudent(teExam.getId(), studentMap.get(examStudentImportDto.getIdentity()).getId(), collegeMap.get(examStudentImportDto.getCollegeName()).getId(), null, teCourse.getCourseName(), teCourse.getCourseCode(), examStudentImportDto.getExamStudentName(), examStudentImportDto.getIdentity(), examStudentImportDto.getIdcardNumber(), Objects.isNull(examStudentImportDto.getMarkDetail()) || Objects.equals(examStudentImportDto.getMarkDetail(), "") ? MissEnum.MISS.getValue() : MissEnum.NORMAL.getValue(), examStudentImportDto.getClassNo(), tePaper.getCode());
                                 examStudentMap.put(examStudentImportDto.getIdcardNumber() + "_" + examStudentImportDto.getIdentity(), teExamStudent);
                             }
                             if (!teacherMap.containsKey(examStudentImportDto.getTeacherName())) {
@@ -252,9 +252,7 @@ public class SysController {
                             extendColumnMap.forEach((k, v) -> {
                                 TEAnswer teAnswer = null;
                                 String filterTitle = SystemConstant.filterQuestion(k);
-                                log.info("filterTitle:{}", filterTitle);
                                 TEPaperStruct tePaperStruct = finalTePaperStructMap1.get(filterTitle);
-                                log.info("tePaperStruct:{}", JacksonUtil.parseJson(tePaperStruct));
                                 Long examRecordId = examRecordMap.get(examStudentMap.get(examStudentImportDto.getIdcardNumber() + "_" + examStudentImportDto.getIdentity()).getId()).getId();
                                 if (!answerMap.containsKey(tePaperStruct.getId())) {
                                     teAnswer = new TEAnswer(tePaperStruct.getMainNumber(), tePaperStruct.getSubNumber(), tePaperStruct.getType(), examRecordId);

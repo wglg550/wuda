@@ -5,7 +5,6 @@ import com.qmth.wuda.teaching.bean.report.SynthesisBean;
 import com.qmth.wuda.teaching.dao.TEExamRecordMapper;
 import com.qmth.wuda.teaching.entity.TEExamRecord;
 import com.qmth.wuda.teaching.service.TEExamRecordService;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -60,9 +59,9 @@ public class TEExamRecordServiceImpl extends ServiceImpl<TEExamRecordMapper, TEE
      * @return
      */
     @Override
-//    @Cacheable(value = "class_score_cache", key = "#examId + '-' + #collegeId + '-' + #classNo + '-' + #courseCode", unless = "#result == null")
-    public SynthesisBean findByClassScore(Long examId, Long collegeId, String classNo, String courseCode) {
-        return teExamRecordMapper.findByClassScore(examId, collegeId, classNo, courseCode);
+//    @Cacheable(value = "class_score_cache", key = "#examId + '-' + #classNo + '-' + #courseCode", unless = "#result == null")
+    public SynthesisBean findByClassScore(Long examId, String classNo, String courseCode) {
+        return teExamRecordMapper.findByClassScore(examId, classNo, courseCode);
     }
 
     /**
