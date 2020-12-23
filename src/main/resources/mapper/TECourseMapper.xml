@@ -11,6 +11,9 @@
                     #{courseCode}
                 </foreach>
             </if>
+            <if test="paperCode != null and paperCode != ''">
+                and t.paper_code = #{paperCode}
+            </if>
         </where>
     </delete>
 </mapper>

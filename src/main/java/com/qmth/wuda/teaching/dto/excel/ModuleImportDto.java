@@ -38,6 +38,18 @@ public class ModuleImportDto implements Serializable {
     @ExcelNotNull
     private String courseCode;
 
+    @ExcelNote(value = "试卷类型")
+    @ExcelNotNull
+    private String paperCode;
+
+    public String getPaperCode() {
+        return paperCode;
+    }
+
+    public void setPaperCode(String paperCode) {
+        this.paperCode = paperCode;
+    }
+
     public String getCourseName() {
         return courseName;
     }

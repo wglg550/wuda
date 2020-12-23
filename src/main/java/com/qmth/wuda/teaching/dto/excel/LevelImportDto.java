@@ -40,6 +40,30 @@ public class LevelImportDto implements Serializable {
     @ExcelNote(value = "模块")
     private String moduleName;
 
+    @ExcelNote(value = "科目编码")
+    @ExcelNotNull
+    private String courseCode;
+
+    @ExcelNote(value = "试卷类型")
+    @ExcelNotNull
+    private String paperCode;
+
+    public String getCourseCode() {
+        return courseCode;
+    }
+
+    public void setCourseCode(String courseCode) {
+        this.courseCode = courseCode;
+    }
+
+    public String getPaperCode() {
+        return paperCode;
+    }
+
+    public void setPaperCode(String paperCode) {
+        this.paperCode = paperCode;
+    }
+
     public String getFormula() {
         return formula;
     }

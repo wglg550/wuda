@@ -20,8 +20,9 @@ public interface TECourseService extends IService<TECourse> {
      *
      * @param schoolId
      * @param courseCodes
+     * @param paperCode
      */
-    void deleteAll(Long schoolId, Set<String> courseCodes);
+    void deleteAll(Long schoolId, Set<String> courseCodes, String paperCode);
 
     /**
      * 根据科目编码count

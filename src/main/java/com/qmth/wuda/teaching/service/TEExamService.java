@@ -24,11 +24,12 @@ public interface TEExamService extends IService<TEExam> {
     /**
      * 根据考试id或考试编码创建考试
      *
+     * @param examName
      * @param examId
      * @param examCode
      * @param accessKey
      * @param accessSecret
      * @return
      */
-    TEExam saveExam(Long examId, String examCode, String accessKey, String accessSecret);
+    TEExam saveExam(String examName,Long examId, String examCode, String accessKey, String accessSecret);
 }

@@ -23,6 +23,7 @@ public interface TECourseMapper extends BaseMapper<TECourse> {
      *
      * @param schoolId
      * @param courseCodes
+     * @param paperCode
      */
-    void deleteAll(@Param("schoolId") Long schoolId, @Param("courseCodes") Set<String> courseCodes);
+    void deleteAll(@Param("schoolId") Long schoolId, @Param("courseCodes") Set<String> courseCodes,@Param("paperCode") String paperCode);
 }

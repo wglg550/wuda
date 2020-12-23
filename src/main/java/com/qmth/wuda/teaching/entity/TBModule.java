@@ -52,6 +52,10 @@ public class TBModule implements Serializable {
     @TableField(value = "degree")
     private String degree;
 
+    @ApiModelProperty(value = "试卷编码")
+    @TableField(value = "paper_code")
+    private String paperCode;
+
     @ApiModelProperty(value = "科目名称")
     @TableField(value = "course_name")
     private String courseName;
@@ -64,7 +68,7 @@ public class TBModule implements Serializable {
 
     }
 
-    public TBModule(String name, String code, String description, String proficiency, String remark, String degree, String courseName, String courseCode) {
+    public TBModule(String name, String code, String description, String proficiency, String remark, String degree, String paperCode, String courseName, String courseCode) {
         setId(UidUtil.nextId());
         this.name = name;
         this.code = code;
@@ -72,8 +76,17 @@ public class TBModule implements Serializable {
         this.proficiency = proficiency;
         this.remark = remark;
         this.degree = degree;
+        this.paperCode = paperCode;
         this.courseName = courseName;
         this.courseCode = courseCode;
+    }
+
+    public String getPaperCode() {
+        return paperCode;
+    }
+
+    public void setPaperCode(String paperCode) {
+        this.paperCode = paperCode;
     }
 
     public String getCourseName() {

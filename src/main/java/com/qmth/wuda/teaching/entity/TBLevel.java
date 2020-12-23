@@ -61,11 +61,19 @@ public class TBLevel implements Serializable {
     @TableField(value = "formula")
     private String formula;
 
+    @ApiModelProperty(value = "科目编码")
+    @TableField(value = "course_code")
+    private String courseCode;
+
+    @ApiModelProperty(value = "试卷类型")
+    @TableField(value = "paper_code")
+    private String paperCode;
+
     public TBLevel() {
 
     }
 
-    public TBLevel(Long moduleId, String code, String level, String degree, String diagnoseResult, String learnAdvice, String formula) {
+    public TBLevel(Long moduleId, String code, String level, String degree, String diagnoseResult, String learnAdvice, String formula,String courseCode,String paperCode) {
         setId(UidUtil.nextId());
         this.moduleId = moduleId;
         this.code = code;
@@ -74,6 +82,24 @@ public class TBLevel implements Serializable {
         this.diagnoseResult = diagnoseResult;
         this.learnAdvice = learnAdvice;
         this.formula = formula;
+        this.courseCode = courseCode;
+        this.paperCode = paperCode;
+    }
+
+    public String getCourseCode() {
+        return courseCode;
+    }
+
+    public void setCourseCode(String courseCode) {
+        this.courseCode = courseCode;
+    }
+
+    public String getPaperCode() {
+        return paperCode;
+    }
+
+    public void setPaperCode(String paperCode) {
+        this.paperCode = paperCode;
     }
 
     public String getFormula() {

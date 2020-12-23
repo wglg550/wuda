@@ -24,6 +24,11 @@ public class TEExam extends BaseEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @JsonSerialize(using = ToStringSerializer.class)
+    @ApiModelProperty(value = "父id")
+    @TableField(value = "parent_id")
+    private Long parentId;
+
     @ApiModelProperty(value = "名称")
     @TableField(value = "name")
     private String name;
@@ -48,21 +53,23 @@ public class TEExam extends BaseEntity implements Serializable {
 
     }
 
-    public TEExam(Long examId, String name, String code, String accessKey, String accessSecret) {
+    public TEExam(Long examId, String name, String code, String accessKey, String accessSecret, Long parentId) {
         setId(examId);
         this.name = name + "_" + examId;
         this.code = code;
         this.accessKey = accessKey;
         this.accessSecret = accessSecret;
+        this.parentId = parentId;
         this.enable = 1;
     }
 
-    public TEExam(String name, String code, String accessKey, String accessSecret) {
+    public TEExam(String name, String code, String accessKey, String accessSecret, Long parentId) {
         setId(UidUtil.nextId());
         this.name = name + "_" + code;
         this.code = code;
         this.accessKey = accessKey;
         this.accessSecret = accessSecret;
+        this.parentId = parentId;
         this.enable = 1;
     }
 
@@ -71,6 +78,14 @@ public class TEExam extends BaseEntity implements Serializable {
         this.name = name;
         this.code = code;
         this.enable = 1;
+    }
+
+    public Long getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(Long parentId) {
+        this.parentId = parentId;
     }
 
     public String getAccessKey() {

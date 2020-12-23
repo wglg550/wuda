@@ -198,7 +198,7 @@ public class SysController {
                                 studentMap.put(examStudentImportDto.getIdentity(), teStudent);
                             }
                             if (!examStudentMap.containsKey(examStudentImportDto.getIdcardNumber() + "_" + examStudentImportDto.getIdentity())) {
-                                TEExamStudent teExamStudent = new TEExamStudent(teExam.getId(), studentMap.get(examStudentImportDto.getIdentity()).getId(), collegeMap.get(examStudentImportDto.getCollegeName()).getId(), null, teCourse.getCourseName(), teCourse.getCourseCode(), examStudentImportDto.getExamStudentName(), examStudentImportDto.getIdentity(), examStudentImportDto.getIdcardNumber(), Objects.isNull(extendColumnMap) || extendColumnMap.size() == 0 ? 1 : 0, examStudentImportDto.getClassNo(),null);
+                                TEExamStudent teExamStudent = new TEExamStudent(teExam.getId(), studentMap.get(examStudentImportDto.getIdentity()).getId(), collegeMap.get(examStudentImportDto.getCollegeName()).getId(), null, teCourse.getCourseName(), teCourse.getCourseCode(), examStudentImportDto.getExamStudentName(), examStudentImportDto.getIdentity(), examStudentImportDto.getIdcardNumber(), Objects.isNull(extendColumnMap) || extendColumnMap.size() == 0 ? 1 : 0, examStudentImportDto.getClassNo(), null);
                                 examStudentMap.put(examStudentImportDto.getIdcardNumber() + "_" + examStudentImportDto.getIdentity(), teExamStudent);
                             }
                             if (!teacherMap.containsKey(examStudentImportDto.getTeacherName())) {
@@ -544,7 +544,7 @@ public class SysController {
                             if (subList.get(y) instanceof ModuleImportDto) {
                                 ModuleImportDto moduleImportDto = (ModuleImportDto) subList.get(y);
                                 if (!moduleMap.containsKey(moduleImportDto.getName())) {
-                                    TBModule tbModule = new TBModule(moduleImportDto.getName(), ModuleEnum.convertToName(moduleImportDto.getName()), moduleImportDto.getDescription(), moduleImportDto.getProficiency(), moduleImportDto.getRemark(), moduleImportDto.getProficiencyDegree(), moduleImportDto.getCourseName(), moduleImportDto.getCourseCode());
+                                    TBModule tbModule = new TBModule(moduleImportDto.getName(), ModuleEnum.convertToName(moduleImportDto.getName()), moduleImportDto.getDescription(), moduleImportDto.getProficiency(), moduleImportDto.getRemark(), moduleImportDto.getProficiencyDegree(), moduleImportDto.getPaperCode(), moduleImportDto.getCourseName(), moduleImportDto.getCourseCode());
                                     moduleMap.put(moduleImportDto.getName(), tbModule);
                                 }
                                 if (!courseMap.containsKey(moduleImportDto.getCourseCode())) {
@@ -552,7 +552,7 @@ public class SysController {
                                 }
                             } else if (subList.get(y) instanceof LevelImportDto) {
                                 LevelImportDto levelImportDto = (LevelImportDto) subList.get(y);
-                                TBLevel tbLevel = new TBLevel(moduleMap.get(levelImportDto.getModuleName()).getId(), levelImportDto.getCode(), levelImportDto.getLevel(), levelImportDto.getLevelDegree(), levelImportDto.getDiagnoseResult(), levelImportDto.getLearnAdvice(), levelImportDto.getFormula());
+                                TBLevel tbLevel = new TBLevel(moduleMap.get(levelImportDto.getModuleName()).getId(), levelImportDto.getCode(), levelImportDto.getLevel(), levelImportDto.getLevelDegree(), levelImportDto.getDiagnoseResult(), levelImportDto.getLearnAdvice(), levelImportDto.getFormula(), levelImportDto.getCourseCode(), levelImportDto.getPaperCode());
                                 levelMap.add(levelImportDto.getModuleName(), tbLevel);
                             }
                         }
@@ -577,7 +577,8 @@ public class SysController {
                 List<TBLevel> tbLevelList = new ArrayList<>();
                 moduleMap.forEach((k, v) -> {
                     QueryWrapper<TBModule> tbModuleQueryWrapper = new QueryWrapper<>();
-                    tbModuleQueryWrapper.lambda().eq(TBModule::getCourseCode, v.getCourseCode())
+                    tbModuleQueryWrapper.lambda().eq(TBModule::getPaperCode, v.getPaperCode())
+                            .eq(TBModule::getCourseCode, v.getCourseCode())
                             .eq(TBModule::getCode, v.getCode().toLowerCase());
                     TBModule tbModule = tbModuleService.getOne(tbModuleQueryWrapper);
                     if (Objects.nonNull(tbModule)) {
@@ -610,12 +611,17 @@ public class SysController {
     @Transactional
     public Result createExam(
             @ApiJsonObject(name = "sysCreateExam", value = {
+                    @ApiJsonProperty(key = "examName", description = "考试名称"),
                     @ApiJsonProperty(key = "examId", description = "考试id"),
                     @ApiJsonProperty(key = "examCode", description = "考试编码"),
                     @ApiJsonProperty(key = "accessKey", description = "密钥key"),
                     @ApiJsonProperty(key = "accessSecret", description = "密钥secret"),
             })
             @ApiParam(value = "创建考试信息", required = true) @RequestBody Map<String, Object> mapParameter) {
+        if (Objects.isNull(mapParameter.get("examName")) || Objects.equals(mapParameter.get("examName"), "")) {
+            throw new BusinessException("考试名称不能为空");
+        }
+        String examName = (String) mapParameter.get("examName");
         Long examId = null;
         String examCode = null;
         if (Objects.nonNull(mapParameter.get("examId")) && !Objects.equals(mapParameter.get("examId"), "")) {
@@ -634,7 +640,7 @@ public class SysController {
             throw new BusinessException("密钥secret不能为空");
         }
         String accessSecret = (String) mapParameter.get("accessSecret");
-        teExamService.saveExam(examId, examCode, accessKey, accessSecret);
+        teExamService.saveExam(examName, examId, examCode, accessKey, accessSecret);
         return ResultUtil.ok(Collections.singletonMap(SystemConstant.SUCCESS, true));
     }
 

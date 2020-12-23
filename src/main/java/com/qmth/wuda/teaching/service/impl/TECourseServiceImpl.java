@@ -29,10 +29,11 @@ public class TECourseServiceImpl extends ServiceImpl<TECourseMapper, TECourse> i
      *
      * @param schoolId
      * @param courseCodes
+     * @param paperCode
      */
     @Override
-    public void deleteAll(Long schoolId, Set<String> courseCodes) {
-        teCourseMapper.deleteAll(schoolId, courseCodes);
+    public void deleteAll(Long schoolId, Set<String> courseCodes, String paperCode) {
+        teCourseMapper.deleteAll(schoolId, courseCodes, paperCode);
     }
 
     /**
