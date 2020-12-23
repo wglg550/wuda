@@ -48,15 +48,15 @@ public class ExamStudentImportDto implements Serializable {
 
     @ExcelNote(value = "客观分")
     @ExcelNotNull
-    private String objectiveScore;
+    private Double objectiveScore;
 
     @ExcelNote(value = "主观分")
     @ExcelNotNull
-    private String subjectiveScore;
+    private Double subjectiveScore;
 
     @ExcelNote(value = "总分")
     @ExcelNotNull
-    private String sumScore;
+    private Double sumScore;
 
     @ExcelNote(value = "评分明细")
     @ExcelNotNull
@@ -185,27 +185,27 @@ public class ExamStudentImportDto implements Serializable {
         this.majorName = majorName;
     }
 
-    public String getObjectiveScore() {
+    public Double getObjectiveScore() {
         return objectiveScore;
     }
 
-    public void setObjectiveScore(String objectiveScore) {
+    public void setObjectiveScore(Double objectiveScore) {
         this.objectiveScore = objectiveScore;
     }
 
-    public String getSubjectiveScore() {
+    public Double getSubjectiveScore() {
         return subjectiveScore;
     }
 
-    public void setSubjectiveScore(String subjectiveScore) {
+    public void setSubjectiveScore(Double subjectiveScore) {
         this.subjectiveScore = subjectiveScore;
     }
 
-    public String getSumScore() {
+    public Double getSumScore() {
         return sumScore;
     }
 
-    public void setSumScore(String sumScore) {
+    public void setSumScore(Double sumScore) {
         this.sumScore = sumScore;
     }
 

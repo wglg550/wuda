@@ -129,7 +129,7 @@ public class SysController {
             if (Objects.isNull(tbAttachment)) {
                 throw new BusinessException(ExceptionResultEnum.ATTACHMENT_ERROR);
             }
-            List<LinkedMultiValueMap<Integer, Object>> finalList = ExcelUtil.excelReader(file.getInputStream(), Lists.newArrayList(PaperImportDto.class, PaperStructImportDto.class), (finalExcelList, finalColumnNameList, finalExcelErrorList) -> {
+            List<LinkedMultiValueMap<Integer, Object>> finalList = ExcelUtil.excelReader(file.getInputStream(), Lists.newArrayList(ExamStudentImportDto.class), (finalExcelList, finalColumnNameList, finalExcelErrorList) -> {
                 if (finalExcelErrorList.size() > 0) {
                     throw new BusinessException(JSONObject.toJSONString(finalExcelErrorList));
                 }
@@ -141,41 +141,17 @@ public class SysController {
                 tbSchoolQueryWrapper.lambda().eq(TBSchool::getCode, "whdx");
                 TBSchool tbSchool = tbSchoolService.getOne(tbSchoolQueryWrapper);
 
-//                ExamStudentImportDto examStudent = (ExamStudentImportDto) finalList.get(0).get(0).get(0);
-//                QueryWrapper<TEExam> teExamQueryWrapper = new QueryWrapper<>();
-//                teExamQueryWrapper.lambda().eq(TEExam::getSchoolId, tbSchool.getId())
-//                        .eq(TEExam::getCode, examStudent.getCourseCode());
-//                TEExam teExam = teExamService.getOne(teExamQueryWrapper);
-                TEExam teExam = null;
-
-                QueryWrapper<TEPaper> tePaperQueryWrapper = new QueryWrapper<>();
-                tePaperQueryWrapper.lambda().eq(TEPaper::getExamId, teExam.getId());
-                TEPaper tePaper = tePaperService.getOne(tePaperQueryWrapper);
-
-                QueryWrapper<TEPaperStruct> tePaperStructQueryWrapper = new QueryWrapper<>();
-                tePaperStructQueryWrapper.lambda().eq(TEPaperStruct::getPaperId, tePaper.getId());
-                List<TEPaperStruct> tePaperStructList = tePaperStructService.list(tePaperStructQueryWrapper);
-                Map<String, TEPaperStruct> tePaperStructMap = new LinkedHashMap<>();
-                if (Objects.nonNull(tePaperStructList) && tePaperStructList.size() > 0) {
-                    tePaperStructList.forEach(s -> {
-                        tePaperStructMap.put(s.getMainNumber() + "-" + s.getSubNumber(), s);
-                    });
-                }
-
-//                QueryWrapper<TECourse> teCourseQueryWrapper = new QueryWrapper<>();
-//                teCourseQueryWrapper.lambda().eq(TECourse::getSchoolId, tbSchool.getId())
-//                        .eq(TECourse::getCourseCode, examStudent.getCourseCode());
-//                TECourse teCourse = teCourseService.getOne(teCourseQueryWrapper);
-                TECourse teCourse = null;
-
                 Map<String, TBSchoolCollege> collegeMap = new LinkedHashMap<>();
                 Map<String, TEStudent> studentMap = new LinkedHashMap<>();
                 Map<String, TEExamStudent> examStudentMap = new LinkedHashMap<>();
                 Map<String, TBTeacher> teacherMap = new LinkedHashMap<>();
                 LinkedMultiValueMap<Long, TBTeacherExamStudent> teacherExamStudentMap = new LinkedMultiValueMap<>();
                 Map<Long, TEExamRecord> examRecordMap = new LinkedHashMap<>();
+                Map<String, TECourse> teCourseMap = new HashMap<>();
+                Map<Long, TEExam> teExamMap = new HashMap<>();
+                Map<String, TEPaper> tePaperMap = new HashMap<>();
+                Map<Long, Map<String, TEPaperStruct>> tePaperStructFinalMap = new HashMap<>();
                 List<TEAnswer> teAnswerList = new ArrayList();
-
                 for (int i = 0; i < finalList.size(); i++) {
                     LinkedMultiValueMap<Integer, Object> finalMap = finalList.get(i);
                     List<Object> examStudentImportDtoList = finalMap.get(i);
@@ -188,6 +164,64 @@ public class SysController {
                         List subList = examStudentImportDtoList.subList(min, max);
                         for (int y = 0; y < subList.size(); y++) {
                             ExamStudentImportDto examStudentImportDto = (ExamStudentImportDto) subList.get(y);
+                            TECourse teCourse = null;
+                            if (!teCourseMap.containsKey(examStudentImportDto.getCourseCode())) {
+                                QueryWrapper<TECourse> teCourseQueryWrapper = new QueryWrapper<>();
+                                teCourseQueryWrapper.lambda().eq(TECourse::getCourseCode, examStudentImportDto.getCourseCode());
+                                teCourse = teCourseService.getOne(teCourseQueryWrapper);
+                                teCourseMap.put(examStudentImportDto.getCourseCode(), teCourse);
+                            } else {
+                                teCourse = teCourseMap.get(examStudentImportDto.getCourseCode());
+                            }
+                            if (Objects.isNull(teCourse)) {
+                                throw new BusinessException("科目编码" + examStudentImportDto.getCourseCode() + "为空");
+                            }
+
+                            TEExam teExam = null;
+                            if (!teExamMap.containsKey(teCourse.getExamId())) {
+                                teExam = teExamService.getById(teCourse.getExamId());
+                                teExamMap.put(teCourse.getExamId(), teExam);
+                            } else {
+                                teExam = teExamMap.get(teCourse.getExamId());
+                            }
+                            if (Objects.isNull(teExam)) {
+                                throw new BusinessException("考试id" + teCourse.getExamId() + "为空");
+                            }
+
+                            TEPaper tePaper = null;
+                            if (!tePaperMap.containsKey(teExam.getId() + "_" + examStudentImportDto.getCourseCode())) {
+                                QueryWrapper<TEPaper> tePaperQueryWrapper = new QueryWrapper<>();
+                                tePaperQueryWrapper.lambda().eq(TEPaper::getExamId, teExam.getId())
+                                        .eq(TEPaper::getCourseCode, examStudentImportDto.getCourseCode());
+                                tePaper = tePaperService.getOne(tePaperQueryWrapper);
+                                tePaperMap.put(teExam.getId() + "_" + examStudentImportDto.getCourseCode(), tePaper);
+                            } else {
+                                tePaper = tePaperMap.get(teExam.getId() + "_" + examStudentImportDto.getCourseCode());
+                            }
+                            if (Objects.isNull(tePaper)) {
+                                throw new BusinessException("试卷为空");
+                            }
+
+                            Map<String, TEPaperStruct> tePaperStructMap = null;
+                            if (!tePaperStructFinalMap.containsKey(tePaper.getId())) {
+                                QueryWrapper<TEPaperStruct> tePaperStructQueryWrapper = new QueryWrapper<>();
+                                tePaperStructQueryWrapper.lambda().eq(TEPaperStruct::getPaperId, tePaper.getId());
+                                List<TEPaperStruct> tePaperStructList = tePaperStructService.list(tePaperStructQueryWrapper);
+                                if (Objects.nonNull(tePaperStructList) && tePaperStructList.size() > 0) {
+                                    tePaperStructMap = new LinkedHashMap<>();
+                                    Map<String, TEPaperStruct> finalTePaperStructMap = tePaperStructMap;
+                                    tePaperStructList.forEach(s -> {
+                                        finalTePaperStructMap.put(s.getMainNumber() + "-" + s.getSubNumber(), s);
+                                    });
+                                }
+                                tePaperStructFinalMap.put(tePaper.getId(), tePaperStructMap);
+                            } else {
+                                tePaperStructMap = tePaperStructFinalMap.get(tePaper.getId());
+                            }
+                            if (Objects.isNull(tePaperStructMap)) {
+                                throw new BusinessException("试卷结构为空");
+                            }
+
                             Map<String, Object> extendColumnMap = examStudentImportDto.getExtendColumn();
                             if (!collegeMap.containsKey(examStudentImportDto.getCollegeName())) {
                                 TBSchoolCollege tbSchoolCollege = new TBSchoolCollege(tbSchool.getId(), examStudentImportDto.getCollegeName(), examStudentImportDto.getCollegeName());
@@ -214,11 +248,12 @@ public class SysController {
                             }
 
                             Map<Long, TEAnswer> answerMap = new LinkedHashMap<>();
+                            Map<String, TEPaperStruct> finalTePaperStructMap1 = tePaperStructMap;
                             extendColumnMap.forEach((k, v) -> {
                                 TEAnswer teAnswer = null;
                                 String filterTitle = SystemConstant.filterQuestion(k);
                                 log.info("filterTitle:{}", filterTitle);
-                                TEPaperStruct tePaperStruct = tePaperStructMap.get(filterTitle);
+                                TEPaperStruct tePaperStruct = finalTePaperStructMap1.get(filterTitle);
                                 log.info("tePaperStruct:{}", JacksonUtil.parseJson(tePaperStruct));
                                 Long examRecordId = examRecordMap.get(examStudentMap.get(examStudentImportDto.getIdcardNumber() + "_" + examStudentImportDto.getIdentity()).getId()).getId();
                                 if (!answerMap.containsKey(tePaperStruct.getId())) {
@@ -267,12 +302,40 @@ public class SysController {
 
                 List<TEExamStudent> teExamStudentList = new ArrayList();
                 examStudentMap.forEach((k, v) -> {
+                    QueryWrapper<TEExamStudent> teExamStudentQueryWrapper = new QueryWrapper<>();
+                    teExamStudentQueryWrapper.lambda().eq(TEExamStudent::getExamId, v.getExamId())
+                            .eq(TEExamStudent::getStudentCode, v.getStudentCode())
+                            .eq(TEExamStudent::getExamNumber, v.getExamNumber())
+                            .eq(TEExamStudent::getCourseCode, v.getCourseCode());
+                    TEExamStudent teExamStudent = teExamStudentService.getOne(teExamStudentQueryWrapper);
+                    if (Objects.nonNull(teExamStudent)) {
+                        QueryWrapper<TEExamRecord> teExamRecordQueryWrapper = new QueryWrapper<>();
+                        teExamRecordQueryWrapper.lambda().eq(TEExamRecord::getExamId, v.getExamId())
+                                .eq(TEExamRecord::getExamStudentId, teExamStudent.getId())
+                                .eq(TEExamRecord::getPaperId, tePaperMap.get(teExamStudent.getCourseCode()).getId());
+                        TEExamRecord teExamRecord = teExamRecordService.getOne(teExamRecordQueryWrapper);
+                        if (Objects.nonNull(teExamRecord)) {
+                            teAnswerService.deleteAll(teExamRecord.getId());
+                            teExamRecordService.remove(teExamRecordQueryWrapper);
+                        }
+                        teExamStudentService.remove(teExamStudentQueryWrapper);
+                    }
                     teExamStudentList.add(v);
                 });
                 teExamStudentService.saveOrUpdateBatch(teExamStudentList);
 
                 List<TBTeacher> tbTeacherList = new ArrayList();
                 teacherMap.forEach((k, v) -> {
+                    QueryWrapper<TBTeacher> tbTeacherQueryWrapper = new QueryWrapper<>();
+                    tbTeacherQueryWrapper.lambda().eq(TBTeacher::getSchoolId, tbSchool.getId())
+                            .eq(TBTeacher::getName, v.getName());
+                    TBTeacher tbTeacher = tbTeacherService.getOne(tbTeacherQueryWrapper);
+
+                    if (Objects.nonNull(tbTeacher)) {
+                        QueryWrapper<TBTeacherExamStudent> tbTeacherExamStudentQueryWrapper = new QueryWrapper<>();
+                        tbTeacherExamStudentQueryWrapper.lambda().eq(TBTeacherExamStudent::getTeacherId, tbTeacher.getId());
+                        tbTeacherExamStudentService.remove(tbTeacherExamStudentQueryWrapper);
+                    }
                     tbTeacherList.add(v);
                 });
                 tbTeacherService.saveOrUpdateBatch(tbTeacherList);
