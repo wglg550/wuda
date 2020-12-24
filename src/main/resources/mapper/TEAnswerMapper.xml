@@ -47,12 +47,23 @@
             </if>
             and exists(
             select
-            teps.id
+            distinct teps.id
             from
             t_e_paper_struct teps
-            <where> 1 = 1
-                <if test="dimension != null and dimension != ''">
-                    and FIND_IN_SET(#{dimension}, teps.knowledge)
+            <where>
+                and 1 = 1
+                <if test="dimensions != null">
+                    <foreach collection="dimensions" item="dimension" index="index">
+                        <choose>
+                            <when test="index == 0">
+                                and (FIND_IN_SET(#{dimension}, ${moduleCode})
+                            </when>
+                            <otherwise>
+                                or FIND_IN_SET(#{dimension}, ${moduleCode})
+                            </otherwise>
+                        </choose>
+                    </foreach>
+                    )
                 </if>
                 and tea.main_number = teps.main_number
                 and tea.sub_number = teps.sub_number)

@@ -11,18 +11,40 @@ import java.util.Objects;
  */
 public enum ModuleEnum {
 
-    KNOWLEDGE("知识"),
+    KNOWLEDGE("知识", "teps.knowledge"),
 
-    CAPABILITY("能力");
+    CAPABILITY("能力", "teps.capability");
 
     String code;
 
-    private ModuleEnum(String code) {
+    String sql;
+
+    private ModuleEnum(String code, String sql) {
         this.code = code;
+        this.sql = sql;
     }
 
     public String getCode() {
         return code;
+    }
+
+    public String getSql() {
+        return sql;
+    }
+
+    /**
+     * 状态转换 toSql
+     *
+     * @param value
+     * @return
+     */
+    public static String convertToSql(String value) {
+        for (ModuleEnum e : ModuleEnum.values()) {
+            if (Objects.equals(e.name(), value.toUpperCase())) {
+                return e.getSql();
+            }
+        }
+        return null;
     }
 
     /**

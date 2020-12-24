@@ -13,6 +13,12 @@ import java.io.Serializable;
  */
 public class DiagnosisDetailBean implements Serializable {
 
+    @ApiModelProperty(value = "结果")
+    private String result;
+
+    @ApiModelProperty(value = "建议")
+    private String advice;
+
     @ApiModelProperty(value = "模块名称")
     private String name;
 
@@ -21,6 +27,22 @@ public class DiagnosisDetailBean implements Serializable {
 
     @ApiModelProperty(value = "详情")
     private DimensionBean detail;
+
+    public String getResult() {
+        return result;
+    }
+
+    public void setResult(String result) {
+        this.result = result;
+    }
+
+    public String getAdvice() {
+        return advice;
+    }
+
+    public void setAdvice(String advice) {
+        this.advice = advice;
+    }
 
     public String getName() {
         return name;

@@ -40,8 +40,9 @@ public interface TEAnswerMapper extends BaseMapper<TEAnswer> {
      * @param examId
      * @param collegeId
      * @param courseCode
-     * @param dimension
+     * @param dimensions
+     * @param moduleCode
      * @return
      */
-    BigDecimal calculateCollegeAvgScoreByDimension(@Param("examId") Long examId, @Param("collegeId") Long collegeId, @Param("courseCode") String courseCode, @Param("dimension") String dimension);
+    BigDecimal calculateCollegeAvgScoreByDimension(@Param("examId") Long examId, @Param("collegeId") Long collegeId, @Param("courseCode") String courseCode, @Param("dimensions") List<String> dimensions, @Param("moduleCode") String moduleCode);
 }

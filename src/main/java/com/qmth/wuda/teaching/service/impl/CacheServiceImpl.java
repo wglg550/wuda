@@ -165,7 +165,7 @@ public class CacheServiceImpl implements CacheService {
         Integer lowScoreCount = teExamRecordService.getLowScoreByMe(examStudentDto.getExamId(), examStudentDto.getCollegeId(), examStudentDto.getExamRecordId(), examStudentDto.getCourseCode());
         BigDecimal fullRate = new BigDecimal(100);
         BigDecimal bigZero = new BigDecimal(0);
-        BigDecimal bigDecimal = actualCount > 0 ? new BigDecimal(lowScoreCount).divide(bigActualCount, 2, BigDecimal.ROUND_HALF_UP).multiply(fullRate) : bigZero;
+        BigDecimal bigDecimal = actualCount > 0 ? new BigDecimal(lowScoreCount).divide(bigActualCount.subtract(new BigDecimal(1)), 2, BigDecimal.ROUND_HALF_UP).multiply(fullRate) : bigZero;
         finalSynthesis.setOverRate(bigDecimal);
         finalSynthesis.setCollegeScore(collegeScore);
         finalSynthesis.setClassScore(calssScore);
@@ -213,7 +213,9 @@ public class CacheServiceImpl implements CacheService {
                     }
                 });
                 moduleDetailBean.setRate(Objects.nonNull(v1.getSumScore()) && v1.getSumScore().doubleValue() > 0 ? v1.getMyScore().divide(v1.getSumScore(), 2, BigDecimal.ROUND_HALF_UP).multiply(fullRate) : bigZero);
-                BigDecimal collegeAvgScoreByDimension = teAnswerService.calculateCollegeAvgScoreByDimension(examStudentDto.getExamId(), examStudentDto.getCollegeId(), examStudentDto.getCourseCode(), v1.getIdentifierFirst());
+                List<String> dimensionFirst = dimensionSecondMap.get(v1.getIdentifierFirst()).stream().map(o ->o.getIdentifierSecond()).filter(Objects::nonNull).collect(Collectors.toList());
+                dimensionFirst.add(v1.getIdentifierFirst());
+                BigDecimal collegeAvgScoreByDimension = teAnswerService.calculateCollegeAvgScoreByDimension(examStudentDto.getExamId(), examStudentDto.getCollegeId(), examStudentDto.getCourseCode(), dimensionFirst, ModuleEnum.convertToSql(v1.getModuleCode()));
                 moduleDetailBean.setCollegeRate(Objects.nonNull(collegeAvgScoreByDimension) ? collegeAvgScoreByDimension.divide(bigActualCount, 2, BigDecimal.ROUND_HALF_UP) : bigZero);
                 dios.add(moduleDetailBean);
             });
@@ -262,7 +264,7 @@ public class CacheServiceImpl implements CacheService {
                     dimensionDetailBean.setCode(s.getIdentifierSecond());
                     dimensionDetailBean.setName(s.getKnowledgeSecond());
                     dimensionDetailBean.setScoreRate(Objects.nonNull(s.getSumScore()) && s.getSumScore().doubleValue() > 0 ? s.getMyScore().divide(s.getSumScore(), 2, BigDecimal.ROUND_HALF_UP).multiply(fullRate) : bigZero);
-                    BigDecimal collegeAvgScoreByDimension = teAnswerService.calculateCollegeAvgScoreByDimension(examStudentDto.getExamId(), examStudentDto.getCollegeId(), examStudentDto.getCourseCode(), s.getIdentifierSecond());
+                    BigDecimal collegeAvgScoreByDimension = teAnswerService.calculateCollegeAvgScoreByDimension(examStudentDto.getExamId(), examStudentDto.getCollegeId(), examStudentDto.getCourseCode(), Arrays.asList(s.getIdentifierSecond()), ModuleEnum.convertToSql(s.getModuleCode()));
                     dimensionDetailBean.setCollegeAvgScore(Objects.nonNull(collegeAvgScoreByDimension) ? collegeAvgScoreByDimension.divide(bigActualCount, 2, BigDecimal.ROUND_HALF_UP) : bigZero);
 
                     if (Objects.nonNull(dimensionMasterysBeanList) && dimensionMasterysBeanList.size() > 0) {

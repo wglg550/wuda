@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.qmth.wuda.teaching.base.BaseEntity;
+import com.qmth.wuda.teaching.constant.SystemConstant;
 import com.qmth.wuda.teaching.util.UidUtil;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -122,7 +123,7 @@ public class TEExamRecord extends BaseEntity implements Serializable {
 
     public BigDecimal getObjectiveScore() {
         if (Objects.nonNull(objectiveScore)) {
-            return objectiveScore.setScale(1, BigDecimal.ROUND_HALF_UP);
+            return objectiveScore.setScale(SystemConstant.SCALE, BigDecimal.ROUND_HALF_UP);
         } else {
             return new BigDecimal(0);
         }
@@ -134,7 +135,7 @@ public class TEExamRecord extends BaseEntity implements Serializable {
 
     public BigDecimal getSubjectiveScore() {
         if (Objects.nonNull(subjectiveScore)) {
-            return subjectiveScore.setScale(1, BigDecimal.ROUND_HALF_UP);
+            return subjectiveScore.setScale(SystemConstant.SCALE, BigDecimal.ROUND_HALF_UP);
         } else {
             return new BigDecimal(0);
         }
@@ -146,7 +147,7 @@ public class TEExamRecord extends BaseEntity implements Serializable {
 
     public BigDecimal getSumScore() {
         if (Objects.nonNull(sumScore)) {
-            return sumScore.setScale(1, BigDecimal.ROUND_HALF_UP);
+            return sumScore.setScale(SystemConstant.SCALE, BigDecimal.ROUND_HALF_UP);
         } else {
             return new BigDecimal(0);
         }

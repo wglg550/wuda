@@ -1,5 +1,6 @@
 package com.qmth.wuda.teaching.dto;
 
+import com.qmth.wuda.teaching.constant.SystemConstant;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
@@ -114,7 +115,7 @@ public class DimensionFirstDto implements Serializable {
 
     public BigDecimal getSumScore() {
         if (Objects.nonNull(sumScore)) {
-            return sumScore.setScale(1, BigDecimal.ROUND_HALF_UP);
+            return sumScore.setScale(SystemConstant.SCALE, BigDecimal.ROUND_HALF_UP);
         } else {
             return new BigDecimal(0);
         }
@@ -126,7 +127,7 @@ public class DimensionFirstDto implements Serializable {
 
     public BigDecimal getMyScore() {
         if (Objects.nonNull(myScore)) {
-            return myScore.setScale(1, BigDecimal.ROUND_HALF_UP);
+            return myScore.setScale(SystemConstant.SCALE, BigDecimal.ROUND_HALF_UP);
         } else {
             return new BigDecimal(0);
         }

@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.qmth.wuda.teaching.dao.TEAnswerMapper;
 import com.qmth.wuda.teaching.entity.TEAnswer;
 import com.qmth.wuda.teaching.service.TEAnswerService;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -53,12 +52,12 @@ public class TEAnswerServiceImpl extends ServiceImpl<TEAnswerMapper, TEAnswer> i
      * @param examId
      * @param collegeId
      * @param courseCode
-     * @param dimension
+     * @param dimensions
      * @return
      */
     @Override
-//    @Cacheable(value = "calculate_college_avg_score_cache", key = "#examId + '-' + #collegeId + '-' + #courseCode + '-' + #dimension", unless = "#result == null")
-    public BigDecimal calculateCollegeAvgScoreByDimension(Long examId, Long collegeId, String courseCode, String dimension) {
-        return teAnswerMapper.calculateCollegeAvgScoreByDimension(examId, collegeId, courseCode, dimension);
+//    @Cacheable(value = "calculate_college_avg_score_cache", key = "#examId + '-' + #collegeId + '-' + #courseCode + '-' + #dimensions + '-' + #type", unless = "#result == null")
+    public BigDecimal calculateCollegeAvgScoreByDimension(Long examId, Long collegeId, String courseCode, List<String> dimensions, String moduleCode) {
+        return teAnswerMapper.calculateCollegeAvgScoreByDimension(examId, collegeId, courseCode, dimensions, moduleCode);
     }
 }

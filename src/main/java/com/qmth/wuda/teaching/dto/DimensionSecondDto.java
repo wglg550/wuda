@@ -1,5 +1,6 @@
 package com.qmth.wuda.teaching.dto;
 
+import com.qmth.wuda.teaching.constant.SystemConstant;
 import com.qmth.wuda.teaching.entity.TBDimension;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -35,7 +36,7 @@ public class DimensionSecondDto extends TBDimension implements Serializable {
 
     public BigDecimal getSumScore() {
         if (Objects.nonNull(sumScore)) {
-            return sumScore.setScale(1, BigDecimal.ROUND_HALF_UP);
+            return sumScore.setScale(SystemConstant.SCALE, BigDecimal.ROUND_HALF_UP);
         } else {
             return new BigDecimal(0);
         }
@@ -47,7 +48,7 @@ public class DimensionSecondDto extends TBDimension implements Serializable {
 
     public BigDecimal getMyScore() {
         if (Objects.nonNull(myScore)) {
-            return myScore.setScale(1, BigDecimal.ROUND_HALF_UP);
+            return myScore.setScale(SystemConstant.SCALE, BigDecimal.ROUND_HALF_UP);
         } else {
             return new BigDecimal(0);
         }

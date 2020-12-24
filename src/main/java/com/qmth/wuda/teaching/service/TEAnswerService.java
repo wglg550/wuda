@@ -37,8 +37,9 @@ public interface TEAnswerService extends IService<TEAnswer> {
      * @param examId
      * @param collegeId
      * @param courseCode
-     * @param dimension
+     * @param dimensions
+     * @param moduleCode
      * @return
      */
-    BigDecimal calculateCollegeAvgScoreByDimension(Long examId, Long collegeId, String courseCode, String dimension);
+    BigDecimal calculateCollegeAvgScoreByDimension(Long examId, Long collegeId, String courseCode, List<String> dimensions, String moduleCode);
 }

@@ -32,6 +32,7 @@ public class SystemConstant {
     public static final String METHOD = "post";
     public static final int MAX_IMPORT_SIZE = 500;
     public static final int BYTE_LEN = 102400; // 100KB
+    public static final int SCALE = 1;
     public static Map<String, List<Integer>> levelMap = new HashMap<>();
 
     public static String TEMP_FILES_DIR;

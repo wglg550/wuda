@@ -1,5 +1,6 @@
 package com.qmth.wuda.teaching.bean.report;
 
+import com.qmth.wuda.teaching.constant.SystemConstant;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
@@ -24,6 +25,17 @@ public class ModuleDetailBean implements Serializable {
     @ApiModelProperty(value = "学院比例")
     private BigDecimal collegeRate;
 
+    @ApiModelProperty(value = "理解说明")
+    private String interpretation;
+
+    public String getInterpretation() {
+        return interpretation;
+    }
+
+    public void setInterpretation(String interpretation) {
+        this.interpretation = interpretation;
+    }
+
     public String getName() {
         return name;
     }
@@ -34,7 +46,7 @@ public class ModuleDetailBean implements Serializable {
 
     public BigDecimal getRate() {
         if (Objects.nonNull(rate)) {
-            return rate.setScale(1, BigDecimal.ROUND_HALF_UP);
+            return rate.setScale(SystemConstant.SCALE, BigDecimal.ROUND_HALF_UP);
         } else {
             return new BigDecimal(0);
         }
@@ -46,7 +58,7 @@ public class ModuleDetailBean implements Serializable {
 
     public BigDecimal getCollegeRate() {
         if (Objects.nonNull(collegeRate)) {
-            return collegeRate.setScale(1, BigDecimal.ROUND_HALF_UP);
+            return collegeRate.setScale(SystemConstant.SCALE, BigDecimal.ROUND_HALF_UP);
         } else {
             return new BigDecimal(0);
         }

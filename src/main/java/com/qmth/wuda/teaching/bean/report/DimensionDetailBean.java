@@ -1,5 +1,6 @@
 package com.qmth.wuda.teaching.bean.report;
 
+import com.qmth.wuda.teaching.constant.SystemConstant;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
@@ -56,7 +57,7 @@ public class DimensionDetailBean implements Serializable {
 
     public BigDecimal getScoreRate() {
         if (Objects.nonNull(scoreRate)) {
-            return scoreRate.setScale(1, BigDecimal.ROUND_HALF_UP);
+            return scoreRate.setScale(SystemConstant.SCALE, BigDecimal.ROUND_HALF_UP);
         } else {
             return new BigDecimal(0);
         }
@@ -68,7 +69,7 @@ public class DimensionDetailBean implements Serializable {
 
     public BigDecimal getCollegeAvgScore() {
         if (Objects.nonNull(collegeAvgScore)) {
-            return collegeAvgScore.setScale(1, BigDecimal.ROUND_HALF_UP);
+            return collegeAvgScore.setScale(SystemConstant.SCALE, BigDecimal.ROUND_HALF_UP);
         } else {
             return new BigDecimal(0);
         }
