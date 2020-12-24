@@ -264,22 +264,27 @@ public class CacheServiceImpl implements CacheService {
                 dimensionSecondList.forEach(s -> {
                     myScore.set(myScore.get().add(s.getMyScore()));
                     dioFullScore.set(dioFullScore.get().add(s.getSumScore()));
-                    DimensionDetailBean dimensionDetailBean = new DimensionDetailBean();
-                    dimensionDetailBean.setCode(s.getIdentifierSecond());
-                    dimensionDetailBean.setName(s.getKnowledgeSecond());
-                    dimensionDetailBean.setScoreRate(Objects.nonNull(s.getSumScore()) && s.getSumScore().doubleValue() > 0 ? s.getMyScore().divide(s.getSumScore(), SystemConstant.OPER_SCALE, BigDecimal.ROUND_HALF_UP).multiply(fullRate) : bigZero);
-                    BigDecimal collegeAvgScoreByDimension = teAnswerService.calculateCollegeAvgScoreByDimension(examStudentDto.getExamId(), examStudentDto.getCollegeId(), examStudentDto.getCourseCode(), Arrays.asList(s.getIdentifierSecond()), ModuleEnum.convertToSql(s.getModuleCode()));
-                    dimensionDetailBean.setCollegeAvgScore(Objects.nonNull(collegeAvgScoreByDimension) ? collegeAvgScoreByDimension.divide(bigActualCount, SystemConstant.OPER_SCALE, BigDecimal.ROUND_HALF_UP) : bigZero);
+                    if (Objects.nonNull(s.getIdentifierSecond())) {
+                        DimensionDetailBean dimensionDetailBean = new DimensionDetailBean();
+                        dimensionDetailBean.setCode(s.getIdentifierSecond());
+                        dimensionDetailBean.setName(s.getKnowledgeSecond());
+                        dimensionDetailBean.setScoreRate(Objects.nonNull(s.getSumScore()) && s.getSumScore().doubleValue() > 0 ? s.getMyScore().divide(s.getSumScore(), SystemConstant.OPER_SCALE, BigDecimal.ROUND_HALF_UP).multiply(fullRate) : bigZero);
+                        List<String> dimensionFirst = Arrays.asList(s.getIdentifierSecond());
+                        String moduleCode = ModuleEnum.convertToSql(s.getModuleCode());
+                        BigDecimal paperStructSumScore = tePaperStructService.paperStructSumScoreByDimension(dimensionFirst, moduleCode);
+                        BigDecimal collegeAvgScoreByDimension = teAnswerService.calculateCollegeAvgScoreByDimension(examStudentDto.getExamId(), examStudentDto.getCollegeId(), examStudentDto.getCourseCode(), dimensionFirst, moduleCode);
+                        dimensionDetailBean.setCollegeAvgScore(Objects.nonNull(collegeAvgScoreByDimension) && Objects.nonNull(paperStructSumScore) ? collegeAvgScoreByDimension.divide(bigActualCount, SystemConstant.OPER_SCALE, BigDecimal.ROUND_HALF_UP).divide(paperStructSumScore, SystemConstant.OPER_SCALE, BigDecimal.ROUND_HALF_UP).multiply(fullRate) : bigZero);
 
-                    if (Objects.nonNull(dimensionMasterysBeanList) && dimensionMasterysBeanList.size() > 0) {
-                        dimensionMasterysBeanList.forEach(o -> {
-                            if (dimensionDetailBean.getScoreRate().intValue() >= o.getGrade().get(0) && dimensionDetailBean.getScoreRate().intValue() <= o.getGrade().get(1)) {
-                                dimensionDetailBean.setProficiency(o.getLevel());
-                                return;
-                            }
-                        });
+                        if (Objects.nonNull(dimensionMasterysBeanList) && dimensionMasterysBeanList.size() > 0) {
+                            dimensionMasterysBeanList.forEach(o -> {
+                                if (dimensionDetailBean.getScoreRate().intValue() >= o.getGrade().get(0) && dimensionDetailBean.getScoreRate().intValue() <= o.getGrade().get(1)) {
+                                    dimensionDetailBean.setProficiency(o.getLevel());
+                                    return;
+                                }
+                            });
+                        }
+                        subDios.add(dimensionDetailBean);
                     }
-                    subDios.add(dimensionDetailBean);
                 });
             });
             dimensionBean.setMyScore(myScore.get());

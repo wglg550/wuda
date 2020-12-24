@@ -1,5 +1,6 @@
 package com.qmth.wuda.teaching.service;
 
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Map;
 
@@ -19,5 +20,5 @@ public interface CallApiService {
      * @param examCode
      * @return
      */
-    List<Map> callStudentScore(Long examId, String examCode);
+    List<Map> callStudentScore(Long examId, String examCode) throws UnsupportedEncodingException;
 }

@@ -33,7 +33,7 @@ public class SystemConstant {
     public static final int MAX_IMPORT_SIZE = 500;
     public static final int BYTE_LEN = 102400; // 100KB
     public static final int FINAL_SCALE = 1;
-    public static final int OPER_SCALE = 4;
+    public static final int OPER_SCALE = 8;
     public static Map<String, List<Integer>> levelMap = new HashMap<>();
 
     public static String TEMP_FILES_DIR;
