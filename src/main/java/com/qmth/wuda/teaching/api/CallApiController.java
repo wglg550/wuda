@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.util.*;
@@ -76,7 +77,7 @@ public class CallApiController {
                     @ApiJsonProperty(key = "examId", description = "考试id"),
                     @ApiJsonProperty(key = "examCode", description = "考试code")
             })
-            @ApiParam(value = "获取考生成绩", required = true) @RequestBody Map<String, Object> mapParameter) throws UnsupportedEncodingException {
+            @ApiParam(value = "获取考生成绩", required = true) @RequestBody Map<String, Object> mapParameter) throws IOException {
         Long examId = null;
         String examCode = null;
         if (Objects.nonNull(mapParameter.get("examId")) && !Objects.equals(mapParameter.get("examId"), "")) {

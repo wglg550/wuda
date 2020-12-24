@@ -4,8 +4,6 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.qmth.wuda.teaching.dao.TEPaperStructMapper;
 import com.qmth.wuda.teaching.entity.TEPaperStruct;
 import com.qmth.wuda.teaching.service.TEPaperStructService;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -59,5 +57,19 @@ public class TEPaperStructServiceImpl extends ServiceImpl<TEPaperStructMapper, T
     @Override
     public BigDecimal paperStructSumScoreByDimension(List<String> dimensions, String moduleCode) {
         return tePaperStructMapper.paperStructSumScoreByDimension(dimensions, moduleCode);
+    }
+
+    /**
+     * 查找学生答题维度
+     *
+     * @param examId
+     * @param studentCode
+     * @param courseCode
+     * @param moduleCode
+     * @return
+     */
+    @Override
+    public List<String> findStudentDimension(Long examId, String studentCode, String courseCode, String moduleCode) {
+        return tePaperStructMapper.findStudentDimension(examId, studentCode, courseCode, moduleCode);
     }
 }

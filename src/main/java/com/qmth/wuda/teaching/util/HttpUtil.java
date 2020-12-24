@@ -2,6 +2,7 @@ package com.qmth.wuda.teaching.util;
 
 import com.qmth.wuda.teaching.constant.SystemConstant;
 import com.qmth.wuda.teaching.signature.Constants;
+import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -10,8 +11,11 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -34,7 +38,7 @@ public class HttpUtil {
      * @param timestamp
      * @return
      */
-    public static String post(String url, Map<String, Object> params, String secret, Long timestamp) {
+    public static String post(String url, Map<String, Object> params, String secret, Long timestamp) throws IOException {
         // 构建post请求
         HttpPost post = new HttpPost(url);
         post.setHeader(Constants.HEADER_AUTHORIZATION, secret);
@@ -63,21 +67,12 @@ public class HttpUtil {
      * @param request
      * @return
      */
-    public static String getRespString(HttpUriRequest request) {
+    public static String getRespString(HttpUriRequest request) throws IOException {
         // 获取响应流
         InputStream in = getRespInputStream(request);
-        // 流转字符串
-        StringBuffer sb = new StringBuffer();
-        byte[] b = new byte[SystemConstant.BYTE_LEN];
-        int len = 0;
-        try {
-            while ((len = in.read(b)) != -1) {
-                sb.append(new String(b, 0, len, Constants.CHARSET_NAME));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return sb.toString();
+        ByteArrayOutputStream ou = new ByteArrayOutputStream();
+        IOUtils.copy(in, ou);
+        return new String(ou.toByteArray(), StandardCharsets.UTF_8);
     }
 
     /**

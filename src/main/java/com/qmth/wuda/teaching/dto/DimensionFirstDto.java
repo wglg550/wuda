@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * @Description: 一级维度dto
@@ -43,11 +44,22 @@ public class DimensionFirstDto implements Serializable {
     @ApiModelProperty(value = "备注")
     private String remark;
 
+    @ApiModelProperty(value = "编号二级")
+    private Set<String> identifierSecond;
+
+    public Set<String> getIdentifierSecond() {
+        return identifierSecond;
+    }
+
+    public void setIdentifierSecond(Set<String> identifierSecond) {
+        this.identifierSecond = identifierSecond;
+    }
+
     public DimensionFirstDto() {
 
     }
 
-    public DimensionFirstDto(Long moduleId, String moduleCode, String courseCode, String knowledgeFirst, String identifierFirst, String info, String remark) {
+    public DimensionFirstDto(Long moduleId, String moduleCode, String courseCode, String knowledgeFirst, String identifierFirst, String info, String remark, Set<String> identifierSecond) {
         this.moduleId = moduleId;
         this.moduleCode = moduleCode;
         this.courseCode = courseCode;
@@ -55,6 +67,7 @@ public class DimensionFirstDto implements Serializable {
         this.identifierFirst = identifierFirst;
         this.info = info;
         this.remark = remark;
+        this.identifierSecond = identifierSecond;
     }
 
     public String getInfo() {

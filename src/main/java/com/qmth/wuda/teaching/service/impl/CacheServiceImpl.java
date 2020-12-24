@@ -128,7 +128,11 @@ public class CacheServiceImpl implements CacheService {
                 Map<String, DimensionFirstDto> dimensionMap = new LinkedHashMap<>();
                 tbDimensionList.forEach(o -> {
                     if (!dimensionMap.containsKey(o.getKnowledgeFirst())) {
-                        dimensionMap.put(o.getKnowledgeFirst(), new DimensionFirstDto(o.getModuleId(), s.getCode(), o.getCourseCode(), o.getKnowledgeFirst(), o.getIdentifierFirst(), s.getDescription(), s.getRemark()));
+                        dimensionMap.put(o.getKnowledgeFirst(), new DimensionFirstDto(o.getModuleId(), s.getCode(), o.getCourseCode(), o.getKnowledgeFirst(), o.getIdentifierFirst(), s.getDescription(), s.getRemark(), Objects.nonNull(o.getIdentifierSecond()) ? new LinkedHashSet<>(Arrays.asList(o.getIdentifierSecond())) : null));
+                    } else {
+                        if (Objects.nonNull(dimensionMap.get(o.getKnowledgeFirst()).getIdentifierSecond())) {
+                            dimensionMap.get(o.getKnowledgeFirst()).getIdentifierSecond().add(o.getIdentifierSecond());
+                        }
                     }
                     DimensionSecondDto dimensionSecondDto = gson.fromJson(gson.toJson(o), DimensionSecondDto.class);
                     dimensionSecondDto.setModuleCode(s.getCode());
@@ -136,6 +140,15 @@ public class CacheServiceImpl implements CacheService {
                 });
                 dimensionFirstMap.put(s.getName(), dimensionMap);
             }
+        });
+
+        //维度过滤
+        dimensionFirstMap.forEach((k, v) -> {
+            String moduleCode = ModuleEnum.convertToSqlByCode(k);
+            List<String> studentDimensions = tePaperStructService.findStudentDimension(examStudentDto.getExamId(), examStudentDto.getStudentNo(), examStudentDto.getCourseCode(), moduleCode);
+//            v.forEach((k1,v1)->{
+//                tePaperStructService.findStudentDimension(examStudentDto.getExamId(),examStudentDto.getStudentNo(),examStudentDto.getCourseCode(),moduleCode);
+//            });
         });
 
         PersonalReportBean personalReportBean = new PersonalReportBean();
@@ -182,6 +195,24 @@ public class CacheServiceImpl implements CacheService {
         if (examStudentDto.getMyScore().doubleValue() >= examStudentDto.getPassScore().doubleValue()) {
             diagnosisBean.setResult(true);
         }
+
+        //维度过滤
+//        dimensionFirstMap.forEach((k, v) -> {
+//            v.forEach((k1, v1) -> {
+//                List<DimensionSecondDto> dimensionSecondDtoList = dimensionSecondMap.get(k);
+//                for (DimensionSecondDto dimensionSecondDto : dimensionSecondDtoList) {
+//                    tePaperStructMap.forEach((k2, v2) -> {
+//                        if (Objects.nonNull(v1.getModuleCode()) && Objects.equals(v1.getModuleCode(), ModuleEnum.KNOWLEDGE.name().toLowerCase())) {
+//                            if (Objects.nonNull(v2.getKnowledge()) && Arrays.asList(v2.getKnowledge().split(",")).contains(v1.getIdentifierFirst())) {
+//
+//                            }else if (Objects.nonNull(v2.getKnowledge()) && Arrays.asList(v2.getKnowledge().split(",")).contains(dimensionSecondDto.getIdentifierSecond())) {
+//
+//                            }
+//                        }
+//                    });
+//                }
+//            });
+//        });
 
         List<DiagnosisDetailBean> diagnosisDetailBeanList = new ArrayList<>();
         //一级维度start

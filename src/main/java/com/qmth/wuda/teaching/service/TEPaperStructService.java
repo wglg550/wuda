@@ -39,4 +39,15 @@ public interface TEPaperStructService extends IService<TEPaperStruct> {
      * @return
      */
     BigDecimal paperStructSumScoreByDimension(List<String> dimensions, String moduleCode);
+
+    /**
+     * 查找学生答题维度
+     *
+     * @param examId
+     * @param studentCode
+     * @param courseCode
+     * @param moduleCode
+     * @return
+     */
+    List<String> findStudentDimension(Long examId, String studentCode, String courseCode, String moduleCode);
 }

@@ -15,6 +15,7 @@ import com.qmth.wuda.teaching.util.HttpUtil;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.*;
@@ -43,7 +44,7 @@ public class CallApiServiceImpl implements CallApiService {
      * @return
      */
     @Override
-    public List<Map> callStudentScore(Long examId, String examCode) throws UnsupportedEncodingException {
+    public List<Map> callStudentScore(Long examId, String examCode) throws IOException {
         String url = dictionaryConfig.yunMarkDomain().getUrl() + dictionaryConfig.yunMarkDomain().getStudentScoreApi();
         Map<String, Object> params = new HashMap<>();
         if (Objects.nonNull(examId)) {
@@ -69,8 +70,8 @@ public class CallApiServiceImpl implements CallApiService {
             params.put("pageNumber", pageNumber);
             params.put("pageSize", pageSize);
             Long timestamp = System.currentTimeMillis();
-            String test = SignatureInfo.build(SignatureType.SECRET, SystemConstant.METHOD, dictionaryConfig.yunMarkDomain().getStudentScoreApi(), timestamp, teExam.getAccessKey(), teExam.getAccessSecret());
-            String result = HttpUtil.post(url, params, test, timestamp);
+            String accessToken = SignatureInfo.build(SignatureType.SECRET, SystemConstant.METHOD, dictionaryConfig.yunMarkDomain().getStudentScoreApi(), timestamp, teExam.getAccessKey(), teExam.getAccessSecret());
+            String result = HttpUtil.post(url, params, accessToken, timestamp);
             if (Objects.nonNull(result)) {
                 if (result.contains("HTTP Status 401 – 未经授权的")) {
                     throw new BusinessException(ExceptionResultEnum.YUN_API_INVALID);

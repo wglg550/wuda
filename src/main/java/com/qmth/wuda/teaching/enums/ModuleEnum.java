@@ -48,6 +48,21 @@ public enum ModuleEnum {
     }
 
     /**
+     * 状态转换 toSql
+     *
+     * @param value
+     * @return
+     */
+    public static String convertToSqlByCode(String value) {
+        for (ModuleEnum e : ModuleEnum.values()) {
+            if (Objects.equals(e.getCode(), value)) {
+                return e.getSql();
+            }
+        }
+        return null;
+    }
+
+    /**
      * 状态转换 toName
      *
      * @param value

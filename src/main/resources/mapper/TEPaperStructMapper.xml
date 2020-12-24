@@ -42,4 +42,29 @@
             </if>
         </where>
     </select>
+
+    <select id="findStudentDimension" resultType="java.util.List">
+        select
+                distinct ${moduleCode}
+            from
+                t_e_paper_struct teps
+            left join t_e_answer tea on
+                tea.main_number = teps.main_number
+                and tea.sub_number = teps.sub_number
+            left join t_e_exam_record teer on
+                teer.id = tea.exam_record_id
+            left join t_e_exam_student tees on
+                tees.exam_id = teer.exam_id
+            <where>
+                <if test="examId != null and examId != ''">
+                    and tees.exam_id = #{examId}
+                </if>
+                <if test="studentCode != null and studentCode != ''">
+                    and tees.student_code = #{studentCode}
+                </if>
+                <if test="courseCode != null and courseCode != ''">
+                    and tees.course_code = #{courseCode}
+                </if>
+            </where>
+    </select>
 </mapper>
