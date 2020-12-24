@@ -9,6 +9,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -46,5 +47,17 @@ public class TEPaperStructServiceImpl extends ServiceImpl<TEPaperStructMapper, T
 //    @Cacheable(value = "paper_struct_cache", key = "#paperId", unless = "#result == null")
     public List<TEPaperStruct> findByPaperId(Long paperId) {
         return tePaperStructMapper.findByPaperId(paperId);
+    }
+
+    /**
+     * 根据维度查找总分
+     *
+     * @param dimensions
+     * @param moduleCode
+     * @return
+     */
+    @Override
+    public BigDecimal paperStructSumScoreByDimension(List<String> dimensions, String moduleCode) {
+        return tePaperStructMapper.paperStructSumScoreByDimension(dimensions, moduleCode);
     }
 }

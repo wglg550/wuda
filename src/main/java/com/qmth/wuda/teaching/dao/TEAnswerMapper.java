@@ -45,4 +45,17 @@ public interface TEAnswerMapper extends BaseMapper<TEAnswer> {
      * @return
      */
     BigDecimal calculateCollegeAvgScoreByDimension(@Param("examId") Long examId, @Param("collegeId") Long collegeId, @Param("courseCode") String courseCode, @Param("dimensions") List<String> dimensions, @Param("moduleCode") String moduleCode);
+
+    /**
+     * 根据维度求学生该维度的平均值
+     *
+     * @param examId
+     * @param collegeId
+     * @param studentCode
+     * @param courseCode
+     * @param dimensions
+     * @param moduleCode
+     * @return
+     */
+    BigDecimal calculateStudentAvgScoreByDimension(@Param("examId") Long examId, @Param("collegeId") Long collegeId, @Param("studentCode") String studentCode, @Param("courseCode") String courseCode, @Param("dimensions") List<String> dimensions, @Param("moduleCode") String moduleCode);
 }

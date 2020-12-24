@@ -19,4 +19,27 @@
             </if>
         </where>
     </select>
+
+    <select id="paperStructSumScoreByDimension" resultType="java.math.BigDecimal">
+        select
+                sum(teps.score) as paperStructSumScore
+            from
+                t_e_paper_struct teps
+        <where>
+            and 1 = 1
+            <if test="dimensions != null">
+                <foreach collection="dimensions" item="dimension" index="index">
+                    <choose>
+                        <when test="index == 0">
+                            and (FIND_IN_SET(#{dimension}, ${moduleCode})
+                        </when>
+                        <otherwise>
+                            or FIND_IN_SET(#{dimension}, ${moduleCode})
+                        </otherwise>
+                    </choose>
+                </foreach>
+                )
+            </if>
+        </where>
+    </select>
 </mapper>

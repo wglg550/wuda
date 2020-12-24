@@ -60,4 +60,20 @@ public class TEAnswerServiceImpl extends ServiceImpl<TEAnswerMapper, TEAnswer> i
     public BigDecimal calculateCollegeAvgScoreByDimension(Long examId, Long collegeId, String courseCode, List<String> dimensions, String moduleCode) {
         return teAnswerMapper.calculateCollegeAvgScoreByDimension(examId, collegeId, courseCode, dimensions, moduleCode);
     }
+
+    /**
+     * 根据维度求学生该维度的平均值
+     *
+     * @param examId
+     * @param collegeId
+     * @param studentCode
+     * @param courseCode
+     * @param dimensions
+     * @param moduleCode
+     * @return
+     */
+    @Override
+    public BigDecimal calculateStudentAvgScoreByDimension(Long examId, Long collegeId, String studentCode, String courseCode, List<String> dimensions, String moduleCode) {
+        return teAnswerMapper.calculateStudentAvgScoreByDimension(examId, collegeId, studentCode, courseCode, dimensions, moduleCode);
+    }
 }

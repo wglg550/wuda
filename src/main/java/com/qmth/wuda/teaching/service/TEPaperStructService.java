@@ -3,6 +3,7 @@ package com.qmth.wuda.teaching.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.qmth.wuda.teaching.entity.TEPaperStruct;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -29,4 +30,13 @@ public interface TEPaperStructService extends IService<TEPaperStruct> {
      * @return
      */
     List<TEPaperStruct> findByPaperId(Long paperId);
+
+    /**
+     * 根据维度查找总分
+     *
+     * @param dimensions
+     * @param moduleCode
+     * @return
+     */
+    BigDecimal paperStructSumScoreByDimension(List<String> dimensions, String moduleCode);
 }

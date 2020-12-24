@@ -76,7 +76,7 @@ public class SynthesisBean implements Serializable {
 
     public BigDecimal getMyScore() {
         if (Objects.nonNull(myScore)) {
-            return myScore.setScale(SystemConstant.SCALE, BigDecimal.ROUND_HALF_UP);
+            return myScore.setScale(SystemConstant.FINAL_SCALE, BigDecimal.ROUND_HALF_UP);
         } else {
             return new BigDecimal(0);
         }
@@ -88,7 +88,7 @@ public class SynthesisBean implements Serializable {
 
     public BigDecimal getOverRate() {
         if (Objects.nonNull(overRate)) {
-            return overRate.setScale(SystemConstant.SCALE, BigDecimal.ROUND_HALF_UP);
+            return overRate.setScale(SystemConstant.FINAL_SCALE, BigDecimal.ROUND_HALF_UP);
         } else {
             return new BigDecimal(0);
         }
@@ -100,7 +100,7 @@ public class SynthesisBean implements Serializable {
 
     public BigDecimal getCollegeMinScore() {
         if (Objects.nonNull(collegeMinScore)) {
-            return collegeMinScore.setScale(SystemConstant.SCALE, BigDecimal.ROUND_HALF_UP);
+            return collegeMinScore.setScale(SystemConstant.FINAL_SCALE, BigDecimal.ROUND_HALF_UP);
         } else {
             return new BigDecimal(0);
         }
@@ -112,7 +112,7 @@ public class SynthesisBean implements Serializable {
 
     public BigDecimal getCollegeAvgScore() {
         if (Objects.nonNull(collegeAvgScore)) {
-            return collegeAvgScore.setScale(SystemConstant.SCALE, BigDecimal.ROUND_HALF_UP);
+            return collegeAvgScore.setScale(SystemConstant.FINAL_SCALE, BigDecimal.ROUND_HALF_UP);
         } else {
             return new BigDecimal(0);
         }
@@ -124,7 +124,7 @@ public class SynthesisBean implements Serializable {
 
     public BigDecimal getCollegeMaxScore() {
         if (Objects.nonNull(collegeMaxScore)) {
-            return collegeMaxScore.setScale(SystemConstant.SCALE, BigDecimal.ROUND_HALF_UP);
+            return collegeMaxScore.setScale(SystemConstant.FINAL_SCALE, BigDecimal.ROUND_HALF_UP);
         } else {
             return new BigDecimal(0);
         }
@@ -136,7 +136,7 @@ public class SynthesisBean implements Serializable {
 
     public BigDecimal getClazzMinScore() {
         if (Objects.nonNull(clazzMinScore)) {
-            return clazzMinScore.setScale(SystemConstant.SCALE, BigDecimal.ROUND_HALF_UP);
+            return clazzMinScore.setScale(SystemConstant.FINAL_SCALE, BigDecimal.ROUND_HALF_UP);
         } else {
             return new BigDecimal(0);
         }
@@ -148,7 +148,7 @@ public class SynthesisBean implements Serializable {
 
     public BigDecimal getClazzAvgScore() {
         if (Objects.nonNull(clazzAvgScore)) {
-            return clazzAvgScore.setScale(SystemConstant.SCALE, BigDecimal.ROUND_HALF_UP);
+            return clazzAvgScore.setScale(SystemConstant.FINAL_SCALE, BigDecimal.ROUND_HALF_UP);
         } else {
             return new BigDecimal(0);
         }
@@ -160,7 +160,7 @@ public class SynthesisBean implements Serializable {
 
     public BigDecimal getClazzMaxScore() {
         if (Objects.nonNull(clazzMaxScore)) {
-            return clazzMaxScore.setScale(SystemConstant.SCALE, BigDecimal.ROUND_HALF_UP);
+            return clazzMaxScore.setScale(SystemConstant.FINAL_SCALE, BigDecimal.ROUND_HALF_UP);
         } else {
             return new BigDecimal(0);
         }
@@ -172,7 +172,7 @@ public class SynthesisBean implements Serializable {
 
     public BigDecimal getFullScore() {
         if (Objects.nonNull(fullScore)) {
-            return fullScore.setScale(SystemConstant.SCALE, BigDecimal.ROUND_HALF_UP);
+            return fullScore.setScale(SystemConstant.FINAL_SCALE, BigDecimal.ROUND_HALF_UP);
         } else {
             return new BigDecimal(0);
         }
@@ -184,7 +184,7 @@ public class SynthesisBean implements Serializable {
 
     public BigDecimal getDifficult() {
         if (Objects.nonNull(difficult)) {
-            return difficult.setScale(SystemConstant.SCALE, BigDecimal.ROUND_HALF_UP);
+            return difficult.setScale(SystemConstant.FINAL_SCALE, BigDecimal.ROUND_HALF_UP);
         } else {
             return new BigDecimal(0);
         }

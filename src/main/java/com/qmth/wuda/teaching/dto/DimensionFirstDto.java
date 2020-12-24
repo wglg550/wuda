@@ -115,7 +115,7 @@ public class DimensionFirstDto implements Serializable {
 
     public BigDecimal getSumScore() {
         if (Objects.nonNull(sumScore)) {
-            return sumScore.setScale(SystemConstant.SCALE, BigDecimal.ROUND_HALF_UP);
+            return sumScore.setScale(SystemConstant.FINAL_SCALE, BigDecimal.ROUND_HALF_UP);
         } else {
             return new BigDecimal(0);
         }
@@ -127,7 +127,7 @@ public class DimensionFirstDto implements Serializable {
 
     public BigDecimal getMyScore() {
         if (Objects.nonNull(myScore)) {
-            return myScore.setScale(SystemConstant.SCALE, BigDecimal.ROUND_HALF_UP);
+            return myScore.setScale(SystemConstant.FINAL_SCALE, BigDecimal.ROUND_HALF_UP);
         } else {
             return new BigDecimal(0);
         }

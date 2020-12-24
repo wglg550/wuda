@@ -46,7 +46,7 @@ public class TBAttachmentServiceImpl extends ServiceImpl<TBAttachmentMapper, TBA
      * @param file
      * @param md5
      * @param path
-     * @param map
+     * @param type
      * @param orgId
      * @param userId
      * @return

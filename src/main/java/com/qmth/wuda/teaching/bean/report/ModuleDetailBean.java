@@ -46,7 +46,7 @@ public class ModuleDetailBean implements Serializable {
 
     public BigDecimal getRate() {
         if (Objects.nonNull(rate)) {
-            return rate.setScale(SystemConstant.SCALE, BigDecimal.ROUND_HALF_UP);
+            return rate.setScale(SystemConstant.FINAL_SCALE, BigDecimal.ROUND_HALF_UP);
         } else {
             return new BigDecimal(0);
         }
@@ -58,7 +58,7 @@ public class ModuleDetailBean implements Serializable {
 
     public BigDecimal getCollegeRate() {
         if (Objects.nonNull(collegeRate)) {
-            return collegeRate.setScale(SystemConstant.SCALE, BigDecimal.ROUND_HALF_UP);
+            return collegeRate.setScale(SystemConstant.FINAL_SCALE, BigDecimal.ROUND_HALF_UP);
         } else {
             return new BigDecimal(0);
         }

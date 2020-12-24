@@ -5,6 +5,7 @@ import com.qmth.wuda.teaching.entity.TEPaperStruct;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -32,4 +33,13 @@ public interface TEPaperStructMapper extends BaseMapper<TEPaperStruct> {
      * @return
      */
     List<TEPaperStruct> findByPaperId(@Param("paperId") Long paperId);
+
+    /**
+     * 根据维度查找总分
+     *
+     * @param dimensions
+     * @param moduleCode
+     * @return
+     */
+    BigDecimal paperStructSumScoreByDimension(@Param("dimensions") List<String> dimensions, @Param("moduleCode") String moduleCode);
 }

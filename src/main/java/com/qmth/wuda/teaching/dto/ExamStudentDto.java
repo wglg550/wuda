@@ -72,7 +72,7 @@ public class ExamStudentDto extends ExamStudentCommonDto implements Serializable
 
     public BigDecimal getPassScore() {
         if (Objects.nonNull(passScore)) {
-            return passScore.setScale(SystemConstant.SCALE, BigDecimal.ROUND_HALF_UP);
+            return passScore.setScale(SystemConstant.FINAL_SCALE, BigDecimal.ROUND_HALF_UP);
         } else {
             return new BigDecimal(0);
         }
@@ -84,7 +84,7 @@ public class ExamStudentDto extends ExamStudentCommonDto implements Serializable
 
     public BigDecimal getContributionScore() {
         if (Objects.nonNull(contributionScore)) {
-            return contributionScore.setScale(SystemConstant.SCALE, BigDecimal.ROUND_HALF_UP);
+            return contributionScore.setScale(SystemConstant.FINAL_SCALE, BigDecimal.ROUND_HALF_UP);
         } else {
             return new BigDecimal(0);
         }
@@ -112,7 +112,7 @@ public class ExamStudentDto extends ExamStudentCommonDto implements Serializable
 
     public BigDecimal getMyScore() {
         if (Objects.nonNull(myScore)) {
-            return myScore.setScale(SystemConstant.SCALE, BigDecimal.ROUND_HALF_UP);
+            return myScore.setScale(SystemConstant.FINAL_SCALE, BigDecimal.ROUND_HALF_UP);
         } else {
             return new BigDecimal(0);
         }
@@ -140,7 +140,7 @@ public class ExamStudentDto extends ExamStudentCommonDto implements Serializable
 
     public BigDecimal getFullScore() {
         if (Objects.nonNull(fullScore)) {
-            return fullScore.setScale(SystemConstant.SCALE, BigDecimal.ROUND_HALF_UP);
+            return fullScore.setScale(SystemConstant.FINAL_SCALE, BigDecimal.ROUND_HALF_UP);
         } else {
             return new BigDecimal(0);
         }
@@ -152,7 +152,7 @@ public class ExamStudentDto extends ExamStudentCommonDto implements Serializable
 
     public BigDecimal getObjectiveScore() {
         if (Objects.nonNull(objectiveScore)) {
-            return objectiveScore.setScale(SystemConstant.SCALE, BigDecimal.ROUND_HALF_UP);
+            return objectiveScore.setScale(SystemConstant.FINAL_SCALE, BigDecimal.ROUND_HALF_UP);
         } else {
             return new BigDecimal(0);
         }
@@ -164,7 +164,7 @@ public class ExamStudentDto extends ExamStudentCommonDto implements Serializable
 
     public BigDecimal getSubjectiveScore() {
         if (Objects.nonNull(subjectiveScore)) {
-            return subjectiveScore.setScale(SystemConstant.SCALE, BigDecimal.ROUND_HALF_UP);
+            return subjectiveScore.setScale(SystemConstant.FINAL_SCALE, BigDecimal.ROUND_HALF_UP);
         } else {
             return new BigDecimal(0);
         }
