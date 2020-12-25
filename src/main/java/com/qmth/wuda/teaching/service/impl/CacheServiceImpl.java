@@ -101,7 +101,6 @@ public class CacheServiceImpl implements CacheService {
         Map<String, TEPaperStruct> tePaperStructMap = tePaperStructList.stream().collect(Collectors.toMap(s -> s.getMainNumber() + "-" + s.getSubNumber(), Function.identity(), (dto1, dto2) -> dto1));
 
         Map<String, List<DimensionMasterysBean>> dimensionSecondMasterysBeanMap = new HashMap<>();
-//        LinkedMultiValueMap<String, DimensionSecondDto> dimensionSecondDtoLinkedMultiValueMap = new LinkedMultiValueMap<>();
         Map<String, Map<String, DimensionFirstDto>> dimensionFirstMap = new LinkedHashMap<>();
         Map<String, Map<String, DimensionSecondDto>> dimensionSecondMap = new LinkedHashMap<>();
         Gson gson = new Gson();
@@ -137,7 +136,6 @@ public class CacheServiceImpl implements CacheService {
                             dimensionMap.get(o.getKnowledgeFirst()).getIdentifierSecond().add(dimensionSecondDto);
                         }
                     }
-//                    dimensionSecondDtoLinkedMultiValueMap.add(o.getIdentifierFirst(), dimensionSecondDto);
                     if (Objects.nonNull(o.getIdentifierSecond())) {
                         dimensionSMap.put(o.getIdentifierSecond(), dimensionSecondDto);
                     }
@@ -260,17 +258,20 @@ public class CacheServiceImpl implements CacheService {
                     }
                 });
                 moduleDetailBean.setRate(Objects.nonNull(v1.getSumScore()) && v1.getSumScore().doubleValue() > 0 ? v1.getMyScore().divide(v1.getSumScore(), SystemConstant.OPER_SCALE, BigDecimal.ROUND_HALF_UP).multiply(fullRate) : bigZero);
+                Set<String> dimensionSet = null;
                 if (Objects.nonNull(v1.getIdentifierSecond())) {
-                    Set<String> dimensionSet = v1.getIdentifierSecond().stream().map(o -> o.getIdentifierSecond()).collect(Collectors.toSet());
-                    dimensionSet.add(v1.getIdentifierFirst());
-                    String moduleCode = ModuleEnum.convertToSql(v1.getModuleCode());
-                    BigDecimal paperStructSumScore = tePaperStructService.paperStructSumScoreByDimension(dimensionSet, moduleCode);
-                    BigDecimal collegeAvgScoreByDimension = teAnswerService.calculateCollegeAvgScoreByDimension(examStudentDto.getExamId(), examStudentDto.getCollegeId(), examStudentDto.getCourseCode(), dimensionSet, moduleCode);
-                    moduleDetailBean.setCollegeRate(Objects.nonNull(collegeAvgScoreByDimension) && Objects.nonNull(paperStructSumScore) ? collegeAvgScoreByDimension.divide(bigActualCount, SystemConstant.OPER_SCALE, BigDecimal.ROUND_HALF_UP).divide(paperStructSumScore, SystemConstant.OPER_SCALE, BigDecimal.ROUND_HALF_UP).multiply(fullRate) : bigZero);
-                    BigDecimal studentAvgScoreByDimension = teAnswerService.calculateStudentAvgScoreByDimension(examStudentDto.getExamId(), examStudentDto.getCollegeId(), examStudentDto.getStudentNo(), examStudentDto.getCourseCode(), dimensionSet, moduleCode);
-                    moduleDetailBean.setRate(Objects.nonNull(studentAvgScoreByDimension) && Objects.nonNull(paperStructSumScore) ? studentAvgScoreByDimension.divide(paperStructSumScore, SystemConstant.OPER_SCALE, BigDecimal.ROUND_HALF_UP).multiply(fullRate) : bigZero);
-                    dios.add(moduleDetailBean);
+                    dimensionSet = v1.getIdentifierSecond().stream().map(o -> o.getIdentifierSecond()).collect(Collectors.toSet());
+                } else {
+                    dimensionSet = new LinkedHashSet<>();
                 }
+                dimensionSet.add(v1.getIdentifierFirst());
+                String moduleCode = ModuleEnum.convertToSql(v1.getModuleCode());
+                BigDecimal paperStructSumScore = tePaperStructService.paperStructSumScoreByDimension(dimensionSet, moduleCode);
+                BigDecimal collegeAvgScoreByDimension = teAnswerService.calculateCollegeAvgScoreByDimension(examStudentDto.getExamId(), examStudentDto.getCollegeId(), examStudentDto.getCourseCode(), dimensionSet, moduleCode);
+                moduleDetailBean.setCollegeRate(Objects.nonNull(collegeAvgScoreByDimension) && Objects.nonNull(paperStructSumScore) ? collegeAvgScoreByDimension.divide(bigActualCount, SystemConstant.OPER_SCALE, BigDecimal.ROUND_HALF_UP).divide(paperStructSumScore, SystemConstant.OPER_SCALE, BigDecimal.ROUND_HALF_UP).multiply(fullRate) : bigZero);
+                BigDecimal studentAvgScoreByDimension = teAnswerService.calculateStudentAvgScoreByDimension(examStudentDto.getExamId(), examStudentDto.getCollegeId(), examStudentDto.getStudentNo(), examStudentDto.getCourseCode(), dimensionSet, moduleCode);
+                moduleDetailBean.setRate(Objects.nonNull(studentAvgScoreByDimension) && Objects.nonNull(paperStructSumScore) ? studentAvgScoreByDimension.divide(paperStructSumScore, SystemConstant.OPER_SCALE, BigDecimal.ROUND_HALF_UP).multiply(fullRate) : bigZero);
+                dios.add(moduleDetailBean);
             });
             moduleBean.setDios(dios);
             diagnosisDetailBean.setModules(moduleBean);
