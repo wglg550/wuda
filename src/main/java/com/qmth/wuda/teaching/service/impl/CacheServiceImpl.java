@@ -1,18 +1,17 @@
 package com.qmth.wuda.teaching.service.impl;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.qmth.wuda.teaching.bean.report.*;
 import com.qmth.wuda.teaching.constant.SystemConstant;
-import com.qmth.wuda.teaching.dto.DimensionFirstDto;
-import com.qmth.wuda.teaching.dto.DimensionSecondDto;
-import com.qmth.wuda.teaching.dto.ExamStudentDto;
-import com.qmth.wuda.teaching.dto.StudentDimensionDto;
+import com.qmth.wuda.teaching.dto.*;
 import com.qmth.wuda.teaching.entity.*;
 import com.qmth.wuda.teaching.enums.MissEnum;
 import com.qmth.wuda.teaching.enums.ModuleEnum;
 import com.qmth.wuda.teaching.enums.PaperDifficultEnum;
 import com.qmth.wuda.teaching.exception.BusinessException;
 import com.qmth.wuda.teaching.service.*;
+import com.qmth.wuda.teaching.util.JacksonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -102,26 +101,26 @@ public class CacheServiceImpl implements CacheService {
             tePaperStructMap.put(s.getMainNumber() + "-" + s.getSubNumber(), s);
         });
 
-        Map<String, List<DimensionMasterysBean>> dimensionSecondMasterysBeanMap = new HashMap<>();
+        Map<String, List<DimensionMasterysDto>> dimensionSecondMasterysDtoMap = new HashMap<>();
         Map<String, Map<String, DimensionFirstDto>> dimensionFirstMap = new LinkedHashMap<>();
         Map<String, Map<String, DimensionSecondDto>> dimensionSecondMap = new LinkedHashMap<>();
         Gson gson = new Gson();
         tbModuleList.forEach(s -> {
             if (Objects.nonNull(s.getDegree()) && !s.getDegree().contains("无")) {
                 String[] strDegrees = s.getDegree().split(";");
-                List<DimensionMasterysBean> dimensionMasterysBeanList = new ArrayList<>();
+                List<DimensionMasterysDto> dimensionMasterysDtoList = new ArrayList<>();
                 for (int i = 0; i < strDegrees.length; i++) {
                     String str = strDegrees[i];
                     String[] strs = str.split(":");
                     String[] grades = strs[1].split(",");
-                    grades[0] = grades[0].replaceAll("\\(", "").replaceAll("\\)", "").replaceAll("\\[", "").replaceAll("]", "");
-                    grades[1] = grades[1].replaceAll("\\(", "").replaceAll("\\)", "").replaceAll("\\[", "").replaceAll("]", "");
+                    String gradesO = grades[0].replaceAll("\\(", "").replaceAll("\\)", "").replaceAll("\\[", "").replaceAll("]", "");
+                    String gradesT = grades[1].replaceAll("\\(", "").replaceAll("\\)", "").replaceAll("\\[", "").replaceAll("]", "");
                     List<Integer> gradeInteger = new ArrayList<>();
-                    gradeInteger.add(Integer.parseInt(grades[0]));
-                    gradeInteger.add(Integer.parseInt(grades[1]));
+                    gradeInteger.add(Integer.parseInt(gradesO));
+                    gradeInteger.add(Integer.parseInt(gradesT));
 //                    dimensionMasterysBeanList.add(new DimensionMasterysBean(strs[0], Arrays.asList((Integer[]) ConvertUtils.convert(strs, Integer.class))));
-                    dimensionMasterysBeanList.add(new DimensionMasterysBean(strs[0], gradeInteger));
-                    dimensionSecondMasterysBeanMap.put(s.getName(), dimensionMasterysBeanList);
+                    dimensionMasterysDtoList.add(new DimensionMasterysDto(strs[0], gradeInteger, grades));
+                    dimensionSecondMasterysDtoMap.put(s.getName(), dimensionMasterysDtoList);
                 }
             }
             List<TBDimension> tbDimensionList = tbDimensionService.findByModuleIdAndCourseCode(s.getId(), examStudentDto.getCourseCode());
@@ -255,6 +254,12 @@ public class CacheServiceImpl implements CacheService {
                             diagnosisDetailBean.setAdvice(s.getLearnAdvice());
                             return;
                         }
+                    } else if (strs[0].contains("[") && strs[1].contains(")")) {
+                        if (oneB.doubleValue() <= myScore.doubleValue() && myScore.doubleValue() < twoB.doubleValue()) {
+                            diagnosisDetailBean.setResult(s.getDiagnoseResult());
+                            diagnosisDetailBean.setAdvice(s.getLearnAdvice());
+                            return;
+                        }
                     } else if (strs[0].contains("(") && strs[1].contains("]")) {
                         if (oneB.doubleValue() < myScore.doubleValue() && myScore.doubleValue() <= twoB.doubleValue()) {
                             diagnosisDetailBean.setResult(s.getDiagnoseResult());
@@ -303,9 +308,11 @@ public class CacheServiceImpl implements CacheService {
         //二级维度start
         Map<String, DiagnosisDetailBean> diagnosisDetailBeanMap = diagnosisDetailBeanList.stream().collect(Collectors.toMap(s -> s.getName(), Function.identity(), (dto1, dto2) -> dto1));
         studentDimensionFirstMap.forEach((k, v) -> {
-            List<DimensionMasterysBean> dimensionMasterysBeanList = dimensionSecondMasterysBeanMap.get(k);
+            List<DimensionMasterysDto> dimensionMasterysDtoList = dimensionSecondMasterysDtoMap.get(k);
+            List<DimensionMasterysBean> dmbList = gson.fromJson(JacksonUtil.parseJson(dimensionMasterysDtoList), new TypeToken<List<DimensionMasterysBean>>() {
+            }.getType());
             DimensionBean dimensionBean = new DimensionBean();
-            dimensionBean.setMasterys(dimensionMasterysBeanList);
+            dimensionBean.setMasterys(dmbList);
             List<DimensionDetailBean> subDios = new ArrayList<>();
             v.forEach((k1, v1) -> {
                 if (Objects.nonNull(v1.getIdentifierSecond())) {
@@ -314,18 +321,38 @@ public class CacheServiceImpl implements CacheService {
                             DimensionDetailBean dimensionDetailBean = new DimensionDetailBean();
                             dimensionDetailBean.setCode(s.getIdentifierSecond());
                             dimensionDetailBean.setName(s.getKnowledgeSecond());
-                            dimensionDetailBean.setScoreRate(Objects.nonNull(s.getSumScore()) && s.getSumScore().doubleValue() > 0 ? s.getMyScore().divide(s.getSumScore(), SystemConstant.OPER_SCALE, BigDecimal.ROUND_HALF_UP).multiply(fullRate) : bigZero);
                             Set<String> dimensionsSet = new HashSet<>(Arrays.asList(s.getIdentifierSecond()));
                             String moduleCode = ModuleEnum.convertToSql(s.getModuleCode());
                             BigDecimal paperStructSumScore = tePaperStructService.paperStructSumScoreByDimension(dimensionsSet, moduleCode);
                             BigDecimal collegeAvgScoreByDimension = teAnswerService.calculateCollegeAvgScoreByDimension(examStudentDto.getExamId(), examStudentDto.getCollegeId(), examStudentDto.getCourseCode(), dimensionsSet, moduleCode);
                             dimensionDetailBean.setCollegeAvgScore(Objects.nonNull(collegeAvgScoreByDimension) && Objects.nonNull(paperStructSumScore) ? collegeAvgScoreByDimension.divide(bigActualCount, SystemConstant.OPER_SCALE, BigDecimal.ROUND_HALF_UP).divide(paperStructSumScore, SystemConstant.OPER_SCALE, BigDecimal.ROUND_HALF_UP).multiply(fullRate) : bigZero);
-
-                            if (Objects.nonNull(dimensionMasterysBeanList) && dimensionMasterysBeanList.size() > 0) {
-                                dimensionMasterysBeanList.forEach(o -> {
-                                    if (dimensionDetailBean.getScoreRate().intValue() >= o.getGrade().get(0) && dimensionDetailBean.getScoreRate().intValue() <= o.getGrade().get(1)) {
-                                        dimensionDetailBean.setProficiency(o.getLevel());
-                                        return;
+                            BigDecimal studentAvgScoreByDimension = teAnswerService.calculateStudentAvgScoreByDimension(examStudentDto.getExamId(), examStudentDto.getCollegeId(), examStudentDto.getStudentNo(), examStudentDto.getCourseCode(), dimensionsSet, moduleCode);
+                            dimensionDetailBean.setScoreRate(Objects.nonNull(studentAvgScoreByDimension) && Objects.nonNull(paperStructSumScore) ? studentAvgScoreByDimension.divide(paperStructSumScore, SystemConstant.OPER_SCALE, BigDecimal.ROUND_HALF_UP).multiply(fullRate) : bigZero);
+                            if (Objects.nonNull(dimensionMasterysDtoList) && dimensionMasterysDtoList.size() > 0) {
+                                dimensionMasterysDtoList.forEach(o -> {
+                                    String[] strs = o.getSourceGrade();
+                                    BigDecimal oneB = new BigDecimal(strs[0].replaceAll("\\(", "").replaceAll("\\)", "").replaceAll("\\[", "").replaceAll("]", ""));
+                                    BigDecimal twoB = new BigDecimal(strs[1].replaceAll("\\(", "").replaceAll("\\)", "").replaceAll("\\[", "").replaceAll("]", ""));
+                                    if (strs[0].contains("[") && strs[1].contains("]")) {
+                                        if (oneB.doubleValue() <= dimensionDetailBean.getScoreRate().doubleValue() && dimensionDetailBean.getScoreRate().doubleValue() <= twoB.doubleValue()) {
+                                            dimensionDetailBean.setProficiency(o.getLevel());
+                                            return;
+                                        }
+                                    } else if (strs[0].contains("[") && strs[1].contains(")")) {
+                                        if (oneB.doubleValue() < dimensionDetailBean.getScoreRate().doubleValue() && dimensionDetailBean.getScoreRate().doubleValue() < twoB.doubleValue()) {
+                                            dimensionDetailBean.setProficiency(o.getLevel());
+                                            return;
+                                        }
+                                    } else if (strs[0].contains("(") && strs[1].contains("]")) {
+                                        if (oneB.doubleValue() < dimensionDetailBean.getScoreRate().doubleValue() && dimensionDetailBean.getScoreRate().doubleValue() <= twoB.doubleValue()) {
+                                            dimensionDetailBean.setProficiency(o.getLevel());
+                                            return;
+                                        }
+                                    } else if (strs[0].contains("(") && strs[1].contains(")")) {
+                                        if (oneB.doubleValue() < dimensionDetailBean.getScoreRate().doubleValue() && dimensionDetailBean.getScoreRate().doubleValue() < twoB.doubleValue()) {
+                                            dimensionDetailBean.setProficiency(o.getLevel());
+                                            return;
+                                        }
                                     }
                                 });
                             }
