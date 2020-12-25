@@ -44,6 +44,9 @@ public class DimensionFirstDto implements Serializable {
     @ApiModelProperty(value = "备注")
     private String remark;
 
+    @ApiModelProperty(value = "理解说明")
+    private String interpretation;
+
     @ApiModelProperty(value = "编号二级")
     private Set<DimensionSecondDto> identifierSecond;
 
@@ -55,11 +58,19 @@ public class DimensionFirstDto implements Serializable {
         this.identifierSecond = identifierSecond;
     }
 
+    public String getInterpretation() {
+        return interpretation;
+    }
+
+    public void setInterpretation(String interpretation) {
+        this.interpretation = interpretation;
+    }
+
     public DimensionFirstDto() {
 
     }
 
-    public DimensionFirstDto(Long moduleId, String moduleCode, String courseCode, String knowledgeFirst, String identifierFirst, String info, String remark, Set<DimensionSecondDto> identifierSecond) {
+    public DimensionFirstDto(Long moduleId, String moduleCode, String courseCode, String knowledgeFirst, String identifierFirst, String info, String remark, Set<DimensionSecondDto> identifierSecond, String interpretation) {
         this.moduleId = moduleId;
         this.moduleCode = moduleCode;
         this.courseCode = courseCode;
@@ -68,6 +79,7 @@ public class DimensionFirstDto implements Serializable {
         this.info = info;
         this.remark = remark;
         this.identifierSecond = identifierSecond;
+        this.interpretation = interpretation;
     }
 
     public String getInfo() {

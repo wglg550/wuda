@@ -17,8 +17,19 @@ public class DiagnosisBean implements Serializable {
     @ApiModelProperty(value = "是否通过")
     private boolean result = false;
 
+    @ApiModelProperty(value = "是否复分")
+    private boolean isAssignedScore = false;
+
     @ApiModelProperty(value = "诊断详情")
     private List<DiagnosisDetailBean> list;
+
+    public boolean isAssignedScore() {
+        return isAssignedScore;
+    }
+
+    public void setAssignedScore(boolean assignedScore) {
+        isAssignedScore = assignedScore;
+    }
 
     public boolean isResult() {
         return result;

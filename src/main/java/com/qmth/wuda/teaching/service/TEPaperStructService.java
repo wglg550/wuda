@@ -1,6 +1,7 @@
 package com.qmth.wuda.teaching.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.qmth.wuda.teaching.dto.StudentDimensionDto;
 import com.qmth.wuda.teaching.entity.TEPaperStruct;
 
 import java.math.BigDecimal;
@@ -50,5 +51,5 @@ public interface TEPaperStructService extends IService<TEPaperStruct> {
      * @param moduleCode
      * @return
      */
-    List<String> findStudentDimension(Long examId, String studentCode, String courseCode, String moduleCode);
+    List<StudentDimensionDto> findStudentDimension(Long examId, String studentCode, String courseCode, String moduleCode);
 }

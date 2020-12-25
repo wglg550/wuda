@@ -2,6 +2,7 @@ package com.qmth.wuda.teaching.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.qmth.wuda.teaching.dao.TEPaperStructMapper;
+import com.qmth.wuda.teaching.dto.StudentDimensionDto;
 import com.qmth.wuda.teaching.entity.TEPaperStruct;
 import com.qmth.wuda.teaching.service.TEPaperStructService;
 import org.springframework.stereotype.Service;
@@ -70,7 +71,7 @@ public class TEPaperStructServiceImpl extends ServiceImpl<TEPaperStructMapper, T
      * @return
      */
     @Override
-    public List<String> findStudentDimension(Long examId, String studentCode, String courseCode, String moduleCode) {
+    public List<StudentDimensionDto> findStudentDimension(Long examId, String studentCode, String courseCode, String moduleCode) {
         return tePaperStructMapper.findStudentDimension(examId, studentCode, courseCode, moduleCode);
     }
 }

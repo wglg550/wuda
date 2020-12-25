@@ -43,9 +43,10 @@
         </where>
     </select>
 
-    <select id="findStudentDimension" resultType="java.lang.String">
+    <select id="findStudentDimension" resultType="com.qmth.wuda.teaching.dto.StudentDimensionDto">
         select
-                distinct ${moduleCode}
+                ${moduleCode} as dimension,
+                tea.score as dimensionScore
             from
                 t_e_paper_struct teps
             left join t_e_answer tea on
@@ -54,7 +55,7 @@
             left join t_e_exam_record teer on
                 teer.id = tea.exam_record_id
             left join t_e_exam_student tees on
-                tees.exam_id = teer.exam_id
+                tees.exam_id = teer.exam_id and tees.id = teer.exam_student_id
             <where>
                 <if test="examId != null and examId != ''">
                     and tees.exam_id = #{examId}

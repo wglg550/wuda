@@ -1,6 +1,7 @@
 package com.qmth.wuda.teaching.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.qmth.wuda.teaching.dto.StudentDimensionDto;
 import com.qmth.wuda.teaching.entity.TEPaperStruct;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -53,5 +54,5 @@ public interface TEPaperStructMapper extends BaseMapper<TEPaperStruct> {
      * @param moduleCode
      * @return
      */
-    List<String> findStudentDimension(@Param("examId") Long examId, @Param("studentCode") String studentCode, @Param("courseCode") String courseCode, @Param("moduleCode") String moduleCode);
+    List<StudentDimensionDto> findStudentDimension(@Param("examId") Long examId, @Param("studentCode") String studentCode, @Param("courseCode") String courseCode, @Param("moduleCode") String moduleCode);
 }
