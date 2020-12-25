@@ -43,7 +43,7 @@
         </where>
     </select>
 
-    <select id="findStudentDimension" resultType="java.util.List">
+    <select id="findStudentDimension" resultType="java.lang.String">
         select
                 distinct ${moduleCode}
             from

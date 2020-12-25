@@ -45,13 +45,13 @@ public class DimensionFirstDto implements Serializable {
     private String remark;
 
     @ApiModelProperty(value = "编号二级")
-    private Set<String> identifierSecond;
+    private Set<DimensionSecondDto> identifierSecond;
 
-    public Set<String> getIdentifierSecond() {
+    public Set<DimensionSecondDto> getIdentifierSecond() {
         return identifierSecond;
     }
 
-    public void setIdentifierSecond(Set<String> identifierSecond) {
+    public void setIdentifierSecond(Set<DimensionSecondDto> identifierSecond) {
         this.identifierSecond = identifierSecond;
     }
 
@@ -59,7 +59,7 @@ public class DimensionFirstDto implements Serializable {
 
     }
 
-    public DimensionFirstDto(Long moduleId, String moduleCode, String courseCode, String knowledgeFirst, String identifierFirst, String info, String remark, Set<String> identifierSecond) {
+    public DimensionFirstDto(Long moduleId, String moduleCode, String courseCode, String knowledgeFirst, String identifierFirst, String info, String remark, Set<DimensionSecondDto> identifierSecond) {
         this.moduleId = moduleId;
         this.moduleCode = moduleCode;
         this.courseCode = courseCode;

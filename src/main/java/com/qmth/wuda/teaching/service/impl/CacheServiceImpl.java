@@ -15,7 +15,6 @@ import com.qmth.wuda.teaching.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
@@ -102,8 +101,9 @@ public class CacheServiceImpl implements CacheService {
         Map<String, TEPaperStruct> tePaperStructMap = tePaperStructList.stream().collect(Collectors.toMap(s -> s.getMainNumber() + "-" + s.getSubNumber(), Function.identity(), (dto1, dto2) -> dto1));
 
         Map<String, List<DimensionMasterysBean>> dimensionSecondMasterysBeanMap = new HashMap<>();
-        LinkedMultiValueMap<String, DimensionSecondDto> dimensionSecondMap = new LinkedMultiValueMap<>();
+//        LinkedMultiValueMap<String, DimensionSecondDto> dimensionSecondDtoLinkedMultiValueMap = new LinkedMultiValueMap<>();
         Map<String, Map<String, DimensionFirstDto>> dimensionFirstMap = new LinkedHashMap<>();
+        Map<String, Map<String, DimensionSecondDto>> dimensionSecondMap = new LinkedHashMap<>();
         Gson gson = new Gson();
         tbModuleList.forEach(s -> {
             if (Objects.nonNull(s.getDegree()) && !s.getDegree().contains("无")) {
@@ -126,29 +126,63 @@ public class CacheServiceImpl implements CacheService {
             List<TBDimension> tbDimensionList = tbDimensionService.findByModuleIdAndCourseCode(s.getId(), examStudentDto.getCourseCode());
             if (Objects.nonNull(tbDimensionList) && tbDimensionList.size() > 0) {
                 Map<String, DimensionFirstDto> dimensionMap = new LinkedHashMap<>();
+                Map<String, DimensionSecondDto> dimensionSMap = new LinkedHashMap<>();
                 tbDimensionList.forEach(o -> {
-                    if (!dimensionMap.containsKey(o.getKnowledgeFirst())) {
-                        dimensionMap.put(o.getKnowledgeFirst(), new DimensionFirstDto(o.getModuleId(), s.getCode(), o.getCourseCode(), o.getKnowledgeFirst(), o.getIdentifierFirst(), s.getDescription(), s.getRemark(), Objects.nonNull(o.getIdentifierSecond()) ? new LinkedHashSet<>(Arrays.asList(o.getIdentifierSecond())) : null));
-                    } else {
-                        if (Objects.nonNull(dimensionMap.get(o.getKnowledgeFirst()).getIdentifierSecond())) {
-                            dimensionMap.get(o.getKnowledgeFirst()).getIdentifierSecond().add(o.getIdentifierSecond());
-                        }
-                    }
                     DimensionSecondDto dimensionSecondDto = gson.fromJson(gson.toJson(o), DimensionSecondDto.class);
                     dimensionSecondDto.setModuleCode(s.getCode());
-                    dimensionSecondMap.add(o.getIdentifierFirst(), dimensionSecondDto);
+                    if (!dimensionMap.containsKey(o.getKnowledgeFirst())) {
+                        dimensionMap.put(o.getKnowledgeFirst(), new DimensionFirstDto(o.getModuleId(), s.getCode(), o.getCourseCode(), o.getKnowledgeFirst(), o.getIdentifierFirst(), s.getDescription(), s.getRemark(), Objects.nonNull(o.getIdentifierSecond()) ? new LinkedHashSet<>(Arrays.asList(dimensionSecondDto)) : null));
+                    } else {
+                        if (Objects.nonNull(dimensionMap.get(o.getKnowledgeFirst()).getIdentifierSecond())) {
+                            dimensionMap.get(o.getKnowledgeFirst()).getIdentifierSecond().add(dimensionSecondDto);
+                        }
+                    }
+//                    dimensionSecondDtoLinkedMultiValueMap.add(o.getIdentifierFirst(), dimensionSecondDto);
+                    if (Objects.nonNull(o.getIdentifierSecond())) {
+                        dimensionSMap.put(o.getIdentifierSecond(), dimensionSecondDto);
+                    }
                 });
                 dimensionFirstMap.put(s.getName(), dimensionMap);
+                dimensionSecondMap.put(s.getName(), dimensionSMap);
             }
         });
 
         //维度过滤
+        Map<String, Map<String, DimensionFirstDto>> studentDimensionFirstMap = new LinkedHashMap<>();
+        Map<String, Map<String, DimensionSecondDto>> studentDimensionSecondMap = new LinkedHashMap<>();
         dimensionFirstMap.forEach((k, v) -> {
             String moduleCode = ModuleEnum.convertToSqlByCode(k);
             List<String> studentDimensions = tePaperStructService.findStudentDimension(examStudentDto.getExamId(), examStudentDto.getStudentNo(), examStudentDto.getCourseCode(), moduleCode);
-//            v.forEach((k1,v1)->{
-//                tePaperStructService.findStudentDimension(examStudentDto.getExamId(),examStudentDto.getStudentNo(),examStudentDto.getCourseCode(),moduleCode);
-//            });
+            for (String s : studentDimensions) {
+                v.forEach((k1, v1) -> {
+                    if (Arrays.asList(s.split(",")).contains(v1.getIdentifierFirst())) {//一级维度
+                        Map<String, DimensionFirstDto> dimensionFirstDtoMap = studentDimensionFirstMap.get(k);
+                        if (Objects.isNull(dimensionFirstDtoMap)) {
+                            dimensionFirstDtoMap = new LinkedHashMap<>();
+                        }
+                        dimensionFirstDtoMap.put(k1, v1);
+                        studentDimensionFirstMap.put(k, dimensionFirstDtoMap);
+                    } else if (Objects.nonNull(v1.getIdentifierSecond())) {//二级维度
+                        for (DimensionSecondDto dimensionSecondDto : v1.getIdentifierSecond()) {
+                            if (Arrays.asList(s.split(",")).contains(dimensionSecondDto.getIdentifierSecond())) {
+                                Map<String, DimensionFirstDto> dimensionFirstDtoMap = studentDimensionFirstMap.get(k);
+                                if (Objects.isNull(dimensionFirstDtoMap)) {
+                                    dimensionFirstDtoMap = new LinkedHashMap<>();
+                                }
+                                dimensionFirstDtoMap.put(k1, v1);
+                                studentDimensionFirstMap.put(k, dimensionFirstDtoMap);
+
+                                Map<String, DimensionSecondDto> dimensionSecondDtoMap = studentDimensionSecondMap.get(k);
+                                if (Objects.isNull(dimensionSecondDtoMap)) {
+                                    dimensionSecondDtoMap = new LinkedHashMap<>();
+                                }
+                                dimensionSecondDtoMap.put(dimensionSecondDto.getIdentifierSecond(), dimensionSecondMap.get(k).get(dimensionSecondDto.getIdentifierSecond()));
+                                studentDimensionSecondMap.put(k, dimensionSecondDtoMap);
+                            }
+                        }
+                    }
+                });
+            }
         });
 
         PersonalReportBean personalReportBean = new PersonalReportBean();
@@ -196,27 +230,9 @@ public class CacheServiceImpl implements CacheService {
             diagnosisBean.setResult(true);
         }
 
-        //维度过滤
-//        dimensionFirstMap.forEach((k, v) -> {
-//            v.forEach((k1, v1) -> {
-//                List<DimensionSecondDto> dimensionSecondDtoList = dimensionSecondMap.get(k);
-//                for (DimensionSecondDto dimensionSecondDto : dimensionSecondDtoList) {
-//                    tePaperStructMap.forEach((k2, v2) -> {
-//                        if (Objects.nonNull(v1.getModuleCode()) && Objects.equals(v1.getModuleCode(), ModuleEnum.KNOWLEDGE.name().toLowerCase())) {
-//                            if (Objects.nonNull(v2.getKnowledge()) && Arrays.asList(v2.getKnowledge().split(",")).contains(v1.getIdentifierFirst())) {
-//
-//                            }else if (Objects.nonNull(v2.getKnowledge()) && Arrays.asList(v2.getKnowledge().split(",")).contains(dimensionSecondDto.getIdentifierSecond())) {
-//
-//                            }
-//                        }
-//                    });
-//                }
-//            });
-//        });
-
         List<DiagnosisDetailBean> diagnosisDetailBeanList = new ArrayList<>();
         //一级维度start
-        dimensionFirstMap.forEach((k, v) -> {
+        studentDimensionFirstMap.forEach((k, v) -> {
             DiagnosisDetailBean diagnosisDetailBean = new DiagnosisDetailBean();
             diagnosisDetailBean.setName(k);
             ModuleBean moduleBean = new ModuleBean();
@@ -244,15 +260,17 @@ public class CacheServiceImpl implements CacheService {
                     }
                 });
                 moduleDetailBean.setRate(Objects.nonNull(v1.getSumScore()) && v1.getSumScore().doubleValue() > 0 ? v1.getMyScore().divide(v1.getSumScore(), SystemConstant.OPER_SCALE, BigDecimal.ROUND_HALF_UP).multiply(fullRate) : bigZero);
-                List<String> dimensionFirst = dimensionSecondMap.get(v1.getIdentifierFirst()).stream().map(o -> o.getIdentifierSecond()).filter(Objects::nonNull).collect(Collectors.toList());
-                dimensionFirst.add(v1.getIdentifierFirst());
-                String moduleCode = ModuleEnum.convertToSql(v1.getModuleCode());
-                BigDecimal paperStructSumScore = tePaperStructService.paperStructSumScoreByDimension(dimensionFirst, moduleCode);
-                BigDecimal collegeAvgScoreByDimension = teAnswerService.calculateCollegeAvgScoreByDimension(examStudentDto.getExamId(), examStudentDto.getCollegeId(), examStudentDto.getCourseCode(), dimensionFirst, moduleCode);
-                moduleDetailBean.setCollegeRate(Objects.nonNull(collegeAvgScoreByDimension) && Objects.nonNull(paperStructSumScore) ? collegeAvgScoreByDimension.divide(bigActualCount, SystemConstant.OPER_SCALE, BigDecimal.ROUND_HALF_UP).divide(paperStructSumScore, SystemConstant.OPER_SCALE, BigDecimal.ROUND_HALF_UP).multiply(fullRate) : bigZero);
-                BigDecimal studentAvgScoreByDimension = teAnswerService.calculateStudentAvgScoreByDimension(examStudentDto.getExamId(), examStudentDto.getCollegeId(), examStudentDto.getStudentNo(), examStudentDto.getCourseCode(), dimensionFirst, moduleCode);
-                moduleDetailBean.setRate(Objects.nonNull(studentAvgScoreByDimension) && Objects.nonNull(paperStructSumScore) ? studentAvgScoreByDimension.divide(paperStructSumScore, SystemConstant.OPER_SCALE, BigDecimal.ROUND_HALF_UP).multiply(fullRate) : bigZero);
-                dios.add(moduleDetailBean);
+                if (Objects.nonNull(v1.getIdentifierSecond())) {
+                    Set<String> dimensionSet = v1.getIdentifierSecond().stream().map(o -> o.getIdentifierSecond()).collect(Collectors.toSet());
+                    dimensionSet.add(v1.getIdentifierFirst());
+                    String moduleCode = ModuleEnum.convertToSql(v1.getModuleCode());
+                    BigDecimal paperStructSumScore = tePaperStructService.paperStructSumScoreByDimension(dimensionSet, moduleCode);
+                    BigDecimal collegeAvgScoreByDimension = teAnswerService.calculateCollegeAvgScoreByDimension(examStudentDto.getExamId(), examStudentDto.getCollegeId(), examStudentDto.getCourseCode(), dimensionSet, moduleCode);
+                    moduleDetailBean.setCollegeRate(Objects.nonNull(collegeAvgScoreByDimension) && Objects.nonNull(paperStructSumScore) ? collegeAvgScoreByDimension.divide(bigActualCount, SystemConstant.OPER_SCALE, BigDecimal.ROUND_HALF_UP).divide(paperStructSumScore, SystemConstant.OPER_SCALE, BigDecimal.ROUND_HALF_UP).multiply(fullRate) : bigZero);
+                    BigDecimal studentAvgScoreByDimension = teAnswerService.calculateStudentAvgScoreByDimension(examStudentDto.getExamId(), examStudentDto.getCollegeId(), examStudentDto.getStudentNo(), examStudentDto.getCourseCode(), dimensionSet, moduleCode);
+                    moduleDetailBean.setRate(Objects.nonNull(studentAvgScoreByDimension) && Objects.nonNull(paperStructSumScore) ? studentAvgScoreByDimension.divide(paperStructSumScore, SystemConstant.OPER_SCALE, BigDecimal.ROUND_HALF_UP).multiply(fullRate) : bigZero);
+                    dios.add(moduleDetailBean);
+                }
             });
             moduleBean.setDios(dios);
             diagnosisDetailBean.setModules(moduleBean);
@@ -261,21 +279,21 @@ public class CacheServiceImpl implements CacheService {
         //一级维度end
 
         //二级维度start
-        dimensionSecondMap.forEach((k, v) -> {
-            v.forEach(s -> {
+        studentDimensionSecondMap.forEach((k, v) -> {
+            v.forEach((k2, v2) -> {
                 tePaperStructMap.forEach((k1, v1) -> {
-                    if (Objects.nonNull(s.getModuleCode()) && Objects.equals(s.getModuleCode(), ModuleEnum.KNOWLEDGE.name().toLowerCase())) {
-                        if (Objects.nonNull(v1.getKnowledge()) && Arrays.asList(v1.getKnowledge().split(",")).contains(s.getIdentifierSecond())) {
-                            s.setSumScore(s.getSumScore().add(v1.getScore()));
+                    if (Objects.nonNull(v2.getModuleCode()) && Objects.equals(v2.getModuleCode(), ModuleEnum.KNOWLEDGE.name().toLowerCase())) {
+                        if (Objects.nonNull(v1.getKnowledge()) && Arrays.asList(v1.getKnowledge().split(",")).contains(v2.getIdentifierSecond())) {
+                            v2.setSumScore(v2.getSumScore().add(v1.getScore()));
                             if (Objects.nonNull(teAnswerMap.get(k1))) {
-                                s.setMyScore(s.getMyScore().add(teAnswerMap.get(k1).getScore()));
+                                v2.setMyScore(v2.getMyScore().add(teAnswerMap.get(k1).getScore()));
                             }
                         }
-                    } else if (Objects.nonNull(s.getModuleCode()) && Objects.equals(s.getModuleCode(), ModuleEnum.CAPABILITY.name().toLowerCase())) {
-                        if (Objects.nonNull(v1.getCapability()) && Arrays.asList(v1.getCapability().split(",")).contains(s.getIdentifierSecond())) {
-                            s.setSumScore(s.getSumScore().add(v1.getScore()));
+                    } else if (Objects.nonNull(v2.getModuleCode()) && Objects.equals(v2.getModuleCode(), ModuleEnum.CAPABILITY.name().toLowerCase())) {
+                        if (Objects.nonNull(v1.getCapability()) && Arrays.asList(v1.getCapability().split(",")).contains(v2.getIdentifierSecond())) {
+                            v2.setSumScore(v2.getSumScore().add(v1.getScore()));
                             if (Objects.nonNull(teAnswerMap.get(k1))) {
-                                s.setMyScore(s.getMyScore().add(teAnswerMap.get(k1).getScore()));
+                                v2.setMyScore(v2.getMyScore().add(teAnswerMap.get(k1).getScore()));
                             }
                         }
                     }
@@ -283,7 +301,7 @@ public class CacheServiceImpl implements CacheService {
             });
         });
         Map<String, DiagnosisDetailBean> diagnosisDetailBeanMap = diagnosisDetailBeanList.stream().collect(Collectors.toMap(s -> s.getName(), Function.identity(), (dto1, dto2) -> dto1));
-        dimensionFirstMap.forEach((k, v) -> {
+        studentDimensionFirstMap.forEach((k, v) -> {
             List<DimensionMasterysBean> dimensionMasterysBeanList = dimensionSecondMasterysBeanMap.get(k);
             DimensionBean dimensionBean = new DimensionBean();
             dimensionBean.setMasterys(dimensionMasterysBeanList);
@@ -291,32 +309,33 @@ public class CacheServiceImpl implements CacheService {
             AtomicReference<BigDecimal> dioFullScore = new AtomicReference<>(bigZero);
             List<DimensionDetailBean> subDios = new ArrayList<>();
             v.forEach((k1, v1) -> {
-                List<DimensionSecondDto> dimensionSecondList = dimensionSecondMap.get(v1.getIdentifierFirst());
-                dimensionSecondList.forEach(s -> {
-                    myScore.set(myScore.get().add(s.getMyScore()));
-                    dioFullScore.set(dioFullScore.get().add(s.getSumScore()));
-                    if (Objects.nonNull(s.getIdentifierSecond())) {
-                        DimensionDetailBean dimensionDetailBean = new DimensionDetailBean();
-                        dimensionDetailBean.setCode(s.getIdentifierSecond());
-                        dimensionDetailBean.setName(s.getKnowledgeSecond());
-                        dimensionDetailBean.setScoreRate(Objects.nonNull(s.getSumScore()) && s.getSumScore().doubleValue() > 0 ? s.getMyScore().divide(s.getSumScore(), SystemConstant.OPER_SCALE, BigDecimal.ROUND_HALF_UP).multiply(fullRate) : bigZero);
-                        List<String> dimensionFirst = Arrays.asList(s.getIdentifierSecond());
-                        String moduleCode = ModuleEnum.convertToSql(s.getModuleCode());
-                        BigDecimal paperStructSumScore = tePaperStructService.paperStructSumScoreByDimension(dimensionFirst, moduleCode);
-                        BigDecimal collegeAvgScoreByDimension = teAnswerService.calculateCollegeAvgScoreByDimension(examStudentDto.getExamId(), examStudentDto.getCollegeId(), examStudentDto.getCourseCode(), dimensionFirst, moduleCode);
-                        dimensionDetailBean.setCollegeAvgScore(Objects.nonNull(collegeAvgScoreByDimension) && Objects.nonNull(paperStructSumScore) ? collegeAvgScoreByDimension.divide(bigActualCount, SystemConstant.OPER_SCALE, BigDecimal.ROUND_HALF_UP).divide(paperStructSumScore, SystemConstant.OPER_SCALE, BigDecimal.ROUND_HALF_UP).multiply(fullRate) : bigZero);
+                if (Objects.nonNull(v1.getIdentifierSecond())) {
+                    v1.getIdentifierSecond().forEach(s -> {
+                        if (Objects.nonNull(s.getIdentifierSecond()) && Objects.nonNull(studentDimensionSecondMap.get(k).get(s.getIdentifierSecond()))) {
+                            myScore.set(myScore.get().add(s.getMyScore()));
+                            dioFullScore.set(dioFullScore.get().add(s.getSumScore()));
+                            DimensionDetailBean dimensionDetailBean = new DimensionDetailBean();
+                            dimensionDetailBean.setCode(s.getIdentifierSecond());
+                            dimensionDetailBean.setName(s.getKnowledgeSecond());
+                            dimensionDetailBean.setScoreRate(Objects.nonNull(s.getSumScore()) && s.getSumScore().doubleValue() > 0 ? s.getMyScore().divide(s.getSumScore(), SystemConstant.OPER_SCALE, BigDecimal.ROUND_HALF_UP).multiply(fullRate) : bigZero);
+                            Set<String> dimensionsSet = new HashSet<>(Arrays.asList(s.getIdentifierSecond()));
+                            String moduleCode = ModuleEnum.convertToSql(s.getModuleCode());
+                            BigDecimal paperStructSumScore = tePaperStructService.paperStructSumScoreByDimension(dimensionsSet, moduleCode);
+                            BigDecimal collegeAvgScoreByDimension = teAnswerService.calculateCollegeAvgScoreByDimension(examStudentDto.getExamId(), examStudentDto.getCollegeId(), examStudentDto.getCourseCode(), dimensionsSet, moduleCode);
+                            dimensionDetailBean.setCollegeAvgScore(Objects.nonNull(collegeAvgScoreByDimension) && Objects.nonNull(paperStructSumScore) ? collegeAvgScoreByDimension.divide(bigActualCount, SystemConstant.OPER_SCALE, BigDecimal.ROUND_HALF_UP).divide(paperStructSumScore, SystemConstant.OPER_SCALE, BigDecimal.ROUND_HALF_UP).multiply(fullRate) : bigZero);
 
-                        if (Objects.nonNull(dimensionMasterysBeanList) && dimensionMasterysBeanList.size() > 0) {
-                            dimensionMasterysBeanList.forEach(o -> {
-                                if (dimensionDetailBean.getScoreRate().intValue() >= o.getGrade().get(0) && dimensionDetailBean.getScoreRate().intValue() <= o.getGrade().get(1)) {
-                                    dimensionDetailBean.setProficiency(o.getLevel());
-                                    return;
-                                }
-                            });
+                            if (Objects.nonNull(dimensionMasterysBeanList) && dimensionMasterysBeanList.size() > 0) {
+                                dimensionMasterysBeanList.forEach(o -> {
+                                    if (dimensionDetailBean.getScoreRate().intValue() >= o.getGrade().get(0) && dimensionDetailBean.getScoreRate().intValue() <= o.getGrade().get(1)) {
+                                        dimensionDetailBean.setProficiency(o.getLevel());
+                                        return;
+                                    }
+                                });
+                            }
+                            subDios.add(dimensionDetailBean);
                         }
-                        subDios.add(dimensionDetailBean);
-                    }
-                });
+                    });
+                }
             });
             dimensionBean.setMyScore(myScore.get());
             dimensionBean.setDioFullScore(dioFullScore.get());

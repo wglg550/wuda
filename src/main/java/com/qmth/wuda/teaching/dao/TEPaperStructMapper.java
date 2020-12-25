@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Param;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Set;
 
 /**
  * <p>
@@ -41,7 +42,7 @@ public interface TEPaperStructMapper extends BaseMapper<TEPaperStruct> {
      * @param moduleCode
      * @return
      */
-    BigDecimal paperStructSumScoreByDimension(@Param("dimensions") List<String> dimensions, @Param("moduleCode") String moduleCode);
+    BigDecimal paperStructSumScoreByDimension(@Param("dimensions") Set<String> dimensions, @Param("moduleCode") String moduleCode);
 
     /**
      * 查找学生答题维度

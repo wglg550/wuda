@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Set;
 
 /**
  * <p>
@@ -55,7 +56,7 @@ public class TEPaperStructServiceImpl extends ServiceImpl<TEPaperStructMapper, T
      * @return
      */
     @Override
-    public BigDecimal paperStructSumScoreByDimension(List<String> dimensions, String moduleCode) {
+    public BigDecimal paperStructSumScoreByDimension(Set<String> dimensions, String moduleCode) {
         return tePaperStructMapper.paperStructSumScoreByDimension(dimensions, moduleCode);
     }
 

@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 import java.util.Objects;
 
 /**
- * @Description: 一级维度dto
+ * @Description: 二级维度dto
  * @Param:
  * @return:
  * @Author: wangliang

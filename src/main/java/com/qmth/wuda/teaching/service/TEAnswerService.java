@@ -5,6 +5,7 @@ import com.qmth.wuda.teaching.entity.TEAnswer;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Set;
 
 /**
  * <p>
@@ -41,7 +42,7 @@ public interface TEAnswerService extends IService<TEAnswer> {
      * @param moduleCode
      * @return
      */
-    BigDecimal calculateCollegeAvgScoreByDimension(Long examId, Long collegeId, String courseCode, List<String> dimensions, String moduleCode);
+    BigDecimal calculateCollegeAvgScoreByDimension(Long examId, Long collegeId, String courseCode, Set<String> dimensions, String moduleCode);
 
     /**
      * 根据维度求学生该维度的平均值
@@ -54,5 +55,5 @@ public interface TEAnswerService extends IService<TEAnswer> {
      * @param moduleCode
      * @return
      */
-    BigDecimal calculateStudentAvgScoreByDimension(Long examId, Long collegeId, String studentCode, String courseCode, List<String> dimensions, String moduleCode);
+    BigDecimal calculateStudentAvgScoreByDimension(Long examId, Long collegeId, String studentCode, String courseCode, Set<String> dimensions, String moduleCode);
 }

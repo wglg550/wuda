@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Param;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Set;
 
 /**
  * <p>
@@ -44,7 +45,7 @@ public interface TEAnswerMapper extends BaseMapper<TEAnswer> {
      * @param moduleCode
      * @return
      */
-    BigDecimal calculateCollegeAvgScoreByDimension(@Param("examId") Long examId, @Param("collegeId") Long collegeId, @Param("courseCode") String courseCode, @Param("dimensions") List<String> dimensions, @Param("moduleCode") String moduleCode);
+    BigDecimal calculateCollegeAvgScoreByDimension(@Param("examId") Long examId, @Param("collegeId") Long collegeId, @Param("courseCode") String courseCode, @Param("dimensions") Set<String> dimensions, @Param("moduleCode") String moduleCode);
 
     /**
      * 根据维度求学生该维度的平均值
@@ -57,5 +58,5 @@ public interface TEAnswerMapper extends BaseMapper<TEAnswer> {
      * @param moduleCode
      * @return
      */
-    BigDecimal calculateStudentAvgScoreByDimension(@Param("examId") Long examId, @Param("collegeId") Long collegeId, @Param("studentCode") String studentCode, @Param("courseCode") String courseCode, @Param("dimensions") List<String> dimensions, @Param("moduleCode") String moduleCode);
+    BigDecimal calculateStudentAvgScoreByDimension(@Param("examId") Long examId, @Param("collegeId") Long collegeId, @Param("studentCode") String studentCode, @Param("courseCode") String courseCode, @Param("dimensions") Set<String> dimensions, @Param("moduleCode") String moduleCode);
 }

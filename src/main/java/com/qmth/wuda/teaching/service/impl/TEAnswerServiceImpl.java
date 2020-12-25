@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Set;
 
 /**
  * <p>
@@ -57,7 +58,7 @@ public class TEAnswerServiceImpl extends ServiceImpl<TEAnswerMapper, TEAnswer> i
      */
     @Override
 //    @Cacheable(value = "calculate_college_avg_score_cache", key = "#examId + '-' + #collegeId + '-' + #courseCode + '-' + #dimensions + '-' + #type", unless = "#result == null")
-    public BigDecimal calculateCollegeAvgScoreByDimension(Long examId, Long collegeId, String courseCode, List<String> dimensions, String moduleCode) {
+    public BigDecimal calculateCollegeAvgScoreByDimension(Long examId, Long collegeId, String courseCode, Set<String> dimensions, String moduleCode) {
         return teAnswerMapper.calculateCollegeAvgScoreByDimension(examId, collegeId, courseCode, dimensions, moduleCode);
     }
 
@@ -73,7 +74,7 @@ public class TEAnswerServiceImpl extends ServiceImpl<TEAnswerMapper, TEAnswer> i
      * @return
      */
     @Override
-    public BigDecimal calculateStudentAvgScoreByDimension(Long examId, Long collegeId, String studentCode, String courseCode, List<String> dimensions, String moduleCode) {
+    public BigDecimal calculateStudentAvgScoreByDimension(Long examId, Long collegeId, String studentCode, String courseCode, Set<String> dimensions, String moduleCode) {
         return teAnswerMapper.calculateStudentAvgScoreByDimension(examId, collegeId, studentCode, courseCode, dimensions, moduleCode);
     }
 }

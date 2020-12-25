@@ -5,6 +5,7 @@ import com.qmth.wuda.teaching.entity.TEPaperStruct;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Set;
 
 /**
  * <p>
@@ -38,7 +39,7 @@ public interface TEPaperStructService extends IService<TEPaperStruct> {
      * @param moduleCode
      * @return
      */
-    BigDecimal paperStructSumScoreByDimension(List<String> dimensions, String moduleCode);
+    BigDecimal paperStructSumScoreByDimension(Set<String> dimensions, String moduleCode);
 
     /**
      * 查找学生答题维度
