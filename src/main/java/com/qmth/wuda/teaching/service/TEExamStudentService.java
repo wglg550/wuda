@@ -40,10 +40,11 @@ public interface TEExamStudentService extends IService<TEExamStudent> {
      *
      * @param examId
      * @param collegeId
+     * @param courseCode
      * @param miss
      * @return
      */
-    Integer findByActualCount(Long examId, Long collegeId, Integer miss);
+    Integer findByActualCount(Long examId, Long collegeId, String courseCode, Integer miss);
 
     /**
      * 根据学生id获取考试科目

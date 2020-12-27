@@ -39,18 +39,20 @@ public interface TEAnswerMapper extends BaseMapper<TEAnswer> {
      * 根据维度求学院该维度的平均值
      *
      * @param examId
+     * @param paperId
      * @param collegeId
      * @param courseCode
      * @param dimensions
      * @param moduleCode
      * @return
      */
-    BigDecimal calculateCollegeAvgScoreByDimension(@Param("examId") Long examId, @Param("collegeId") Long collegeId, @Param("courseCode") String courseCode, @Param("dimensions") Set<String> dimensions, @Param("moduleCode") String moduleCode);
+    BigDecimal calculateCollegeAvgScoreByDimension(@Param("examId") Long examId, @Param("paperId") Long paperId, @Param("collegeId") Long collegeId, @Param("courseCode") String courseCode, @Param("dimensions") Set<String> dimensions, @Param("moduleCode") String moduleCode);
 
     /**
      * 根据维度求学生该维度的平均值
      *
      * @param examId
+     * @param paperId
      * @param collegeId
      * @param studentCode
      * @param courseCode
@@ -58,5 +60,5 @@ public interface TEAnswerMapper extends BaseMapper<TEAnswer> {
      * @param moduleCode
      * @return
      */
-    BigDecimal calculateStudentAvgScoreByDimension(@Param("examId") Long examId, @Param("collegeId") Long collegeId, @Param("studentCode") String studentCode, @Param("courseCode") String courseCode, @Param("dimensions") Set<String> dimensions, @Param("moduleCode") String moduleCode);
+    BigDecimal calculateStudentAvgScoreByDimension(@Param("examId") Long examId, @Param("paperId") Long paperId, @Param("collegeId") Long collegeId, @Param("studentCode") String studentCode, @Param("courseCode") String courseCode, @Param("dimensions") Set<String> dimensions, @Param("moduleCode") String moduleCode);
 }

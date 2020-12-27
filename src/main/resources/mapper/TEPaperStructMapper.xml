@@ -27,6 +27,9 @@
                 t_e_paper_struct teps
         <where>
             and 1 = 1
+            <if test="paperId != null and paperId != ''">
+                and teps.paper_id = #{paperId}
+            </if>
             <if test="dimensions != null">
                 <foreach collection="dimensions" item="dimension" index="index">
                     <choose>
@@ -56,7 +59,9 @@
                 teer.id = tea.exam_record_id
             left join t_e_exam_student tees on
                 tees.exam_id = teer.exam_id and tees.id = teer.exam_student_id
-            <where>
+            left join t_e_paper tep on tep.exam_id = tees.exam_id
+                and tep.id = teps.paper_id
+        <where>
                 <if test="examId != null and examId != ''">
                     and tees.exam_id = #{examId}
                 </if>
@@ -65,6 +70,9 @@
                 </if>
                 <if test="courseCode != null and courseCode != ''">
                     and tees.course_code = #{courseCode}
+                </if>
+                <if test="paperId != null and paperId != ''">
+                    and teps.paper_id = #{paperId}
                 </if>
             </where>
     </select>

@@ -72,6 +72,9 @@
             <if test="collegeId != null and collegeId != ''">
                 and tees.college_id = #{collegeId}
             </if>
+            <if test="courseCode != null and courseCode != ''">
+                and tees.course_code = #{courseCode}
+            </if>
             <if test="miss != null and miss != '' or miss == 0">
                 and tees.miss = #{miss}
             </if>

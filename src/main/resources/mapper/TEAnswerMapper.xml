@@ -30,8 +30,7 @@
         left join t_e_exam tee on
         tee.id = teer.exam_id
         left join t_e_exam_student tees on
-        tees.id = teer.exam_student_id
-        and tees.exam_id = teer.exam_id
+        tees.id = teer.exam_student_id and tees.exam_id = teer.exam_id
         left join t_e_paper tep on
         tep.id = teer.paper_id
         and tep.exam_id = teer.exam_id
@@ -46,6 +45,9 @@
         </if>
         <if test="courseCode != null and courseCode != ''">
             and tees.course_code = #{courseCode}
+        </if>
+        <if test="paperId != null and paperId != ''">
+            and tep.id = #{paperId}
         </if>
     </sql>
 
@@ -69,6 +71,9 @@
                     </choose>
                 </foreach>
                 )
+            </if>
+            <if test="paperId != null and paperId != ''">
+                and teps.paper_id = #{paperId}
             </if>
             and tea.main_number = teps.main_number
             and tea.sub_number = teps.sub_number)

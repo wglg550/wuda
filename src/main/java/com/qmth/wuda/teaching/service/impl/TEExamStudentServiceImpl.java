@@ -6,7 +6,6 @@ import com.qmth.wuda.teaching.dto.ExamCourseDto;
 import com.qmth.wuda.teaching.dto.ExamStudentDto;
 import com.qmth.wuda.teaching.entity.TEExamStudent;
 import com.qmth.wuda.teaching.service.TEExamStudentService;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -61,8 +60,8 @@ public class TEExamStudentServiceImpl extends ServiceImpl<TEExamStudentMapper, T
      */
     @Override
 //    @Cacheable(value = "exam_param_cache", key = "#examId + '-' + #collegeId + '-' + #miss", unless = "#result == null")
-    public Integer findByActualCount(Long examId, Long collegeId, Integer miss) {
-        return teExamStudentMapper.findByActualCount(examId, collegeId, miss);
+    public Integer findByActualCount(Long examId, Long collegeId, String courseCode, Integer miss) {
+        return teExamStudentMapper.findByActualCount(examId, collegeId, courseCode, miss);
     }
 
     /**

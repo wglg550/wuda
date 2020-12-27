@@ -54,24 +54,26 @@ public class TEPaperStructServiceImpl extends ServiceImpl<TEPaperStructMapper, T
      *
      * @param dimensions
      * @param moduleCode
+     * @param paperId
      * @return
      */
     @Override
-    public BigDecimal paperStructSumScoreByDimension(Set<String> dimensions, String moduleCode) {
-        return tePaperStructMapper.paperStructSumScoreByDimension(dimensions, moduleCode);
+    public BigDecimal paperStructSumScoreByDimension(Set<String> dimensions, String moduleCode, Long paperId) {
+        return tePaperStructMapper.paperStructSumScoreByDimension(dimensions, moduleCode, paperId);
     }
 
     /**
      * 查找学生答题维度
      *
      * @param examId
+     * @param paperId
      * @param studentCode
      * @param courseCode
      * @param moduleCode
      * @return
      */
     @Override
-    public List<StudentDimensionDto> findStudentDimension(Long examId, String studentCode, String courseCode, String moduleCode) {
-        return tePaperStructMapper.findStudentDimension(examId, studentCode, courseCode, moduleCode);
+    public List<StudentDimensionDto> findStudentDimension(Long examId, Long paperId, String studentCode, String courseCode, String moduleCode) {
+        return tePaperStructMapper.findStudentDimension(examId, paperId, studentCode, courseCode, moduleCode);
     }
 }

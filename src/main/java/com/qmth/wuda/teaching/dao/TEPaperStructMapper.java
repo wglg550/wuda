@@ -43,16 +43,17 @@ public interface TEPaperStructMapper extends BaseMapper<TEPaperStruct> {
      * @param moduleCode
      * @return
      */
-    BigDecimal paperStructSumScoreByDimension(@Param("dimensions") Set<String> dimensions, @Param("moduleCode") String moduleCode);
+    BigDecimal paperStructSumScoreByDimension(@Param("dimensions") Set<String> dimensions, @Param("moduleCode") String moduleCode, @Param("paperId") Long paperId);
 
     /**
      * 查找学生答题维度
      *
      * @param examId
+     * @param paperId
      * @param studentCode
      * @param courseCode
      * @param moduleCode
      * @return
      */
-    List<StudentDimensionDto> findStudentDimension(@Param("examId") Long examId, @Param("studentCode") String studentCode, @Param("courseCode") String courseCode, @Param("moduleCode") String moduleCode);
+    List<StudentDimensionDto> findStudentDimension(@Param("examId") Long examId, @Param("paperId") Long paperId, @Param("studentCode") String studentCode, @Param("courseCode") String courseCode, @Param("moduleCode") String moduleCode);
 }

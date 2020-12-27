@@ -51,6 +51,7 @@ public class TEAnswerServiceImpl extends ServiceImpl<TEAnswerMapper, TEAnswer> i
      * 根据维度求学院该维度的平均值
      *
      * @param examId
+     * @param paperId
      * @param collegeId
      * @param courseCode
      * @param dimensions
@@ -58,14 +59,15 @@ public class TEAnswerServiceImpl extends ServiceImpl<TEAnswerMapper, TEAnswer> i
      */
     @Override
 //    @Cacheable(value = "calculate_college_avg_score_cache", key = "#examId + '-' + #collegeId + '-' + #courseCode + '-' + #dimensions + '-' + #type", unless = "#result == null")
-    public BigDecimal calculateCollegeAvgScoreByDimension(Long examId, Long collegeId, String courseCode, Set<String> dimensions, String moduleCode) {
-        return teAnswerMapper.calculateCollegeAvgScoreByDimension(examId, collegeId, courseCode, dimensions, moduleCode);
+    public BigDecimal calculateCollegeAvgScoreByDimension(Long examId, Long paperId, Long collegeId, String courseCode, Set<String> dimensions, String moduleCode) {
+        return teAnswerMapper.calculateCollegeAvgScoreByDimension(examId, paperId, collegeId, courseCode, dimensions, moduleCode);
     }
 
     /**
      * 根据维度求学生该维度的平均值
      *
      * @param examId
+     * @param paperId
      * @param collegeId
      * @param studentCode
      * @param courseCode
@@ -74,7 +76,7 @@ public class TEAnswerServiceImpl extends ServiceImpl<TEAnswerMapper, TEAnswer> i
      * @return
      */
     @Override
-    public BigDecimal calculateStudentAvgScoreByDimension(Long examId, Long collegeId, String studentCode, String courseCode, Set<String> dimensions, String moduleCode) {
-        return teAnswerMapper.calculateStudentAvgScoreByDimension(examId, collegeId, studentCode, courseCode, dimensions, moduleCode);
+    public BigDecimal calculateStudentAvgScoreByDimension(Long examId, Long paperId, Long collegeId, String studentCode, String courseCode, Set<String> dimensions, String moduleCode) {
+        return teAnswerMapper.calculateStudentAvgScoreByDimension(examId, paperId, collegeId, studentCode, courseCode, dimensions, moduleCode);
     }
 }
