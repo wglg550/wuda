@@ -14,6 +14,8 @@ import com.qmth.wuda.teaching.service.*;
 import com.qmth.wuda.teaching.util.JacksonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 
@@ -68,7 +70,7 @@ public class CacheServiceImpl implements CacheService {
      * @return
      */
     @Override
-//    @Cacheable(value = "personal_report_cache", key = "#examId + '-' + #examStudentId + '-' + #courseCode")
+    @Cacheable(value = "personal_report_cache", key = "#examId + '-' + #examStudentId + '-' + #courseCode")
     public PersonalReportBean addPersonalReport(Long examId, Long examStudentId, String courseCode) {
         //报告第一页start
         ExamStudentDto examStudentDto = teExamStudentService.findById(examStudentId);
@@ -115,11 +117,11 @@ public class CacheServiceImpl implements CacheService {
                     String[] grades = strs[1].split(",");
                     String gradesO = grades[0].replaceAll("\\(", "").replaceAll("\\)", "").replaceAll("\\[", "").replaceAll("]", "");
                     String gradesT = grades[1].replaceAll("\\(", "").replaceAll("\\)", "").replaceAll("\\[", "").replaceAll("]", "");
-                    List<Integer> gradeInteger = new ArrayList<>();
-                    gradeInteger.add(Integer.parseInt(gradesO));
-                    gradeInteger.add(Integer.parseInt(gradesT));
+                    List<Double> gradeDouble = new ArrayList<>();
+                    gradeDouble.add(Double.parseDouble(gradesO));
+                    gradeDouble.add(Double.parseDouble(gradesT));
 //                    dimensionMasterysBeanList.add(new DimensionMasterysBean(strs[0], Arrays.asList((Integer[]) ConvertUtils.convert(strs, Integer.class))));
-                    dimensionMasterysDtoList.add(new DimensionMasterysDto(strs[0], gradeInteger, grades));
+                    dimensionMasterysDtoList.add(new DimensionMasterysDto(strs[0], gradeDouble, grades));
                     dimensionSecondMasterysDtoMap.put(s.getName(), dimensionMasterysDtoList);
                 }
             }
@@ -384,7 +386,7 @@ public class CacheServiceImpl implements CacheService {
      * @param courseCode
      */
     @Override
-//    @CacheEvict(value = "personal_report_cache", key = "#examId + '-' + #examStudentId + '-' + #courseCode")
+    @CacheEvict(value = "personal_report_cache", key = "#examId + '-' + #examStudentId + '-' + #courseCode")
     public void removePersonalReport(Long examId, Long examStudentId, String courseCode) {
 
     }

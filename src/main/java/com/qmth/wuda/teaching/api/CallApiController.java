@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.qmth.wuda.teaching.annotation.ApiJsonObject;
 import com.qmth.wuda.teaching.annotation.ApiJsonProperty;
 import com.qmth.wuda.teaching.bean.Result;
+import com.qmth.wuda.teaching.constant.SystemConstant;
 import com.qmth.wuda.teaching.entity.*;
 import com.qmth.wuda.teaching.exception.BusinessException;
 import com.qmth.wuda.teaching.service.*;
@@ -21,7 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.function.Function;
@@ -89,9 +89,6 @@ public class CallApiController {
             throw new BusinessException("考试id或考试code必须传一个");
         }
         List<Map> studentsMark = callApiService.callStudentScore(examId, examCode);
-        if (true) {
-            return ResultUtil.ok(studentsMark);
-        }
         if (Objects.nonNull(studentsMark) && studentsMark.size() > 0) {
             QueryWrapper<TBSchool> tbSchoolQueryWrapper = new QueryWrapper<>();
             tbSchoolQueryWrapper.lambda().eq(TBSchool::getCode, "whdx");
@@ -143,6 +140,9 @@ public class CallApiController {
                 String subjectiveScore = (String) map.get("subjectiveScore");
                 String subjectCode = (String) map.get("subjectCode");
                 String subjectName = (String) map.get("subjectName");
+                if (Objects.equals(subjectName, "大学物理B（下）")) {
+                    subjectCode = "1001";
+                }
                 Integer status = Integer.parseInt(String.valueOf(map.get("status")));
 
                 TEPaper tePaper = null;
@@ -239,7 +239,24 @@ public class CallApiController {
             });
 
             tbSchoolCollegeService.deleteAll(tbSchool.getId());
-            teStudentService.deleteAll(tbSchool.getId(), new HashSet<>(studentMap.keySet()));
+            int min = 0;
+            int max = SystemConstant.MAX_IMPORT_SIZE, size = studentMap.keySet().size();
+            if (max >= size) {
+                max = size;
+            }
+            List list = Arrays.asList(studentMap.keySet().toArray());
+            while (max <= size) {
+                List subList = list.subList(min, max);
+                teStudentService.deleteAll(tbSchool.getId(), new HashSet<>(subList));
+                if (max == size) {
+                    break;
+                }
+                min = max;
+                max += SystemConstant.MAX_IMPORT_SIZE;
+                if (max >= size) {
+                    max = size;
+                }
+            }
             tbTeacherService.deleteAll(tbSchool.getId());
 
             List<TBSchoolCollege> tbSchoolCollegeList = new ArrayList();

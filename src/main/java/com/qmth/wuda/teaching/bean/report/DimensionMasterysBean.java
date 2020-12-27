@@ -18,13 +18,13 @@ public class DimensionMasterysBean implements Serializable {
     private String level;
 
     @ApiModelProperty(value = "分数比")
-    private List<Integer> grade;
+    private List<Double> grade;
 
     public DimensionMasterysBean() {
 
     }
 
-    public DimensionMasterysBean(String level, List<Integer> grade) {
+    public DimensionMasterysBean(String level, List<Double> grade) {
         this.level = level;
         this.grade = grade;
     }
@@ -37,11 +37,11 @@ public class DimensionMasterysBean implements Serializable {
         this.level = level;
     }
 
-    public List<Integer> getGrade() {
+    public List<Double> getGrade() {
         return grade;
     }
 
-    public void setGrade(List<Integer> grade) {
+    public void setGrade(List<Double> grade) {
         this.grade = grade;
     }
 }

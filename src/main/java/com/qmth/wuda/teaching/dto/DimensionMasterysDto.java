@@ -22,7 +22,7 @@ public class DimensionMasterysDto extends DimensionMasterysBean implements Seria
 
     }
 
-    public DimensionMasterysDto(String level, List<Integer> grade, String[] sourceGrade) {
+    public DimensionMasterysDto(String level, List<Double> grade, String[] sourceGrade) {
         setLevel(level);
         setGrade(grade);
         this.sourceGrade = sourceGrade;
