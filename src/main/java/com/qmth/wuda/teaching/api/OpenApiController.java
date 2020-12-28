@@ -3,7 +3,9 @@ package com.qmth.wuda.teaching.api;
 import com.qmth.wuda.teaching.annotation.ApiJsonObject;
 import com.qmth.wuda.teaching.annotation.ApiJsonProperty;
 import com.qmth.wuda.teaching.bean.Result;
+import com.qmth.wuda.teaching.bean.report.course.StudentReallyInfoBean;
 import com.qmth.wuda.teaching.config.DictionaryConfig;
+import com.qmth.wuda.teaching.constant.SystemConstant;
 import com.qmth.wuda.teaching.dto.ExamCourseDto;
 import com.qmth.wuda.teaching.dto.ExamDto;
 import com.qmth.wuda.teaching.entity.TEStudent;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -45,10 +48,10 @@ public class OpenApiController {
     CacheService cacheService;
 
     @ApiOperation(value = "获取考生科目接口")
-    @RequestMapping(value = "/examStudent/course", method = RequestMethod.POST)
-    @ApiResponses({@ApiResponse(code = 200, message = "{\"success\":true}", response = Result.class)})
+    @RequestMapping(value = "/exam/findStudentReallyInfo", method = RequestMethod.POST)
+    @ApiResponses({@ApiResponse(code = 200, message = "{\"success\":true}", response = StudentReallyInfoBean.class)})
     public Result examStudentCourse(
-            @ApiJsonObject(name = "openExamStudentCourse", value = {
+            @ApiJsonObject(name = "openFindStudentReallyInfo", value = {
                     @ApiJsonProperty(key = "studentCode", description = "学号")
             })
             @ApiParam(value = "获取考生科目信息", required = true) @RequestBody Map<String, Object> mapParameter) {
@@ -56,9 +59,10 @@ public class OpenApiController {
             throw new BusinessException("学号不能为空");
         }
         String studentCode = (String) mapParameter.get("studentCode");
-        TEStudent teStudent = teStudentService.findByStudentCode(studentCode);
-        List<ExamCourseDto> examCourseDtoList = teExamStudentService.findByStudentId(teStudent.getId());
-        return ResultUtil.ok(new ExamDto(dictionaryConfig.sysDomain().getExamName(), teStudent.getId(), teStudent.getName(), examCourseDtoList));
+//        TEStudent teStudent = teStudentService.findByStudentCode(studentCode);
+//        List<ExamCourseDto> examCourseDtoList = teExamStudentService.findByStudentId(teStudent.getId());
+//        return ResultUtil.ok(new ExamDto(dictionaryConfig.sysDomain().getExamName(), teStudent.getId(), teStudent.getName(), examCourseDtoList));
+        return ResultUtil.ok(Collections.singletonMap(SystemConstant.SUCCESS, true));
     }
 
     @ApiOperation(value = "根据科目获取报告接口")
