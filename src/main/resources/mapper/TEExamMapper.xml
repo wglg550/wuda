@@ -13,4 +13,30 @@
             </if>
         </where>
     </delete>
+
+    <select id="findByExamName" resultType="com.qmth.wuda.teaching.dto.ExamDto">
+        select
+        t.id,
+        t.code as examCode,
+        temp.name as examName,
+        from_unixtime(t.create_time / 1000, '%Y年%m月%d日') as createTime
+        from
+        (
+        select
+        tee.id,
+        tee.name
+        from
+        t_e_exam tee
+        <where>
+            <if test="examName != null and examName != ''">
+                and tee.name = #{examName}
+            </if>
+        </where>
+        ) temp
+        left join t_e_exam t on
+        t.parent_id = temp.id
+        where t.test = 1
+        order by
+        t.create_time desc
+    </select>
 </mapper>

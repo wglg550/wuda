@@ -1,7 +1,10 @@
 package com.qmth.wuda.teaching.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.qmth.wuda.teaching.dto.ExamDto;
 import com.qmth.wuda.teaching.entity.TEExam;
+
+import java.util.List;
 
 /**
  * <p>
@@ -31,5 +34,13 @@ public interface TEExamService extends IService<TEExam> {
      * @param accessSecret
      * @return
      */
-    TEExam saveExam(String examName,Long examId, String examCode, String accessKey, String accessSecret);
+    TEExam saveExam(String examName, Long examId, String examCode, String accessKey, String accessSecret);
+
+    /**
+     * 根据考试名称查询考试
+     *
+     * @param examName
+     * @return
+     */
+    List<ExamDto> findByExamName(String examName);
 }

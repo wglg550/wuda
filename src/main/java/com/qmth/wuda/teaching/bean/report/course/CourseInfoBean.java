@@ -5,12 +5,12 @@ import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 
 /**
-* @Description: 科目信息
-* @Param:
-* @return:
-* @Author: wangliang
-* @Date: 2020/12/28
-*/
+ * @Description: 科目信息
+ * @Param:
+ * @return:
+ * @Author: wangliang
+ * @Date: 2020/12/28
+ */
 public class CourseInfoBean implements Serializable {
 
     @ApiModelProperty(value = "考试代码")
@@ -27,6 +27,18 @@ public class CourseInfoBean implements Serializable {
 
     @ApiModelProperty(value = "状态")
     private String status;
+
+    public CourseInfoBean() {
+
+    }
+
+    public CourseInfoBean(String examCode, Boolean isAbsent, String paperCode, String paperName, String status) {
+        this.examCode = examCode;
+        this.isAbsent = isAbsent;
+        this.paperCode = paperCode;
+        this.paperName = paperName;
+        this.status = status;
+    }
 
     public String getExamCode() {
         return examCode;

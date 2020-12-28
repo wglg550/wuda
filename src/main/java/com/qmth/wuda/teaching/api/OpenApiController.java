@@ -1,19 +1,21 @@
 package com.qmth.wuda.teaching.api;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.qmth.wuda.teaching.annotation.ApiJsonObject;
 import com.qmth.wuda.teaching.annotation.ApiJsonProperty;
 import com.qmth.wuda.teaching.bean.Result;
+import com.qmth.wuda.teaching.bean.report.course.CourseInfoBean;
+import com.qmth.wuda.teaching.bean.report.course.ExamInfoBean;
+import com.qmth.wuda.teaching.bean.report.course.StudentInfoBean;
 import com.qmth.wuda.teaching.bean.report.course.StudentReallyInfoBean;
 import com.qmth.wuda.teaching.config.DictionaryConfig;
-import com.qmth.wuda.teaching.constant.SystemConstant;
-import com.qmth.wuda.teaching.dto.ExamCourseDto;
 import com.qmth.wuda.teaching.dto.ExamDto;
+import com.qmth.wuda.teaching.entity.TBSchool;
+import com.qmth.wuda.teaching.entity.TECourse;
+import com.qmth.wuda.teaching.entity.TEExamStudent;
 import com.qmth.wuda.teaching.entity.TEStudent;
 import com.qmth.wuda.teaching.exception.BusinessException;
-import com.qmth.wuda.teaching.service.CacheService;
-import com.qmth.wuda.teaching.service.TEExamService;
-import com.qmth.wuda.teaching.service.TEExamStudentService;
-import com.qmth.wuda.teaching.service.TEStudentService;
+import com.qmth.wuda.teaching.service.*;
 import com.qmth.wuda.teaching.util.ResultUtil;
 import io.swagger.annotations.*;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,10 +24,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Api(tags = "开放接口层apiController")
 @RestController
@@ -47,6 +49,12 @@ public class OpenApiController {
     @Resource
     CacheService cacheService;
 
+    @Resource
+    TECourseService teCourseService;
+
+    @Resource
+    TBSchoolService tbSchoolService;
+
     @ApiOperation(value = "获取考生科目接口")
     @RequestMapping(value = "/exam/findStudentReallyInfo", method = RequestMethod.POST)
     @ApiResponses({@ApiResponse(code = 200, message = "{\"success\":true}", response = StudentReallyInfoBean.class)})
@@ -59,10 +67,59 @@ public class OpenApiController {
             throw new BusinessException("学号不能为空");
         }
         String studentCode = (String) mapParameter.get("studentCode");
-//        TEStudent teStudent = teStudentService.findByStudentCode(studentCode);
-//        List<ExamCourseDto> examCourseDtoList = teExamStudentService.findByStudentId(teStudent.getId());
-//        return ResultUtil.ok(new ExamDto(dictionaryConfig.sysDomain().getExamName(), teStudent.getId(), teStudent.getName(), examCourseDtoList));
-        return ResultUtil.ok(Collections.singletonMap(SystemConstant.SUCCESS, true));
+        QueryWrapper<TEStudent> teStudentQueryWrapper = new QueryWrapper<>();
+        teStudentQueryWrapper.lambda().eq(TEStudent::getStudentCode, studentCode);
+        TEStudent teStudent = teStudentService.getOne(teStudentQueryWrapper);
+        if (Objects.isNull(teStudent)) {
+            throw new BusinessException("没有当前这个学生");
+        }
+        QueryWrapper<TBSchool> tbSchoolQueryWrapper = new QueryWrapper<>();
+        tbSchoolQueryWrapper.lambda().eq(TBSchool::getCode, "whdx");
+        TBSchool tbSchool = tbSchoolService.getOne(tbSchoolQueryWrapper);
+
+        StudentInfoBean studentInfoBean = new StudentInfoBean(teStudent.getName(), tbSchool.getName(), tbSchool.getCode());
+
+        List<ExamDto> teExamList = teExamService.findByExamName(dictionaryConfig.sysDomain().getExamName());
+        if (Objects.isNull(teExamList) || teExamList.size() == 0) {
+            throw new BusinessException("当前学生没有考试");
+        }
+        AtomicReference<String> examCode = new AtomicReference<>();
+        AtomicReference<String> createTime = new AtomicReference<>();
+        List<Long> examIds = new ArrayList<>();
+        teExamList.forEach(s -> {
+            examCode.set(s.getExamCode());
+            createTime.set(s.getCreateTime());
+            examIds.add(s.getId());
+        });
+        ExamInfoBean examInfoBean = new ExamInfoBean(examCode.get(), dictionaryConfig.sysDomain().getExamName(), createTime.get());
+
+        QueryWrapper<TECourse> teCourseQueryWrapper = new QueryWrapper<>();
+        teCourseQueryWrapper.lambda().in(TECourse::getExamId, examIds);
+        List<TECourse> teCourseList = teCourseService.list(teCourseQueryWrapper);
+        if (Objects.isNull(teCourseList) || teCourseList.size() == 0) {
+            throw new BusinessException("当前学生没有科目信息");
+        }
+
+        QueryWrapper<TEExamStudent> teExamStudentQueryWrapper = new QueryWrapper<>();
+        teExamStudentQueryWrapper.lambda().eq(TEExamStudent::getStudentId, teStudent.getId())
+                .in(TEExamStudent::getExamId, examIds);
+        List<TEExamStudent> teExamStudentList = teExamStudentService.list(teExamStudentQueryWrapper);
+        if (Objects.isNull(teExamStudentList) || teExamStudentList.size() == 0) {
+            throw new BusinessException("当前学生没有考生信息");
+        }
+        Map<String, TEExamStudent> teExamStudentMap = teExamStudentList.stream().collect(Collectors.toMap(s -> s.getCourseCode(), Function.identity(), (dto1, dto2) -> dto1));
+
+        List<CourseInfoBean> courseInfoBeanList = new ArrayList<>();
+        teCourseList.forEach(s -> {
+            CourseInfoBean courseInfoBean = new CourseInfoBean(examCode.get(), teExamStudentMap.get(s.getCourseCode()).getMiss() == 1 ? false : true, s.getCourseCode(), s.getCourseName(), String.valueOf(s.getStatus()));
+            courseInfoBeanList.add(courseInfoBean);
+        });
+        examInfoBean.setCourseInfo(courseInfoBeanList);
+
+        StudentReallyInfoBean studentReallyInfoBean = new StudentReallyInfoBean();
+        studentReallyInfoBean.setExamInfo(Collections.singletonList(examInfoBean));
+        studentReallyInfoBean.setStudentInfo(studentInfoBean);
+        return ResultUtil.ok(studentReallyInfoBean);
     }
 
     @ApiOperation(value = "根据科目获取报告接口")

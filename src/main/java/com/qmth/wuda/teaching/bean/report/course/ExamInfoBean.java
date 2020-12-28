@@ -1,18 +1,17 @@
 package com.qmth.wuda.teaching.bean.report.course;
 
-import com.qmth.wuda.teaching.bean.report.SynthesisBean;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
 import java.util.List;
 
-/** 
-* @Description:  
-* @Param:  
-* @return:  
-* @Author: wangliang
-* @Date: 2020/12/28 
-*/ 
+/**
+ * @Description:
+ * @Param:
+ * @return:
+ * @Author: wangliang
+ * @Date: 2020/12/28
+ */
 public class ExamInfoBean implements Serializable {
 
     @ApiModelProperty(value = "考试代码")
@@ -26,6 +25,16 @@ public class ExamInfoBean implements Serializable {
 
     @ApiModelProperty(value = "科目信息")
     private List<CourseInfoBean> courseInfo;
+
+    public ExamInfoBean() {
+
+    }
+
+    public ExamInfoBean(String examCode, String examName, String createTime) {
+        this.examCode = examCode;
+        this.examName = examName;
+        this.createTime = createTime;
+    }
 
     public String getExamCode() {
         return examCode;

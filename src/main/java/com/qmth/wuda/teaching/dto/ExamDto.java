@@ -1,5 +1,11 @@
 package com.qmth.wuda.teaching.dto;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import io.swagger.annotations.ApiModelProperty;
+
+import java.io.Serializable;
+
 /**
  * @Description: 考试临时传输对象dto
  * @Param:
@@ -7,46 +13,27 @@ package com.qmth.wuda.teaching.dto;
  * @Author: wangliang
  * @Date: 2020/12/15
  */
-
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
-import io.swagger.annotations.ApiModelProperty;
-
-import java.io.Serializable;
-import java.util.List;
-
 public class ExamDto implements Serializable {
+
+    @JsonSerialize(using = ToStringSerializer.class)
+    @ApiModelProperty(value = "考试id")
+    private Long id;
 
     @ApiModelProperty(value = "考试名称")
     private String examName;
 
-    @JsonSerialize(using = ToStringSerializer.class)
-    @ApiModelProperty(value = "学生id")
-    private Long studentId;
+    @ApiModelProperty(value = "考试编码")
+    private String examCode;
 
-    @ApiModelProperty(value = "学生姓名")
-    private String studentName;
+    @ApiModelProperty(value = "创建时间")
+    private String createTime;
 
-    @ApiModelProperty(value = "考试名称")
-    private List<ExamCourseDto> courseList;
-
-    public ExamDto() {
-
+    public Long getId() {
+        return id;
     }
 
-    public ExamDto(String examName, Long studentId, String studentName, List<ExamCourseDto> courseList) {
-        this.examName = examName;
-        this.studentId = studentId;
-        this.studentName = studentName;
-        this.courseList = courseList;
-    }
-
-    public Long getStudentId() {
-        return studentId;
-    }
-
-    public void setStudentId(Long studentId) {
-        this.studentId = studentId;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getExamName() {
@@ -57,19 +44,19 @@ public class ExamDto implements Serializable {
         this.examName = examName;
     }
 
-    public String getStudentName() {
-        return studentName;
+    public String getExamCode() {
+        return examCode;
     }
 
-    public void setStudentName(String studentName) {
-        this.studentName = studentName;
+    public void setExamCode(String examCode) {
+        this.examCode = examCode;
     }
 
-    public List<ExamCourseDto> getCourseList() {
-        return courseList;
+    public String getCreateTime() {
+        return createTime;
     }
 
-    public void setCourseList(List<ExamCourseDto> courseList) {
-        this.courseList = courseList;
+    public void setCreateTime(String createTime) {
+        this.createTime = createTime;
     }
 }

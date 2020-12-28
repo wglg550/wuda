@@ -3,6 +3,7 @@ package com.qmth.wuda.teaching.bean.report.course;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * @Description: 考生最终信息
@@ -14,16 +15,16 @@ import java.io.Serializable;
 public class StudentReallyInfoBean implements Serializable {
 
     @ApiModelProperty(value = "考试信息")
-    private ExamInfoBean examInfo;
+    private List<ExamInfoBean> examInfo;
 
     @ApiModelProperty(value = "考生信息")
     private StudentInfoBean studentInfo;
 
-    public ExamInfoBean getExamInfo() {
+    public List<ExamInfoBean> getExamInfo() {
         return examInfo;
     }
 
-    public void setExamInfo(ExamInfoBean examInfo) {
+    public void setExamInfo(List<ExamInfoBean> examInfo) {
         this.examInfo = examInfo;
     }
 

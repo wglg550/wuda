@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.qmth.wuda.teaching.constant.SystemConstant;
 import com.qmth.wuda.teaching.dao.TEExamMapper;
+import com.qmth.wuda.teaching.dto.ExamDto;
 import com.qmth.wuda.teaching.entity.TEExam;
 import com.qmth.wuda.teaching.service.TEExamService;
 import org.slf4j.Logger;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -83,5 +85,16 @@ public class TEExamServiceImpl extends ServiceImpl<TEExamMapper, TEExam> impleme
         }
         this.saveOrUpdate(teExam);
         return teExam;
+    }
+
+    /**
+     * 根据考试名称查询考试
+     *
+     * @param examName
+     * @return
+     */
+    @Override
+    public List<ExamDto> findByExamName(String examName) {
+        return teExamMapper.findByExamName(examName);
     }
 }

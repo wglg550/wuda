@@ -4,13 +4,13 @@ import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
 
-/** 
-* @Description: 学生信息
-* @Param:  
-* @return:  
-* @Author: wangliang
-* @Date: 2020/12/28 
-*/ 
+/**
+ * @Description: 学生信息
+ * @Param:
+ * @return:
+ * @Author: wangliang
+ * @Date: 2020/12/28
+ */
 public class StudentInfoBean implements Serializable {
 
     @ApiModelProperty(value = "考生名称")
@@ -21,6 +21,16 @@ public class StudentInfoBean implements Serializable {
 
     @ApiModelProperty(value = "学校编码")
     private String studentCode;
+
+    public StudentInfoBean() {
+
+    }
+
+    public StudentInfoBean(String name, String school, String studentCode) {
+        this.name = name;
+        this.school = school;
+        this.studentCode = studentCode;
+    }
 
     public String getName() {
         return name;

@@ -36,6 +36,10 @@ public class TECourse extends BaseEntity implements Serializable {
     @TableField(value = "course_code")
     private String courseCode;
 
+    @ApiModelProperty(value = "发布状态（0:未计算、1:未发布、2:已发布、10:已测试）")
+    @TableField(value = "status")
+    private Integer status;
+
     public TECourse() {
 
     }
@@ -51,6 +55,14 @@ public class TECourse extends BaseEntity implements Serializable {
         setId(UidUtil.nextId());
         this.courseName = courseName;
         this.courseCode = courseCode;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
     }
 
     public static long getSerialVersionUID() {

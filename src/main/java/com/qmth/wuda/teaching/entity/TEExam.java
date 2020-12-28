@@ -49,6 +49,10 @@ public class TEExam extends BaseEntity implements Serializable {
     @TableField(value = "access_secret")
     private String accessSecret;
 
+    @ApiModelProperty(value = "是否是测试数据，0：是，1：不是")
+    @TableField(value = "test")
+    private Integer test;
+
     public TEExam() {
 
     }
@@ -78,6 +82,14 @@ public class TEExam extends BaseEntity implements Serializable {
         this.name = name;
         this.code = code;
         this.enable = 1;
+    }
+
+    public Integer getTest() {
+        return test;
+    }
+
+    public void setTest(Integer test) {
+        this.test = test;
     }
 
     public Long getParentId() {
