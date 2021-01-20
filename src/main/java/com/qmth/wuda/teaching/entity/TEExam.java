@@ -24,11 +24,6 @@ public class TEExam extends BaseEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @JsonSerialize(using = ToStringSerializer.class)
-    @ApiModelProperty(value = "父id")
-    @TableField(value = "parent_id")
-    private Long parentId;
-
     @ApiModelProperty(value = "名称")
     @TableField(value = "name")
     private String name;
@@ -49,31 +44,29 @@ public class TEExam extends BaseEntity implements Serializable {
     @TableField(value = "access_secret")
     private String accessSecret;
 
-    @ApiModelProperty(value = "是否是测试数据，0：是，1：不是")
-    @TableField(value = "test")
-    private Integer test;
+    @ApiModelProperty(value = "备注")
+    @TableField(value = "remark")
+    private String remark;
 
     public TEExam() {
 
     }
 
-    public TEExam(Long examId, String name, String code, String accessKey, String accessSecret, Long parentId) {
+    public TEExam(Long examId, String name, String code, String accessKey, String accessSecret) {
         setId(examId);
         this.name = name + "_" + examId;
         this.code = code;
         this.accessKey = accessKey;
         this.accessSecret = accessSecret;
-        this.parentId = parentId;
         this.enable = 1;
     }
 
-    public TEExam(String name, String code, String accessKey, String accessSecret, Long parentId) {
+    public TEExam(String name, String code, String accessKey, String accessSecret) {
         setId(UidUtil.nextId());
         this.name = name + "_" + code;
         this.code = code;
         this.accessKey = accessKey;
         this.accessSecret = accessSecret;
-        this.parentId = parentId;
         this.enable = 1;
     }
 
@@ -84,20 +77,12 @@ public class TEExam extends BaseEntity implements Serializable {
         this.enable = 1;
     }
 
-    public Integer getTest() {
-        return test;
+    public String getRemark() {
+        return remark;
     }
 
-    public void setTest(Integer test) {
-        this.test = test;
-    }
-
-    public Long getParentId() {
-        return parentId;
-    }
-
-    public void setParentId(Long parentId) {
-        this.parentId = parentId;
+    public void setRemark(String remark) {
+        this.remark = remark;
     }
 
     public String getAccessKey() {

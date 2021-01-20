@@ -18,20 +18,20 @@ import com.qmth.wuda.teaching.exception.BusinessException;
 import com.qmth.wuda.teaching.service.*;
 import com.qmth.wuda.teaching.util.ResultUtil;
 import io.swagger.annotations.*;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Api(tags = "开放接口层apiController")
 @RestController
-@RequestMapping("/${prefix.url.wuda}/open")
+@RequestMapping("/${prefix.url.wuda}/wuda/open")
 public class OpenApiController {
 
     @Resource
@@ -79,26 +79,20 @@ public class OpenApiController {
 
         StudentInfoBean studentInfoBean = new StudentInfoBean(teStudent.getName(), tbSchool.getName(), tbSchool.getCode());
 
-        List<ExamDto> teExamList = teExamService.findByExamName(dictionaryConfig.sysDomain().getExamName());
+        List<ExamDto> teExamList = teExamService.findByExamName(null);
         if (Objects.isNull(teExamList) || teExamList.size() == 0) {
             throw new BusinessException("当前学生没有考试");
         }
-        AtomicReference<String> examCode = new AtomicReference<>();
-        AtomicReference<String> createTime = new AtomicReference<>();
-        List<Long> examIds = new ArrayList<>();
-        teExamList.forEach(s -> {
-            examCode.set(s.getExamCode());
-            createTime.set(s.getCreateTime());
-            examIds.add(s.getId());
-        });
-        ExamInfoBean examInfoBean = new ExamInfoBean(examCode.get(), dictionaryConfig.sysDomain().getExamName(), createTime.get());
+        ExamInfoBean examInfoBean = new ExamInfoBean(teExamList.get(0).getExamCode(), teExamList.get(0).getExamName(), teExamList.get(0).getCreateTime());
 
         QueryWrapper<TECourse> teCourseQueryWrapper = new QueryWrapper<>();
-        teCourseQueryWrapper.lambda().in(TECourse::getExamId, examIds);
+        teCourseQueryWrapper.lambda().in(TECourse::getExamCode, examInfoBean.getExamCode());
         List<TECourse> teCourseList = teCourseService.list(teCourseQueryWrapper);
         if (Objects.isNull(teCourseList) || teCourseList.size() == 0) {
             throw new BusinessException("当前学生没有科目信息");
         }
+        List<Long> examIds = teCourseList.stream().map(TECourse::getExamId).collect(Collectors.toList());
+        Map<Long, TECourse> teCourseMap = teCourseList.stream().collect(Collectors.toMap(s -> s.getExamId(), Function.identity(), (dto1, dto2) -> dto1));
 
         QueryWrapper<TEExamStudent> teExamStudentQueryWrapper = new QueryWrapper<>();
         teExamStudentQueryWrapper.lambda().eq(TEExamStudent::getStudentId, teStudent.getId())
@@ -110,8 +104,8 @@ public class OpenApiController {
         Map<String, TEExamStudent> teExamStudentMap = teExamStudentList.stream().collect(Collectors.toMap(s -> s.getCourseCode(), Function.identity(), (dto1, dto2) -> dto1));
 
         List<CourseInfoBean> courseInfoBeanList = new ArrayList<>();
-        teCourseList.forEach(s -> {
-            CourseInfoBean courseInfoBean = new CourseInfoBean(examCode.get(), teExamStudentMap.get(s.getCourseCode()).getMiss() == 1 ? false : true, s.getCourseCode(), s.getCourseName(), String.valueOf(s.getStatus()));
+        teExamStudentList.forEach(s -> {
+            CourseInfoBean courseInfoBean = new CourseInfoBean(examInfoBean.getExamCode(), teExamStudentMap.get(s.getCourseCode()).getMiss() == 1 ? false : true, s.getCourseCode(), s.getCourseName(), String.valueOf(teCourseMap.get(s.getExamId()).getStatus()));
             courseInfoBeanList.add(courseInfoBean);
         });
         examInfoBean.setCourseInfo(courseInfoBeanList);
@@ -127,23 +121,46 @@ public class OpenApiController {
     @ApiResponses({@ApiResponse(code = 200, message = "{\"success\":true}", response = Result.class)})
     public Result examStudentReport(
             @ApiJsonObject(name = "openExamStudentReport", value = {
-                    @ApiJsonProperty(key = "examId", description = "考试id"),
-                    @ApiJsonProperty(key = "courseCode", description = "科目编码"),
-                    @ApiJsonProperty(key = "examStudentId", description = "考生id")
+                    @ApiJsonProperty(key = "examCode", description = "考试编码"),
+                    @ApiJsonProperty(key = "paperCode", description = "科目编码"),
+                    @ApiJsonProperty(key = "studentCode", description = "考生学号")
             })
             @ApiParam(value = "获取考生科目报告信息", required = true) @RequestBody Map<String, Object> mapParameter) {
-        if (Objects.isNull(mapParameter.get("examId")) || Objects.equals(mapParameter.get("examId"), "")) {
-            throw new BusinessException("考试id不能为空");
+        if (Objects.isNull(mapParameter.get("examCode")) || Objects.equals(mapParameter.get("examCode"), "")) {
+            throw new BusinessException("考试编码不能为空");
         }
-        Long examId = Long.parseLong(String.valueOf(mapParameter.get("examId")));
-        if (Objects.isNull(mapParameter.get("courseCode")) || Objects.equals(mapParameter.get("courseCode"), "")) {
+        String examCode = (String) mapParameter.get("examCode");
+        if (Objects.isNull(mapParameter.get("paperCode")) || Objects.equals(mapParameter.get("paperCode"), "")) {
             throw new BusinessException("科目编码不能为空");
         }
-        String courseCode = (String) mapParameter.get("courseCode");
-        if (Objects.isNull(mapParameter.get("examStudentId")) || Objects.equals(mapParameter.get("examStudentId"), "")) {
-            throw new BusinessException("考生id不能为空");
+        String paperCode = (String) mapParameter.get("paperCode");
+        if (Objects.isNull(mapParameter.get("studentCode")) || Objects.equals(mapParameter.get("studentCode"), "")) {
+            throw new BusinessException("考生学号不能为空");
         }
-        Long examStudentId = Long.parseLong(String.valueOf(mapParameter.get("examStudentId")));
-        return ResultUtil.ok(cacheService.addPersonalReport(examId, examStudentId, courseCode));
+        String studentCode = (String) mapParameter.get("studentCode");
+        QueryWrapper<TECourse> teCourseQueryWrapper = new QueryWrapper<>();
+        teCourseQueryWrapper.lambda().eq(TECourse::getExamCode, examCode)
+                .eq(TECourse::getCourseCode, paperCode);
+        TECourse teCourse = teCourseService.getOne(teCourseQueryWrapper);
+        if (Objects.isNull(teCourse)) {
+            throw new BusinessException("科目为空");
+        }
+
+        QueryWrapper<TEExamStudent> teExamStudentQueryWrapper = new QueryWrapper<>();
+        teExamStudentQueryWrapper.lambda().eq(TEExamStudent::getStudentCode, studentCode)
+                .eq(TEExamStudent::getExamId, teCourse.getExamId());
+        TEExamStudent teExamStudent = teExamStudentService.getOne(teExamStudentQueryWrapper);
+        if (Objects.isNull(teExamStudent)) {
+            throw new BusinessException("考生为空");
+        }
+        return ResultUtil.ok(cacheService.addPersonalReport(teCourse.getExamId(), teExamStudent.getId(), paperCode));
+    }
+
+    @ApiOperation(value = "cas鉴权接口")
+    @RequestMapping(value = "/authentication/{studentCode}", method = RequestMethod.GET)
+    @ApiResponses({@ApiResponse(code = 200, message = "{\"success\":true}", response = Result.class)})
+    public void authentication(HttpServletRequest request, HttpServletResponse response, @PathVariable String studentCode) throws IOException, ServletException {
+        response.setHeader("Access-Control-Allow-Origin", "*");
+        response.sendRedirect(dictionaryConfig.sysDomain().getReportUrl() + studentCode);
     }
 }

@@ -723,16 +723,16 @@ public class SysController {
             throw new BusinessException("科目名称不能为空");
         }
         List<String> courseNameList = (List<String>) mapParameter.get("courseNames");
-        Long finalExamId = examId;
+        TEExam teExam = teExamService.getById(examId);
         courseNameList.forEach(s -> {
             TECourse teCourse = null;
-            if (Objects.nonNull(finalExamId)) {
+            if (Objects.nonNull(teExam.getId())) {
                 QueryWrapper<TECourse> teCourseQueryWrapper = new QueryWrapper<>();
-                teCourseQueryWrapper.lambda().eq(TECourse::getExamId, finalExamId)
+                teCourseQueryWrapper.lambda().eq(TECourse::getExamId, teExam.getId())
                         .eq(TECourse::getCourseName, s);
                 int count = teCourseService.count(teCourseQueryWrapper);
                 if (count == 0) {
-                    teCourse = new TECourse(finalExamId, s, String.valueOf(sequenceService.selectNextVal()));
+                    teCourse = new TECourse(teExam.getId(), teExam.getCode(), s, String.valueOf(sequenceService.selectNextVal()));
                 }
             } else {
                 QueryWrapper<TECourse> teCourseQueryWrapper = new QueryWrapper<>();

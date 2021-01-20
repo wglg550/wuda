@@ -16,15 +16,8 @@
 
     <select id="findByExamName" resultType="com.qmth.wuda.teaching.dto.ExamDto">
         select
-        t.id,
-        t.code as examCode,
-        temp.name as examName,
-        from_unixtime(t.create_time / 1000, '%Y年%m月%d日') as createTime
-        from
-        (
-        select
-        tee.id,
-        tee.name
+        max(tee.code) as examCode,
+        tee.name as examName
         from
         t_e_exam tee
         <where>
@@ -32,11 +25,6 @@
                 and tee.name = #{examName}
             </if>
         </where>
-        ) temp
-        left join t_e_exam t on
-        t.parent_id = temp.id
-        where t.test = 1
-        order by
-        t.create_time desc
+        group by tee.code,tee.name
     </select>
 </mapper>

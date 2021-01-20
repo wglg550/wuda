@@ -5,7 +5,7 @@
     <groupId>com.qmth.wuda</groupId>
     <artifactId>wuda-teaching</artifactId>
     <version>1.0.0</version>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
 
     <parent>
         <groupId>org.springframework.boot</groupId>

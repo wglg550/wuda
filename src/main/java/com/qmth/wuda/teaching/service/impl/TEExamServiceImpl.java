@@ -65,18 +65,11 @@ public class TEExamServiceImpl extends ServiceImpl<TEExamMapper, TEExam> impleme
                     .eq(TEExam::getCode, examCode);
             teExam = this.getOne(teExamQueryWrapper);
         }
-        QueryWrapper<TEExam> teExamQueryWrapper = new QueryWrapper<>();
-        teExamQueryWrapper.lambda().eq(TEExam::getName, examName);
-        TEExam parentExam = this.getOne(teExamQueryWrapper);
-        if (Objects.isNull(parentExam)) {
-            parentExam = new TEExam(examName, SystemConstant.uuidString());
-            this.saveOrUpdate(parentExam);
-        }
         if (Objects.isNull(teExam)) {
             if (Objects.nonNull(examId)) {
-                teExam = new TEExam(examId, examName, Objects.isNull(examCode) ? SystemConstant.uuidString() : examCode, accessKey, accessSecret, parentExam.getId());
+                teExam = new TEExam(examId, examName, Objects.isNull(examCode) ? SystemConstant.uuidString() : examCode, accessKey, accessSecret);
             } else {
-                teExam = new TEExam(examName, Objects.isNull(examCode) ? SystemConstant.uuidString() : examCode, accessKey, accessSecret, parentExam.getId());
+                teExam = new TEExam(examName, Objects.isNull(examCode) ? SystemConstant.uuidString() : examCode, accessKey, accessSecret);
             }
         } else {
             if (Objects.nonNull(examCode)) {

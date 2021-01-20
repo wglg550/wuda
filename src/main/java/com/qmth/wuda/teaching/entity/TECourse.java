@@ -28,6 +28,10 @@ public class TECourse extends BaseEntity implements Serializable {
     @TableField(value = "exam_id")
     private Long examId;
 
+    @ApiModelProperty(value = "考试编码")
+    @TableField(value = "exam_code")
+    private String examCode;
+
     @ApiModelProperty(value = "科目名称")
     @TableField(value = "course_name")
     private String courseName;
@@ -44,9 +48,10 @@ public class TECourse extends BaseEntity implements Serializable {
 
     }
 
-    public TECourse(Long examId, String courseName, String courseCode) {
+    public TECourse(Long examId, String examCode, String courseName, String courseCode) {
         setId(UidUtil.nextId());
         this.examId = examId;
+        this.examCode = examCode;
         this.courseName = courseName;
         this.courseCode = courseCode;
     }
@@ -55,6 +60,14 @@ public class TECourse extends BaseEntity implements Serializable {
         setId(UidUtil.nextId());
         this.courseName = courseName;
         this.courseCode = courseCode;
+    }
+
+    public String getExamCode() {
+        return examCode;
+    }
+
+    public void setExamCode(String examCode) {
+        this.examCode = examCode;
     }
 
     public Integer getStatus() {
