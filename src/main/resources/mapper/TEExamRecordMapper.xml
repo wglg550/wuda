@@ -23,6 +23,10 @@
             tees.id = teer.exam_student_id
         left join t_e_exam tee on
             tee.id = teer.exam_id
+        left join t_e_paper tep on
+            tep.exam_id = tees.exam_id
+            and tep.code = tees.paper_code
+            and tep.course_code = tees.course_code
     </sql>
 
     <sql id="scoreCommonFoot">
@@ -37,9 +41,22 @@
 
     <select id="findByCollegeScore" resultType="com.qmth.wuda.teaching.bean.report.SynthesisBean">
         select
-        max(teer.sum_score) as collegeMaxScore,
-        min(teer.sum_score) as collegeMinScore,
-        avg(teer.sum_score) as collegeAvgScore
+            max(t.myScore) as collegeMaxScore,
+            min(t.myScore) as collegeMinScore,
+            avg(t.myScore) as collegeAvgScore
+            from
+            (
+            select
+            case
+            when tep.contribution = 1 then
+            case
+            when tep.exam_id = 10
+            or tep.exam_id = 40
+            or tep.exam_id = 49 then ROUND(teer.sum_score + (tep.total_score - teer.sum_score) / tep.contribution_score)
+            else tep.contribution_final_score
+            end
+            else teer.sum_score
+            end as myScore
         <include refid="scoreCommonMidden"/>
         <where>
             <include refid="scoreCommonFoot"/>
@@ -47,13 +64,27 @@
                 and tees.college_id = #{collegeId}
             </if>
         </where>
+        ) t
     </select>
 
     <select id="findByClassScore" resultType="com.qmth.wuda.teaching.bean.report.SynthesisBean">
         select
-        max(teer.sum_score) as clazzMaxScore,
-        min(teer.sum_score) as clazzMinScore,
-        avg(teer.sum_score) as clazzAvgScore
+            max(t.myScore) as clazzMaxScore,
+            min(t.myScore) as clazzMinScore,
+            avg(t.myScore) as clazzAvgScore
+            from
+            (
+            select
+            case
+            when tep.contribution = 1 then
+            case
+            when tep.exam_id = 10
+            or tep.exam_id = 40
+            or tep.exam_id = 49 then ROUND(teer.sum_score + (tep.total_score - teer.sum_score) / tep.contribution_score)
+            else tep.contribution_final_score
+            end
+            else teer.sum_score
+            end as myScore
         <include refid="scoreCommonMidden"/>
         <where>
             <include refid="scoreCommonFoot"/>
@@ -61,6 +92,7 @@
                 and tees.class_no = #{classNo}
             </if>
         </where>
+        ) t
     </select>
 
     <select id="getLowScoreByMe" resultType="java.lang.Integer">

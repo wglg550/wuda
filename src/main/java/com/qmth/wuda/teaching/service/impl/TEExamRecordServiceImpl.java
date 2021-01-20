@@ -53,7 +53,6 @@ public class TEExamRecordServiceImpl extends ServiceImpl<TEExamRecordMapper, TEE
      * 获取班级分数
      *
      * @param examId
-     * @param collegeId
      * @param classNo
      * @param courseCode
      * @return

@@ -32,7 +32,17 @@
         from_unixtime(tee.create_time / 1000, '%Y年%m月%d日') as time,
         teer.objective_score as objectiveScore,
         teer.subjective_score as subjectiveScore,
-        teer.sum_score as myScore,
+        case
+            when tep.contribution = 1 then
+                case
+                    when tep.exam_id = 10 or tep.exam_id = 40 or tep.exam_id = 49 then
+                        ROUND(teer.sum_score + (tep.total_score - teer.sum_score) / tep.contribution_score)
+                    else
+                        tep.contribution_final_score
+                end
+            else
+                teer.sum_score
+        end as myScore,
         tees.college_id as collegeId,
         tee.id as examId,
         tep.total_score as fullScore,

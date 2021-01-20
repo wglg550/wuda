@@ -366,6 +366,13 @@ public class CacheServiceImpl implements CacheService {
                 dimensionBean.setDioFullScore(paperStructScore.get());
                 dimensionBean.setMasteryRate(studentDimensionScoreMap.get(k).divide(paperStructScore.get(), SystemConstant.OPER_SCALE, BigDecimal.ROUND_HALF_UP).multiply(fullRate));
             }
+            Collections.sort(subDios, new Comparator<DimensionDetailBean>() {
+
+                @Override
+                public int compare(DimensionDetailBean o1, DimensionDetailBean o2) {
+                    return o1.getCode().compareTo(o2.getCode());
+                }
+            });
             dimensionBean.setSubDios(subDios);
             diagnosisDetailBeanMap.get(k).setDetail(dimensionBean);
         });
