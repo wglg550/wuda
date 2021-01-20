@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -16,6 +17,9 @@ import java.util.Objects;
  * @Date: 2020/12/7
  */
 public class DimensionBean implements Serializable {
+
+    @ApiModelProperty(value = "简介")
+    private List<String> define = Arrays.asList("测试");
 
     @ApiModelProperty(value = "我的分数")
     private BigDecimal myScore;
@@ -31,6 +35,14 @@ public class DimensionBean implements Serializable {
 
     @ApiModelProperty(value = "熟练度等级")
     private List<DimensionMasterysBean> masterys;
+
+    public List<String> getDefine() {
+        return define;
+    }
+
+    public void setDefine(List<String> define) {
+        this.define = define;
+    }
 
     public BigDecimal getMyScore() {
         if (Objects.nonNull(myScore)) {
