@@ -43,7 +43,8 @@
         select
             max(t.myScore) as collegeMaxScore,
             min(t.myScore) as collegeMinScore,
-            avg(t.myScore) as collegeAvgScore
+            avg(t.myScore) as collegeAvgScore,
+            avg(t.sum_score) as schoolAvgScore
             from
             (
             select
@@ -56,7 +57,8 @@
             else tep.contribution_final_score
             end
             else teer.sum_score
-            end as myScore
+            end as myScore,
+            teer.sum_score
         <include refid="scoreCommonMidden"/>
         <where>
             <include refid="scoreCommonFoot"/>
@@ -106,14 +108,37 @@
         tees.exam_id = tee.id
         and tees.college_id = tees.college_id
         and t.exam_student_id = tees.id
+        left join t_e_paper tep on
+        tep.exam_id = tees.exam_id
+        and tep.code = tees.paper_code
+        and tep.course_code = tees.course_code
         <where>
             <include refid="scoreCommonFoot"/>
             <if test="collegeId != null and collegeId != ''">
                 and tees.college_id = #{collegeId}
             </if>
-            and t.sum_score <![CDATA[ < ]]> (
+            and case
+            when tep.contribution = 1 then
+            case
+            when tep.exam_id = 10
+            or tep.exam_id = 40
+            or tep.exam_id = 49 then ROUND(t.sum_score + (tep.total_score - t.sum_score) / tep.contribution_score)
+            else tep.contribution_final_score
+            end
+            else t.sum_score
+            end <![CDATA[ < ]]> (
             select
-            teer.sum_score
+                case
+                when tep.contribution = 1 then
+                case
+                when tep.exam_id = 10 or tep.exam_id = 40 or tep.exam_id = 49 then
+                ROUND(teer.sum_score + (tep.total_score - teer.sum_score) / tep.contribution_score)
+                else
+                tep.contribution_final_score
+                end
+                else
+                teer.sum_score
+                end as sum_score
             from
             t_e_exam_record teer
             left join t_e_exam tee on
@@ -122,6 +147,10 @@
             tees.exam_id = tee.id
             and tees.college_id = tees.college_id
             and teer.exam_student_id = tees.id
+            left join t_e_paper tep on
+                tep.exam_id = tees.exam_id
+                and tep.code = tees.paper_code
+                and tep.course_code = tees.course_code
             <where>
                 <if test="examRecordId != null and examRecordId != ''">
                     and teer.id = #{examRecordId}

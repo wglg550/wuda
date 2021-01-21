@@ -52,6 +52,17 @@ public class SynthesisBean implements Serializable {
     @ApiModelProperty(value = "难度系数说明")
     private String difficultInfo;
 
+    @ApiModelProperty(value = "学校最高分")
+    private BigDecimal schoolAvgScore;
+
+    public BigDecimal getSchoolAvgScore() {
+        return schoolAvgScore;
+    }
+
+    public void setSchoolAvgScore(BigDecimal schoolAvgScore) {
+        this.schoolAvgScore = schoolAvgScore;
+    }
+
     public SynthesisBean() {
 
     }
@@ -66,6 +77,7 @@ public class SynthesisBean implements Serializable {
         this.collegeMinScore = synthesisBean.getCollegeMinScore();
         this.collegeAvgScore = synthesisBean.getCollegeAvgScore();
         this.collegeMaxScore = synthesisBean.getCollegeMaxScore();
+        this.schoolAvgScore = synthesisBean.getSchoolAvgScore();
     }
 
     public void setClassScore(SynthesisBean synthesisBean) {

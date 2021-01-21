@@ -224,9 +224,9 @@ public class CacheServiceImpl implements CacheService {
         finalSynthesis.setCollegeScore(collegeScore);
         finalSynthesis.setClassScore(calssScore);
 
-        BigDecimal difficult = Objects.nonNull(tePaper.getTotalScore()) && tePaper.getTotalScore().doubleValue() > 0 ? finalSynthesis.getCollegeAvgScore().divide(tePaper.getTotalScore(), SystemConstant.OPER_SCALE, BigDecimal.ROUND_HALF_UP) : BigDecimal.ZERO;
+        BigDecimal difficult = Objects.nonNull(tePaper.getTotalScore()) && tePaper.getTotalScore().doubleValue() > 0 ? finalSynthesis.getSchoolAvgScore().divide(tePaper.getTotalScore(), SystemConstant.OPER_SCALE, BigDecimal.ROUND_HALF_UP) : BigDecimal.ZERO;
         finalSynthesis.setDifficult(difficult);
-        finalSynthesis.setDifficultInfo(PaperDifficultEnum.convertToCode(difficult.doubleValue()));
+        finalSynthesis.setDifficultInfo(PaperDifficultEnum.convertToCode(difficult.setScale(SystemConstant.FINAL_SCALE, BigDecimal.ROUND_HALF_UP).doubleValue()));
         CollegeBean collegeBean = new CollegeBean(finalSynthesis);
         personalReportBean.setCollege(collegeBean);
         //报告第二页end
@@ -277,12 +277,13 @@ public class CacheServiceImpl implements CacheService {
             }
             diagnosisDetailBean.setName(k);
             ModuleBean moduleBean = new ModuleBean();
-            List<ModuleDetailBean> dios = new ArrayList<>();
+            List<ModuleDetailBean> dios = new LinkedList<>();
             v.forEach((k1, v1) -> {
                 moduleBean.setInfo(v1.getInfo());
                 moduleBean.setRemark(v1.getRemark());
                 ModuleDetailBean moduleDetailBean = new ModuleDetailBean();
                 moduleDetailBean.setName(v1.getKnowledgeFirst());
+                moduleDetailBean.setCode(v1.getIdentifierFirst());
                 Set<String> dimensionSet = null;
                 if (Objects.nonNull(v1.getIdentifierSecond())) {
                     dimensionSet = v1.getIdentifierSecond().stream().map(o -> o.getIdentifierSecond()).collect(Collectors.toSet());
@@ -299,6 +300,13 @@ public class CacheServiceImpl implements CacheService {
                 moduleDetailBean.setInterpretation(v1.getInterpretation());
                 dios.add(moduleDetailBean);
             });
+            Collections.sort(dios, new Comparator<ModuleDetailBean>() {
+
+                @Override
+                public int compare(ModuleDetailBean o1, ModuleDetailBean o2) {
+                    return o1.getCode().compareToIgnoreCase(o2.getCode());
+                }
+            });
             moduleBean.setDios(dios);
             diagnosisDetailBean.setModules(moduleBean);
             diagnosisDetailBeanList.add(diagnosisDetailBean);
@@ -313,12 +321,13 @@ public class CacheServiceImpl implements CacheService {
             }.getType());
             DimensionBean dimensionBean = new DimensionBean();
             dimensionBean.setMasterys(dmbList);
-            List<DimensionDetailBean> subDios = new ArrayList<>();
+            List<DimensionDetailBean> subDios = new LinkedList<>();
             v.forEach((k1, v1) -> {
                 if (Objects.nonNull(v1.getIdentifierSecond())) {
                     v1.getIdentifierSecond().forEach(s -> {
                         if (Objects.nonNull(s.getIdentifierSecond()) && Objects.nonNull(studentDimensionSecondMap.get(k).get(s.getIdentifierSecond()))) {
                             DimensionDetailBean dimensionDetailBean = new DimensionDetailBean();
+                            dimensionDetailBean.setId(s.getId());
                             dimensionDetailBean.setCode(s.getIdentifierSecond());
                             dimensionDetailBean.setName(s.getKnowledgeSecond());
                             Set<String> dimensionsSet = new HashSet<>(Arrays.asList(s.getIdentifierSecond()));
@@ -370,7 +379,7 @@ public class CacheServiceImpl implements CacheService {
 
                 @Override
                 public int compare(DimensionDetailBean o1, DimensionDetailBean o2) {
-                    return o1.getCode().compareTo(o2.getCode());
+                    return (int) (o1.getId().longValue() - o2.getId().longValue());
                 }
             });
             dimensionBean.setSubDios(subDios);

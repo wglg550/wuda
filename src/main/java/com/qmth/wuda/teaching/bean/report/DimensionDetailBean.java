@@ -16,6 +16,9 @@ import java.util.Objects;
  */
 public class DimensionDetailBean implements Serializable {
 
+    @ApiModelProperty(value = "id")
+    private Long id;
+
     @ApiModelProperty(value = "维度编码")
     private String code;
 
@@ -30,6 +33,14 @@ public class DimensionDetailBean implements Serializable {
 
     @ApiModelProperty(value = "学院平均分")
     private BigDecimal collegeAvgScore;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getCode() {
         return code;

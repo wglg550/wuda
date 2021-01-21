@@ -22,11 +22,22 @@ public class ModuleDetailBean implements Serializable {
     @ApiModelProperty(value = "个人比例")
     private BigDecimal rate;
 
+    @ApiModelProperty(value = "编码")
+    private String code;
+
     @ApiModelProperty(value = "学院比例")
     private BigDecimal collegeRate;
 
     @ApiModelProperty(value = "理解说明")
     private String interpretation;
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
 
     public String getInterpretation() {
         return interpretation;
