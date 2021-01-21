@@ -638,8 +638,9 @@ public class SysController {
                 List<TBLevel> tbLevelList = new ArrayList<>();
                 moduleMap.forEach((k, v) -> {
                     QueryWrapper<TBModule> tbModuleQueryWrapper = new QueryWrapper<>();
-                    tbModuleQueryWrapper.lambda().eq(TBModule::getPaperCode, v.getPaperCode())
+                    tbModuleQueryWrapper.lambda()
                             .eq(TBModule::getCourseCode, v.getCourseCode())
+                            .eq(TBModule::getPaperCode, v.getPaperCode())
                             .eq(TBModule::getCode, v.getCode().toLowerCase());
                     TBModule tbModule = tbModuleService.getOne(tbModuleQueryWrapper);
                     if (Objects.nonNull(tbModule)) {

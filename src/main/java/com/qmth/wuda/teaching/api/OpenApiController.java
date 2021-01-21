@@ -140,7 +140,7 @@ public class OpenApiController {
         String studentCode = (String) mapParameter.get("studentCode");
         QueryWrapper<TECourse> teCourseQueryWrapper = new QueryWrapper<>();
         teCourseQueryWrapper.lambda().eq(TECourse::getExamCode, examCode)
-                .eq(TECourse::getCourseCode, paperCode);
+                .eq(TECourse::getExamCode, examCode);
         TECourse teCourse = teCourseService.getOne(teCourseQueryWrapper);
         if (Objects.isNull(teCourse)) {
             throw new BusinessException("科目为空");

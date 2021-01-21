@@ -1,7 +1,8 @@
 package com.qmth.wuda.teaching.templete.service;
 
-import com.qmth.wuda.teaching.entity.*;
-import org.springframework.util.LinkedMultiValueMap;
+import com.qmth.wuda.teaching.bean.YyjSourceDataBean;
+import com.qmth.wuda.teaching.entity.TBSchool;
+import com.qmth.wuda.teaching.templete.CourseAnalysisTemplete;
 
 import java.io.IOException;
 import java.util.List;
@@ -26,31 +27,27 @@ public interface CourseAnalysisService {
     List<Map> yyjSourceDataAnalysis(Long examId, String examCode) throws IOException;
 
     /**
+     * 获取学校信息
+     */
+    TBSchool getSchoolData();
+
+    /**
+     * 云阅卷数据解析
+     *
+     * @param examId
+     * @param tbSchool
+     * @param yyjSourceDataBean
+     * @param courseAnalysisTemplete
+     * @return
+     */
+    boolean yyjResolveData(Long examId, TBSchool tbSchool, YyjSourceDataBean yyjSourceDataBean, CourseAnalysisTemplete courseAnalysisTemplete);
+
+    /**
      * 保存数据库
      *
-     * @param tbSchool
      * @param examId
-     * @param courseMap
-     * @param collegeMap
-     * @param studentMap
-     * @param examStudentMap
-     * @param teacherMap
-     * @param teacherExamStudentMap
-     * @param examRecordMap
-     * @param teAnswerMap
-     * @param tePaperMap
-     * @param tePaperStructTranMap
+     * @param tbSchool
+     * @param courseAnalysisTemplete
      */
-    void saveYyjSourceDataForDb(TBSchool tbSchool,
-                                Long examId,
-                                Map<String, String> courseMap,
-                                Map<String, TBSchoolCollege> collegeMap,
-                                Map<String, TEStudent> studentMap,
-                                Map<String, TEExamStudent> examStudentMap,
-                                Map<String, TBTeacher> teacherMap,
-                                LinkedMultiValueMap<Long, TBTeacherExamStudent> teacherExamStudentMap,
-                                Map<Long, TEExamRecord> examRecordMap,
-                                Map<Long, List<TEAnswer>> teAnswerMap,
-                                Map<String, TEPaper> tePaperMap,
-                                Map<Long, Map<String, TEPaperStruct>> tePaperStructTranMap);
+    void saveYyjSourceDataForDb(Long examId, TBSchool tbSchool, CourseAnalysisTemplete courseAnalysisTemplete);
 }

@@ -11,7 +11,6 @@ import com.qmth.wuda.teaching.util.ResultUtil;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -38,7 +37,6 @@ public class CallApiController {
     @ApiOperation(value = "获取考生成绩接口")
     @RequestMapping(value = "/student/score", method = RequestMethod.POST)
     @ApiResponses({@ApiResponse(code = 200, message = "{\"success\":true}", response = Result.class)})
-    @Transactional
     public Result studentScore(
             @ApiJsonObject(name = "callStudentScore", value = {
                     @ApiJsonProperty(key = "examId", description = "考试id"),
