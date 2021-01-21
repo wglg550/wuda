@@ -16,9 +16,9 @@ public interface CourseAnalysisTemplete {
     /**
      * 数据分析模版
      *
-     * @param id
-     * @param cloudExamCode
+     * @param examId
+     * @param examCode
      * @return
      */
-    Result dataAnalysis(Long id, String cloudExamCode) throws IOException;
+    Result dataAnalysis(Long examId, String examCode) throws IOException;
 }

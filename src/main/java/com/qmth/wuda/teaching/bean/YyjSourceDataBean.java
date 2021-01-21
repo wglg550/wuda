@@ -3,8 +3,8 @@ package com.qmth.wuda.teaching.bean;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
-import java.util.Map;
 
 public class YyjSourceDataBean implements Serializable {
 
@@ -48,10 +48,10 @@ public class YyjSourceDataBean implements Serializable {
     private String subjectiveScore;
 
     @ApiModelProperty(name = "客观分集合")
-    private List<Map<Object,Object>> objectiveScoreDetail;
+    private List<YyjObjectiveScoreBean> objectiveScoreDetail;
 
     @ApiModelProperty(name = "主观分集合")
-    List<Map<Object,Object>> subjectiveScoreDetail;
+    List<YyjSubjectiveScoreBean> subjectiveScoreDetail;
 
     public String getSubjectCode() {
         return subjectCode;
@@ -157,19 +157,102 @@ public class YyjSourceDataBean implements Serializable {
         this.subjectiveScore = subjectiveScore;
     }
 
-    public List<Map<Object, Object>> getObjectiveScoreDetail() {
+    public List<YyjObjectiveScoreBean> getObjectiveScoreDetail() {
         return objectiveScoreDetail;
     }
 
-    public void setObjectiveScoreDetail(List<Map<Object, Object>> objectiveScoreDetail) {
+    public void setObjectiveScoreDetail(List<YyjObjectiveScoreBean> objectiveScoreDetail) {
         this.objectiveScoreDetail = objectiveScoreDetail;
     }
 
-    public List<Map<Object, Object>> getSubjectiveScoreDetail() {
+    public List<YyjSubjectiveScoreBean> getSubjectiveScoreDetail() {
         return subjectiveScoreDetail;
     }
 
-    public void setSubjectiveScoreDetail(List<Map<Object, Object>> subjectiveScoreDetail) {
+    public void setSubjectiveScoreDetail(List<YyjSubjectiveScoreBean> subjectiveScoreDetail) {
         this.subjectiveScoreDetail = subjectiveScoreDetail;
+    }
+
+    public class YyjObjectiveScoreBean implements Serializable {
+
+        @ApiModelProperty(name = "分数")
+        private BigDecimal score;
+
+        @ApiModelProperty(name = "答案")
+        private String answer;
+
+        @ApiModelProperty(name = "大题号")
+        private Integer mainNumber;
+
+        @ApiModelProperty(name = "小题号")
+        private Integer subNumber;
+
+        public BigDecimal getScore() {
+            return score;
+        }
+
+        public void setScore(BigDecimal score) {
+            this.score = score;
+        }
+
+        public String getAnswer() {
+            return answer;
+        }
+
+        public void setAnswer(String answer) {
+            this.answer = answer;
+        }
+
+        public Integer getMainNumber() {
+            return mainNumber;
+        }
+
+        public void setMainNumber(Integer mainNumber) {
+            this.mainNumber = mainNumber;
+        }
+
+        public Integer getSubNumber() {
+            return subNumber;
+        }
+
+        public void setSubNumber(Integer subNumber) {
+            this.subNumber = subNumber;
+        }
+    }
+
+    public class YyjSubjectiveScoreBean implements Serializable {
+
+        @ApiModelProperty(name = "分数")
+        private BigDecimal score;
+
+        @ApiModelProperty(name = "大题号")
+        private Integer mainNumber;
+
+        @ApiModelProperty(name = "小题号")
+        private Integer subNumber;
+
+        public BigDecimal getScore() {
+            return score;
+        }
+
+        public void setScore(BigDecimal score) {
+            this.score = score;
+        }
+
+        public Integer getMainNumber() {
+            return mainNumber;
+        }
+
+        public void setMainNumber(Integer mainNumber) {
+            this.mainNumber = mainNumber;
+        }
+
+        public Integer getSubNumber() {
+            return subNumber;
+        }
+
+        public void setSubNumber(Integer subNumber) {
+            this.subNumber = subNumber;
+        }
     }
 }
