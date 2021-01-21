@@ -1,11 +1,11 @@
 package com.qmth.wuda.teaching.api;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.google.gson.Gson;
 import com.qmth.wuda.teaching.annotation.ApiJsonObject;
 import com.qmth.wuda.teaching.annotation.ApiJsonProperty;
 import com.qmth.wuda.teaching.bean.Result;
+import com.qmth.wuda.teaching.bean.YyjSourceDataBean;
 import com.qmth.wuda.teaching.constant.SystemConstant;
 import com.qmth.wuda.teaching.entity.*;
 import com.qmth.wuda.teaching.exception.BusinessException;
@@ -94,26 +94,6 @@ public class CallApiController {
             tbSchoolQueryWrapper.lambda().eq(TBSchool::getCode, "whdx");
             TBSchool tbSchool = tbSchoolService.getOne(tbSchoolQueryWrapper);
 
-//            QueryWrapper<TEPaper> tePaperQueryWrapper = new QueryWrapper<>();
-//            tePaperQueryWrapper.lambda().eq(TEPaper::getExamId, examId);
-//            TEPaper tePaper = tePaperService.getOne(tePaperQueryWrapper);
-//            if (Objects.isNull(tePaper)) {
-//                throw new BusinessException("试卷为空");
-//            }
-//
-//            QueryWrapper<TEPaperStruct> tePaperStructQueryWrapper = new QueryWrapper<>();
-//            tePaperStructQueryWrapper.lambda().eq(TEPaperStruct::getPaperId, tePaper.getId());
-//            List<TEPaperStruct> tePaperStructList = tePaperStructService.list(tePaperStructQueryWrapper);
-//            if (Objects.isNull(tePaperStructList) || tePaperStructList.size() == 0) {
-//                throw new BusinessException("试卷结构为空");
-//            }
-//            Map<String, TEPaperStruct> tePaperStructMap = new LinkedHashMap<>();
-//            if (Objects.nonNull(tePaperStructList) && tePaperStructList.size() > 0) {
-//                tePaperStructList.forEach(s -> {
-//                    tePaperStructMap.put(s.getMainNumber() + "-" + s.getSubNumber(), s);
-//                });
-//            }
-
             Map<String, String> courseMap = new LinkedHashMap<>();
             Map<String, TBSchoolCollege> collegeMap = new LinkedHashMap<>();
             Map<String, TEStudent> studentMap = new LinkedHashMap<>();
@@ -124,39 +104,24 @@ public class CallApiController {
             Map<Long, List<TEAnswer>> teAnswerMap = new LinkedHashMap<>();
             Map<String, TEPaper> tePaperMap = new LinkedHashMap<>();
             Map<Long, Map<String, TEPaperStruct>> tePaperStructTranMap = new LinkedHashMap<>();
+            Gson gson = new Gson();
             for (int i = 0; i < studentsMark.size(); i++) {
-                Map map = studentsMark.get(i);
-                String college = (String) map.get("college");
-                String objectiveScore = (String) map.get("objectiveScore");
-                String paperType = (String) map.get("paperType");
-                String examCodeMap = (String) map.get("examCode");
-                String studentCode = (String) map.get("studentCode");
-                String className = (String) map.get("className");
-                String examNumber = (String) map.get("examNumber");
-                String totalScore = (String) map.get("totalScore");
-                String teacher = (String) map.get("teacher");
-                Long examIdMap = Long.parseLong(String.valueOf(map.get("examId")));
-                String name = (String) map.get("name");
-                String subjectiveScore = (String) map.get("subjectiveScore");
-                String subjectCode = (String) map.get("subjectCode");
-                String subjectName = (String) map.get("subjectName");
-                if (Objects.equals(subjectName, "大学物理B（下）")) {
-                    subjectCode = "1001";
+                YyjSourceDataBean yyjSourceDataBean = gson.fromJson(gson.toJson(studentsMark.get(i)), YyjSourceDataBean.class);
+                if (Objects.equals(yyjSourceDataBean.getSubjectName(), "大学物理B（下）")) {
+                    yyjSourceDataBean.setSubjectCode("1001");
                 }
-                Integer status = Integer.parseInt(String.valueOf(map.get("status")));
-
                 TEPaper tePaper = null;
-                if (!tePaperMap.containsKey(subjectCode)) {
+                if (!tePaperMap.containsKey(yyjSourceDataBean.getStudentCode())) {
                     QueryWrapper<TEPaper> tePaperQueryWrapper = new QueryWrapper<>();
                     tePaperQueryWrapper.lambda().eq(TEPaper::getExamId, examId)
-                            .eq(TEPaper::getCourseCode, subjectCode);
+                            .eq(TEPaper::getCourseCode, yyjSourceDataBean.getStudentCode());
                     tePaper = tePaperService.getOne(tePaperQueryWrapper);
                     if (Objects.isNull(tePaper)) {
                         continue;
                     }
-                    tePaperMap.put(subjectCode, tePaper);
+                    tePaperMap.put(yyjSourceDataBean.getStudentCode(), tePaper);
                 } else {
-                    tePaper = tePaperMap.get(subjectCode);
+                    tePaper = tePaperMap.get(yyjSourceDataBean.getStudentCode());
                 }
 
                 Map<String, TEPaperStruct> tePaperStructMap = null;
@@ -175,60 +140,58 @@ public class CallApiController {
                     tePaperStructMap = tePaperStructTranMap.get(tePaper.getId());
                 }
 
-                if (!courseMap.containsKey(subjectCode)) {
-                    courseMap.put(subjectCode, subjectName);
+                if (!courseMap.containsKey(yyjSourceDataBean.getStudentCode())) {
+                    courseMap.put(yyjSourceDataBean.getStudentCode(), yyjSourceDataBean.getSubjectName());
                 }
-                if (!collegeMap.containsKey(college)) {
-                    TBSchoolCollege tbSchoolCollege = new TBSchoolCollege(tbSchool.getId(), college, college);
-                    collegeMap.put(college, tbSchoolCollege);
+                if (!collegeMap.containsKey(yyjSourceDataBean.getCollege())) {
+                    TBSchoolCollege tbSchoolCollege = new TBSchoolCollege(tbSchool.getId(), yyjSourceDataBean.getCollege(), yyjSourceDataBean.getCollege());
+                    collegeMap.put(yyjSourceDataBean.getCollege(), tbSchoolCollege);
                 }
-                if (!studentMap.containsKey(studentCode)) {
-                    TEStudent teStudent = new TEStudent(tbSchool.getId(), name, studentCode);
-                    studentMap.put(studentCode, teStudent);
+                if (!studentMap.containsKey(yyjSourceDataBean.getStudentCode())) {
+                    TEStudent teStudent = new TEStudent(tbSchool.getId(), yyjSourceDataBean.getName(), yyjSourceDataBean.getStudentCode());
+                    studentMap.put(yyjSourceDataBean.getStudentCode(), teStudent);
                 }
-                if (!examStudentMap.containsKey(studentCode + "_" + examNumber)) {
-                    TEExamStudent teExamStudent = new TEExamStudent(examIdMap, studentMap.get(studentCode).getId(), collegeMap.get(college).getId(), null, subjectName, subjectCode, name, studentCode, examNumber, status, className, paperType);
-                    examStudentMap.put(studentCode + "_" + examNumber, teExamStudent);
+                if (!examStudentMap.containsKey(yyjSourceDataBean.getStudentCode() + "_" + yyjSourceDataBean.getExamNumber())) {
+                    TEExamStudent teExamStudent = new TEExamStudent(examId, studentMap.get(yyjSourceDataBean.getStudentCode()).getId(), collegeMap.get(yyjSourceDataBean.getCollege()).getId(), null, yyjSourceDataBean.getSubjectName(), yyjSourceDataBean.getSubjectCode(), yyjSourceDataBean.getName(), yyjSourceDataBean.getStudentCode(), yyjSourceDataBean.getExamNumber(), yyjSourceDataBean.getStatus(), yyjSourceDataBean.getClassName(), yyjSourceDataBean.getPaperType());
+                    examStudentMap.put(yyjSourceDataBean.getStudentCode() + "_" + yyjSourceDataBean.getExamNumber(), teExamStudent);
                 }
-                if (!teacherMap.containsKey(teacher)) {
-                    TBTeacher tbTeacher = new TBTeacher(tbSchool.getId(), collegeMap.get(college).getId(), null, teacher);
-                    teacherMap.put(teacher, tbTeacher);
+                if (!teacherMap.containsKey(yyjSourceDataBean.getTeacher())) {
+                    TBTeacher tbTeacher = new TBTeacher(tbSchool.getId(), collegeMap.get(yyjSourceDataBean.getCollege()).getId(), null, yyjSourceDataBean.getTeacher());
+                    teacherMap.put(yyjSourceDataBean.getTeacher(), tbTeacher);
                 }
-                TBTeacherExamStudent tbTeacherExamStudent = new TBTeacherExamStudent(teacherMap.get(teacher).getId(), examStudentMap.get(studentCode + "_" + examNumber).getId());
-                teacherExamStudentMap.add(teacherMap.get(teacher).getId(), tbTeacherExamStudent);
+                TBTeacherExamStudent tbTeacherExamStudent = new TBTeacherExamStudent(teacherMap.get(yyjSourceDataBean.getTeacher()).getId(), examStudentMap.get(yyjSourceDataBean.getStudentCode() + "_" + yyjSourceDataBean.getExamNumber()).getId());
+                teacherExamStudentMap.add(teacherMap.get(yyjSourceDataBean.getTeacher()).getId(), tbTeacherExamStudent);
 
-                if (!examRecordMap.containsKey(examStudentMap.get(studentCode + "_" + examNumber).getId())) {
-                    TEExamRecord teExamRecord = new TEExamRecord(examIdMap, tePaper.getId(), examStudentMap.get(studentCode + "_" + examNumber).getId(), new BigDecimal(objectiveScore), new BigDecimal(subjectiveScore), new BigDecimal(totalScore), null, null);
-                    examRecordMap.put(examStudentMap.get(studentCode + "_" + examNumber).getId(), teExamRecord);
+                if (!examRecordMap.containsKey(examStudentMap.get(yyjSourceDataBean.getStudentCode() + "_" + yyjSourceDataBean.getExamNumber()).getId())) {
+                    TEExamRecord teExamRecord = new TEExamRecord(examId, tePaper.getId(), examStudentMap.get(yyjSourceDataBean.getStudentCode() + "_" + yyjSourceDataBean.getExamNumber()).getId(), new BigDecimal(yyjSourceDataBean.getObjectiveScore()), new BigDecimal(yyjSourceDataBean.getSubjectiveScore()), new BigDecimal(yyjSourceDataBean.getTotalScore()), null, null);
+                    examRecordMap.put(examStudentMap.get(yyjSourceDataBean.getStudentCode() + "_" + yyjSourceDataBean.getExamNumber()).getId(), teExamRecord);
                 }
 
                 List<TEAnswer> teAnswerList = new ArrayList();
-                JSONArray subjectiveScoreJsonArray = (JSONArray) map.get("subjectiveScoreDetail");
-                JSONArray objectiveScoreJsonArray = (JSONArray) map.get("objectiveScoreDetail");
-                for (int y = 0; y < objectiveScoreJsonArray.size(); y++) {
-                    JSONObject objectiveJsonObject = objectiveScoreJsonArray.getJSONObject(y);
-                    String score = objectiveJsonObject.getString("score");
-                    String answer = objectiveJsonObject.getString("answer");
-                    String mainNumber = objectiveJsonObject.getString("mainNumber");
-                    String subNumber = objectiveJsonObject.getString("subNumber");
+                for (int y = 0; y < yyjSourceDataBean.getObjectiveScoreDetail().size(); y++) {
+                    Map<Object, Object> objectiveJsonObject = yyjSourceDataBean.getObjectiveScoreDetail().get(y);
+                    String score = (String) objectiveJsonObject.get("score");
+                    String answer = (String) objectiveJsonObject.get("answer");
+                    String mainNumber = (String) objectiveJsonObject.get("mainNumber");
+                    String subNumber = (String) objectiveJsonObject.get("subNumber");
                     if (Objects.nonNull(tePaperStructMap.get(mainNumber + "-" + subNumber))) {
-                        TEAnswer teAnswer = new TEAnswer(Integer.parseInt(mainNumber), Integer.parseInt(subNumber), tePaperStructMap.get(mainNumber + "-" + subNumber).getType(), examRecordMap.get(examStudentMap.get(studentCode + "_" + examNumber).getId()).getId(), answer, new BigDecimal(score));
+                        TEAnswer teAnswer = new TEAnswer(Integer.parseInt(mainNumber), Integer.parseInt(subNumber), tePaperStructMap.get(mainNumber + "-" + subNumber).getType(), examRecordMap.get(examStudentMap.get(yyjSourceDataBean.getStudentCode() + "_" + yyjSourceDataBean.getExamNumber()).getId()).getId(), answer, new BigDecimal(score));
                         teAnswerList.add(teAnswer);
                     }
                 }
 
-                for (int y = 0; y < subjectiveScoreJsonArray.size(); y++) {
-                    JSONObject subjectiveJsonObject = subjectiveScoreJsonArray.getJSONObject(y);
-                    String score = subjectiveJsonObject.getString("score");
-                    String mainNumber = subjectiveJsonObject.getString("mainNumber");
-                    String subNumber = subjectiveJsonObject.getString("subNumber");
+                for (int y = 0; y < yyjSourceDataBean.getSubjectiveScoreDetail().size(); y++) {
+                    Map<Object, Object> subjectiveJsonObject = yyjSourceDataBean.getSubjectiveScoreDetail().get(y);
+                    String score = (String) subjectiveJsonObject.get("score");
+                    String mainNumber = (String) subjectiveJsonObject.get("mainNumber");
+                    String subNumber = (String) subjectiveJsonObject.get("subNumber");
                     if (Objects.nonNull(tePaperStructMap.get(mainNumber + "-" + subNumber))) {
-                        TEAnswer teAnswer = new TEAnswer(Integer.parseInt(mainNumber), Integer.parseInt(subNumber), tePaperStructMap.get(mainNumber + "-" + subNumber).getType(), examRecordMap.get(examStudentMap.get(studentCode + "_" + examNumber).getId()).getId(), new BigDecimal(score));
+                        TEAnswer teAnswer = new TEAnswer(Integer.parseInt(mainNumber), Integer.parseInt(subNumber), tePaperStructMap.get(mainNumber + "-" + subNumber).getType(), examRecordMap.get(examStudentMap.get(yyjSourceDataBean.getStudentCode() + "_" + yyjSourceDataBean.getExamNumber()).getId()).getId(), new BigDecimal(score));
                         teAnswerList.add(teAnswer);
                     }
                 }
-                if (!teAnswerMap.containsKey(examRecordMap.get(examStudentMap.get(studentCode + "_" + examNumber).getId()).getId())) {
-                    teAnswerMap.put(examRecordMap.get(examStudentMap.get(studentCode + "_" + examNumber).getId()).getId(), teAnswerList);
+                if (!teAnswerMap.containsKey(examRecordMap.get(examStudentMap.get(yyjSourceDataBean.getStudentCode() + "_" + yyjSourceDataBean.getExamNumber()).getId()).getId())) {
+                    teAnswerMap.put(examRecordMap.get(examStudentMap.get(yyjSourceDataBean.getStudentCode() + "_" + yyjSourceDataBean.getExamNumber()).getId()).getId(), teAnswerList);
                 }
             }
             courseMap.forEach((k, v) -> {

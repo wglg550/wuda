@@ -40,6 +40,8 @@
                     else
                         tep.contribution_final_score
                 end
+            when tep.contribution = 2 then
+                teer.contribution_score
             else
                 teer.sum_score
         end as myScore,

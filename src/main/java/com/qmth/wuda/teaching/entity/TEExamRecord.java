@@ -61,6 +61,10 @@ public class TEExamRecord extends BaseEntity implements Serializable {
     @TableField(value = "remark")
     private String remark;
 
+    @ApiModelProperty(value = "赋分")
+    @TableField(value = "contribution_score")
+    private BigDecimal contributionScore;
+
     public TEExamRecord() {
 
     }
@@ -75,6 +79,14 @@ public class TEExamRecord extends BaseEntity implements Serializable {
         this.sumScore = sumScore;
         this.markDetail = markDetail;
         this.remark = remark;
+    }
+
+    public BigDecimal getContributionScore() {
+        return contributionScore;
+    }
+
+    public void setContributionScore(BigDecimal contributionScore) {
+        this.contributionScore = contributionScore;
     }
 
     public String getMarkDetail() {

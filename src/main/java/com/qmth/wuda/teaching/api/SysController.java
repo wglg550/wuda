@@ -411,7 +411,7 @@ public class SysController {
                             if (subList.get(y) instanceof PaperImportDto) {
                                 PaperImportDto paperImportDto = (PaperImportDto) paperStructImportDtoList.get(y);
                                 if (!paperMap.containsKey(paperImportDto.getPaperCode() + "_" + paperImportDto.getCourseCode())) {
-                                    TEPaper tePaper = new TEPaper(examId, paperImportDto.getPaperCode(), paperImportDto.getPaperCode(), new BigDecimal(paperImportDto.getTotalScore()), new BigDecimal(paperImportDto.getPassScore()), Objects.nonNull(paperImportDto.getContribution()) && Objects.equals(paperImportDto.getContribution(), "是") ? 1 : 0, Objects.nonNull(paperImportDto.getContributionScore()) ? new BigDecimal(paperImportDto.getContributionScore()) : new BigDecimal(0), paperImportDto.getCourseName(), paperImportDto.getCourseCode());
+                                    TEPaper tePaper = new TEPaper(examId, paperImportDto.getPaperCode(), paperImportDto.getPaperCode(), new BigDecimal(paperImportDto.getTotalScore()), new BigDecimal(paperImportDto.getPassScore()), Objects.nonNull(paperImportDto.getContribution()) && Objects.equals(paperImportDto.getContribution(), "是") ? 1 : Objects.equals(paperImportDto.getContribution(), "2") ? 2 : 0, Objects.nonNull(paperImportDto.getContributionScore()) ? new BigDecimal(paperImportDto.getContributionScore()) : new BigDecimal(0), paperImportDto.getCourseName(), paperImportDto.getCourseCode());
                                     paperMap.put(paperImportDto.getPaperCode() + "_" + paperImportDto.getCourseCode(), tePaper);
                                 }
                             } else if (subList.get(y) instanceof PaperStructImportDto) {

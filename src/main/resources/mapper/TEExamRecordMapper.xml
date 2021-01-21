@@ -56,6 +56,8 @@
             or tep.exam_id = 49 then ROUND(teer.sum_score + (tep.total_score - teer.sum_score) / tep.contribution_score)
             else tep.contribution_final_score
             end
+            when tep.contribution = 2 then
+                 teer.contribution_score
             else teer.sum_score
             end as myScore,
             teer.sum_score
@@ -85,6 +87,8 @@
             or tep.exam_id = 49 then ROUND(teer.sum_score + (tep.total_score - teer.sum_score) / tep.contribution_score)
             else tep.contribution_final_score
             end
+            when tep.contribution = 2 then
+                teer.contribution_score
             else teer.sum_score
             end as myScore
         <include refid="scoreCommonMidden"/>
@@ -136,6 +140,8 @@
                 else
                 tep.contribution_final_score
                 end
+                when tep.contribution = 2 then
+                    teer.contribution_score
                 else
                 teer.sum_score
                 end as sum_score
