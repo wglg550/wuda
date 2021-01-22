@@ -2,6 +2,7 @@ package com.qmth.wuda.teaching.api;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.google.common.collect.Lists;
 import com.qmth.wuda.teaching.annotation.ApiJsonObject;
 import com.qmth.wuda.teaching.annotation.ApiJsonProperty;
@@ -549,6 +550,89 @@ public class SysController {
                     tbDimensionList.addAll(v);
                 });
                 tbDimensionService.saveOrUpdateBatch(tbDimensionList);
+            }
+        } catch (Exception e) {
+            log.error("请求出错", e);
+            if (Objects.nonNull(tbAttachment)) {
+                tbAttachmentService.deleteAttachment(UploadFileEnum.file, tbAttachment);
+            }
+            if (e instanceof BusinessException) {
+                throw new BusinessException(e.getMessage());
+            } else {
+                throw new RuntimeException(e);
+            }
+        }
+        return ResultUtil.ok(Collections.singletonMap(SystemConstant.SUCCESS, true));
+    }
+
+    @ApiOperation(value = "赋分成绩导入接口")
+    @RequestMapping(value = "/assign/import", method = RequestMethod.POST)
+    @Transactional
+    @ApiResponses({@ApiResponse(code = 200, message = "{\"success\":true}", response = Result.class)})
+    public Result assignImport(@ApiParam(value = "上传文件", required = true) @RequestParam MultipartFile file) {
+        if (Objects.isNull(file) || Objects.equals(file, "")) {
+            throw new BusinessException(ExceptionResultEnum.ATTACHMENT_IS_NULL);
+        }
+        TBAttachment tbAttachment = null;
+        try {
+            tbAttachment = tbAttachmentService
+                    .saveAttachment(file, ServletUtil.getRequestMd5(), ServletUtil.getRequestPath(),
+                            UploadFileEnum.file, null, null);
+            if (Objects.isNull(tbAttachment)) {
+                throw new BusinessException(ExceptionResultEnum.ATTACHMENT_ERROR);
+            }
+            List<LinkedMultiValueMap<Integer, Object>> finalList = ExcelUtil.excelReader(file.getInputStream(), Lists.newArrayList(AssignImportDto.class), (finalExcelList, finalColumnNameList, finalExcelErrorList) -> {
+                if (finalExcelErrorList.size() > 0) {
+                    throw new BusinessException(JSONObject.toJSONString(finalExcelErrorList));
+                }
+                return finalExcelList;
+            });
+            //保存到数据库
+            if (Objects.nonNull(finalList) && finalList.size() > 0) {
+                AssignImportDto assignImportDtoTemp = (AssignImportDto) finalList.get(0).get(0).get(0);
+                QueryWrapper<TECourse> teCourseQueryWrapper = new QueryWrapper<>();
+                teCourseQueryWrapper.lambda().eq(TECourse::getExamCode, assignImportDtoTemp.getExamCode())
+                        .eq(TECourse::getCourseCode, assignImportDtoTemp.getCourseCode());
+                TECourse teCourse = teCourseService.getOne(teCourseQueryWrapper);
+                if (Objects.isNull(teCourse)) {
+                    throw new BusinessException("未找到科目信息");
+                }
+                for (int i = 0; i < finalList.size(); i++) {
+                    LinkedMultiValueMap<Integer, Object> finalMap = finalList.get(i);
+                    List<Object> assignImportDtoList = finalMap.get(i);
+                    int min = 0;
+                    int max = SystemConstant.MAX_IMPORT_SIZE, size = assignImportDtoList.size();
+                    if (max >= size) {
+                        max = size;
+                    }
+                    while (max <= size) {
+                        List subList = assignImportDtoList.subList(min, max);
+                        for (int y = 0; y < subList.size(); y++) {
+                            AssignImportDto assignImportDto = (AssignImportDto) subList.get(y);
+                            QueryWrapper<TEExamStudent> teExamStudentQueryWrapper = new QueryWrapper<>();
+                            teExamStudentQueryWrapper.lambda().eq(TEExamStudent::getExamId, teCourse.getExamId())
+                                    .eq(TEExamStudent::getStudentCode, assignImportDto.getStudentCode());
+                            TEExamStudent teExamStudent = teExamStudentService.getOne(teExamStudentQueryWrapper);
+                            if (Objects.isNull(teExamStudent)) {
+                                throw new BusinessException("未找到考生信息");
+                            }
+
+                            UpdateWrapper<TEExamRecord> teExamRecordUpdateWrapper = new UpdateWrapper<>();
+                            teExamRecordUpdateWrapper.lambda().set(TEExamRecord::getContributionScore, assignImportDto.getContributionScore())
+                                    .eq(TEExamRecord::getExamId, teCourse.getExamId())
+                                    .eq(TEExamRecord::getExamStudentId, teExamStudent.getId());
+                            teExamRecordService.update(teExamRecordUpdateWrapper);
+                        }
+                        if (max == size) {
+                            break;
+                        }
+                        min = max;
+                        max += SystemConstant.MAX_IMPORT_SIZE;
+                        if (max >= size) {
+                            max = size;
+                        }
+                    }
+                }
             }
         } catch (Exception e) {
             log.error("请求出错", e);

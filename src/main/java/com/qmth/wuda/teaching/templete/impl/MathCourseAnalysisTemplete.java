@@ -49,6 +49,31 @@ public class MathCourseAnalysisTemplete extends CourseAnalysisTemplete {
                 List<TEAnswer> teAnswerList = new ArrayList();
                 for (int y = 0; y < yyjSourceDataBean.getObjectiveScoreDetail().size(); y++) {
                     YyjSourceDataBean.YyjObjectiveScoreBean yyjObjectiveScoreBean = yyjSourceDataBean.getObjectiveScoreDetail().get(y);
+//                    if (yyjObjectiveScoreBean.getMainNumber() == 2 && yyjObjectiveScoreBean.getSubNumber() == 1) {
+//                        yyjObjectiveScoreBean.setSubNumber(5);
+//                    } else if (yyjObjectiveScoreBean.getMainNumber() == 2 && yyjObjectiveScoreBean.getSubNumber() == 2) {
+//                        yyjObjectiveScoreBean.setSubNumber(6);
+//                    } else if (yyjObjectiveScoreBean.getMainNumber() == 2 && yyjObjectiveScoreBean.getSubNumber() == 3) {
+//                        yyjObjectiveScoreBean.setSubNumber(7);
+//                    } else if (yyjObjectiveScoreBean.getMainNumber() == 2 && yyjObjectiveScoreBean.getSubNumber() == 4) {
+//                        yyjObjectiveScoreBean.setSubNumber(8);
+//                    } else if (yyjObjectiveScoreBean.getMainNumber() == 3 && yyjObjectiveScoreBean.getSubNumber() == 1) {
+//                        yyjObjectiveScoreBean.setSubNumber(9);
+//                    } else if (yyjObjectiveScoreBean.getMainNumber() == 4 && yyjObjectiveScoreBean.getSubNumber() == 1) {
+//                        yyjObjectiveScoreBean.setSubNumber(10);
+//                    } else if (yyjObjectiveScoreBean.getMainNumber() == 5 && yyjObjectiveScoreBean.getSubNumber() == 1) {
+//                        yyjObjectiveScoreBean.setSubNumber(11);
+//                    } else if (yyjObjectiveScoreBean.getMainNumber() == 6 && yyjObjectiveScoreBean.getSubNumber() == 1) {
+//                        yyjObjectiveScoreBean.setSubNumber(12);
+//                    } else if (yyjObjectiveScoreBean.getMainNumber() == 7 && yyjObjectiveScoreBean.getSubNumber() == 1) {
+//                        yyjObjectiveScoreBean.setSubNumber(13);
+//                    } else if (yyjObjectiveScoreBean.getMainNumber() == 8 && yyjObjectiveScoreBean.getSubNumber() == 1) {
+//                        yyjObjectiveScoreBean.setSubNumber(14);
+//                    } else if (yyjObjectiveScoreBean.getMainNumber() == 9 && yyjObjectiveScoreBean.getSubNumber() == 1) {
+//                        yyjObjectiveScoreBean.setSubNumber(16);
+//                    }
+                    Integer updateSubNumber = updateSubNumber(yyjObjectiveScoreBean);
+                    yyjObjectiveScoreBean.setSubNumber(Objects.nonNull(updateSubNumber) ? updateSubNumber : yyjObjectiveScoreBean.getSubNumber());
                     if (Objects.nonNull(this.getTePaperStructMap().get(yyjObjectiveScoreBean.getMainNumber() + "-" + yyjObjectiveScoreBean.getSubNumber()))) {
                         TEAnswer teAnswer = new TEAnswer(yyjObjectiveScoreBean.getMainNumber(), yyjObjectiveScoreBean.getSubNumber(), this.getTePaperStructMap().get(yyjObjectiveScoreBean.getMainNumber() + "-" + yyjObjectiveScoreBean.getSubNumber()).getType(), this.getExamRecordMap().get(this.getExamStudentMap().get(yyjSourceDataBean.getStudentCode() + "_" + yyjSourceDataBean.getExamNumber()).getId()).getId(), yyjObjectiveScoreBean.getAnswer(), yyjObjectiveScoreBean.getScore());
                         teAnswerList.add(teAnswer);
@@ -57,6 +82,8 @@ public class MathCourseAnalysisTemplete extends CourseAnalysisTemplete {
 
                 for (int y = 0; y < yyjSourceDataBean.getSubjectiveScoreDetail().size(); y++) {
                     YyjSourceDataBean.YyjSubjectiveScoreBean yyjSubjectiveScoreBean = yyjSourceDataBean.getSubjectiveScoreDetail().get(y);
+                    Integer updateSubNumber = updateSubNumber(yyjSubjectiveScoreBean);
+                    yyjSubjectiveScoreBean.setSubNumber(Objects.nonNull(updateSubNumber) ? updateSubNumber : yyjSubjectiveScoreBean.getSubNumber());
                     if (Objects.nonNull(this.getTePaperStructMap().get(yyjSubjectiveScoreBean.getMainNumber() + "-" + yyjSubjectiveScoreBean.getSubNumber()))) {
                         TEAnswer teAnswer = new TEAnswer(yyjSubjectiveScoreBean.getMainNumber(), yyjSubjectiveScoreBean.getSubNumber(), this.getTePaperStructMap().get(yyjSubjectiveScoreBean.getMainNumber() + "-" + yyjSubjectiveScoreBean.getSubNumber()).getType(), this.getExamRecordMap().get(this.getExamStudentMap().get(yyjSourceDataBean.getStudentCode() + "_" + yyjSourceDataBean.getExamNumber()).getId()).getId(), yyjSubjectiveScoreBean.getScore());
                         teAnswerList.add(teAnswer);
@@ -69,5 +96,46 @@ public class MathCourseAnalysisTemplete extends CourseAnalysisTemplete {
             courseAnalysisService.saveYyjSourceDataForDb(examId, tbSchool, this);
         }
         return ResultUtil.ok(studentsMark);
+    }
+
+    /**
+     * 修改子题号
+     *
+     * @param obj
+     * @return
+     */
+    public Integer updateSubNumber(Object obj) {
+        Integer mainNumber = null, subnumber = null, updateSubNumber = null;
+        if (obj instanceof YyjSourceDataBean.YyjObjectiveScoreBean) {
+            mainNumber = ((YyjSourceDataBean.YyjObjectiveScoreBean) obj).getMainNumber();
+            subnumber = ((YyjSourceDataBean.YyjObjectiveScoreBean) obj).getSubNumber();
+        } else {
+            mainNumber = ((YyjSourceDataBean.YyjSubjectiveScoreBean) obj).getMainNumber();
+            subnumber = ((YyjSourceDataBean.YyjSubjectiveScoreBean) obj).getSubNumber();
+        }
+        if (mainNumber == 2 && subnumber == 1) {
+            updateSubNumber = 5;
+        } else if (mainNumber == 2 && subnumber == 2) {
+            updateSubNumber = 6;
+        } else if (mainNumber == 2 && subnumber == 3) {
+            updateSubNumber = 7;
+        } else if (mainNumber == 2 && subnumber == 4) {
+            updateSubNumber = 8;
+        } else if (mainNumber == 3 && subnumber == 1) {
+            updateSubNumber = 9;
+        } else if (mainNumber == 4 && subnumber == 1) {
+            updateSubNumber = 10;
+        } else if (mainNumber == 5 && subnumber == 1) {
+            updateSubNumber = 11;
+        } else if (mainNumber == 6 && subnumber == 1) {
+            updateSubNumber = 12;
+        } else if (mainNumber == 7 && subnumber == 1) {
+            updateSubNumber = 13;
+        } else if (mainNumber == 8 && subnumber == 1) {
+            updateSubNumber = 14;
+        } else if (mainNumber == 9 && subnumber == 1) {
+            updateSubNumber = 15;
+        }
+        return updateSubNumber;
     }
 }
