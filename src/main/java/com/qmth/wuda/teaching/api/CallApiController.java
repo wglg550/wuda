@@ -3,10 +3,10 @@ package com.qmth.wuda.teaching.api;
 import com.qmth.wuda.teaching.annotation.ApiJsonObject;
 import com.qmth.wuda.teaching.annotation.ApiJsonProperty;
 import com.qmth.wuda.teaching.bean.Result;
-import com.qmth.wuda.teaching.constant.SystemConstant;
 import com.qmth.wuda.teaching.exception.BusinessException;
 import com.qmth.wuda.teaching.templete.impl.MathCourseAnalysisTemplete;
 import com.qmth.wuda.teaching.templete.impl.PhysicsCourseAnalysisTemplete;
+import com.qmth.wuda.teaching.templete.service.CourseAnalysisService;
 import com.qmth.wuda.teaching.util.ResultUtil;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 
@@ -33,6 +32,9 @@ public class CallApiController {
 
     @Resource
     MathCourseAnalysisTemplete mathCourseAnalysisTemplete;
+
+    @Resource
+    CourseAnalysisService courseAnalysisService;
 
     @ApiOperation(value = "获取考生成绩接口")
     @RequestMapping(value = "/student/score", method = RequestMethod.POST)
@@ -59,7 +61,7 @@ public class CallApiController {
             case 63:
                 return mathCourseAnalysisTemplete.dataAnalysis(examId, examCode);
             default:
-                return ResultUtil.ok(Collections.singletonMap(SystemConstant.SUCCESS, true));
+                return ResultUtil.ok(courseAnalysisService.yyjSourceDataAnalysis(examId, examCode));
         }
     }
 }
