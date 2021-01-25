@@ -2,9 +2,12 @@ package com.qmth.wuda.teaching.exception;
 
 import com.qmth.wuda.teaching.bean.Result;
 import com.qmth.wuda.teaching.enums.ExceptionResultEnum;
+import com.qmth.wuda.teaching.util.JacksonUtil;
 import com.qmth.wuda.teaching.util.ResultUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -12,6 +15,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @Description: 全局异常处理
@@ -44,6 +49,11 @@ public class GlobalDefultExceptionHandler {
             if (e.getMessage().contains("No enum constant Platform")) {
                 return ResultUtil.error(ExceptionResultEnum.EXCEPTION_ERROR.getStatusCode(), "暂不支持此平台");
             }
+        } else if (e instanceof MethodArgumentNotValidException) {
+            response.setStatus(ExceptionResultEnum.EXCEPTION_ERROR.getCode());
+            BindingResult bindingResult = ((MethodArgumentNotValidException) e).getBindingResult();
+            List<String> errorList = bindingResult.getFieldErrors().stream().map(o -> o.getDefaultMessage()).collect(Collectors.toList());
+            return ResultUtil.error(ExceptionResultEnum.ERROR.getCode(), JacksonUtil.parseJson(errorList));
         }
         response.setStatus(ExceptionResultEnum.EXCEPTION_ERROR.getCode());
         //Exception错误
